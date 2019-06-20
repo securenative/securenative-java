@@ -33,7 +33,7 @@ public class VerifyRequestMiddleware implements Filter {
 
         String cookie = utils.getCookie(req, null);
         if (Strings.isNullOrEmpty(cookie)){
-            ActionResult response = this.sn.verify(new EventOptions(utils.remoteIpFromRequest(req), req.getHeader("user-agent"), EventTypes.types.get(EventTypes.EventKey.VERIFY)), req);
+            ActionResult response = this.sn.verify(new EventOptions(utils.remoteIpFromRequest(req), req.getHeader("user-agent"), EventTypes.VERIFY.getType()), req);
             if (ActionType.type.BLOCK == response.getAction()){
                 res.sendRedirect(String.valueOf(500));
             }

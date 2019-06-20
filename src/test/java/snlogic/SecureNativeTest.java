@@ -1,5 +1,7 @@
 package snlogic;
 
+import exceptions.SecureNativeSDKException;
+import models.Device;
 import models.EventOptions;
 import models.SecureNativeOptions;
 import models.User;
@@ -34,13 +36,13 @@ public class SecureNativeTest {
 
     }
 
-    @Test (expected = Exception.class)
+    @Test (expected = SecureNativeSDKException.class)
     public void initializeSnWhenApiKeyNullTest()  throws Exception {
         SecureNative sn = new SecureNative(null, null);
     }
 
 
-    @Test (expected = Exception.class)
+    @Test (expected = SecureNativeSDKException.class)
     public void initializeSnWhenApiKeyEmptyTest()  throws Exception {
         SecureNative sn = new SecureNative("", null);
     }
@@ -50,12 +52,12 @@ public class SecureNativeTest {
         SecureNative sn = new SecureNative("api", null);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = SecureNativeSDKException.class)
     public void initializeSnWithEmptyApikeyTest()  throws Exception {
         SecureNative sn = new SecureNative("", null);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = SecureNativeSDKException.class)
     public void callTrackWith7CustomParams()  throws Exception {
         SecureNative sn = new SecureNative("api", null);
         Map mymap = new HashMap<String, String>() {
@@ -69,7 +71,7 @@ public class SecureNativeTest {
                 put("seven", "seven");
             }
         };
-        EventOptions options = new EventOptions("ip", "remoteIP", "userAgent" , "device", new User("1","name","email") , "cookieName" , "eventType", mymap);
+        EventOptions options = new EventOptions("ip", "remoteIP", "userAgent" , new Device("1"), new User("1","name","email") , "cookieName" , "eventType", mymap);
         sn.track(options, request);
     }
 

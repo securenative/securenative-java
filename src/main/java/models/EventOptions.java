@@ -7,12 +7,12 @@ public class EventOptions {
     private String userAgent;
     private String remoteIP;
     private User user;
-    private String device;
+    private Device device;
     private String cookieName;
     private String eventType;
     private Map params;
 
-    public EventOptions(String ip, String remoteIP, String userAgent, String device, User user, String cookieName, String eventType, Map params) {
+    public EventOptions(String ip, String remoteIP, String userAgent, Device device, User user, String cookieName, String eventType, Map params) {
         this.ip = ip;
         this.remoteIP = remoteIP;
         this.userAgent = userAgent;
@@ -62,11 +62,11 @@ public class EventOptions {
         this.user = user;
     }
 
-    public String getDevice() {
+    public Device getDevice() {
         return device;
     }
 
-    public void setDevice(String device) {
+    public void setDevice(Device device) {
         this.device = device;
     }
 

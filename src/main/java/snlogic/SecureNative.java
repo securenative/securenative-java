@@ -1,6 +1,7 @@
 package snlogic;
 
 import com.google.common.base.Strings;
+import exceptions.SecureNativeSDKException;
 import models.ActionResult;
 import models.EventOptions;
 import models.SecureNativeOptions;
@@ -20,9 +21,9 @@ public class SecureNative implements ISDK {
     private SecureNativeOptions snOptions;
     private String apiKey;
 
-    public SecureNative(String apiKey, SecureNativeOptions options) throws Exception {
+    public SecureNative(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         if (Strings.isNullOrEmpty(apiKey)) {
-            throw new Exception("You must pass your snlogic.SecureNative api key");
+            throw new SecureNativeSDKException("You must pass your snlogic.SecureNative api key");
         }
         this.apiKey = apiKey;
         this.snOptions = initializeOptions(options);
@@ -55,9 +56,9 @@ public class SecureNative implements ISDK {
     }
 
     @Override
-    public void track(EventOptions options, HttpServletRequest request) throws Exception {
+    public void track(EventOptions options, HttpServletRequest request) throws SecureNativeSDKException {
         if (options != null && options.getParams() != null && options.getParams().size() > MAX_CUSTOM_PARAMS) {
-            throw new Exception("You can only specify maximum of " + MAX_CUSTOM_PARAMS + " params");
+            throw new SecureNativeSDKException("You can only specify maximum of " + MAX_CUSTOM_PARAMS + " params");
         }
         SnEvent event = this.eventManager.buildEvent(request, options);
         this.eventManager.sendSync(event, this.snOptions.getApiUrl() + "/track");

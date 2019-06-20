@@ -17,6 +17,14 @@ public class SecureNativeOptions {
         this.autoSend = autoSend;
     }
 
+    public SecureNativeOptions(String apiUrl, int interval, long maxEvents, int timeout) {
+        this.interval = interval;
+        this.maxEvents = maxEvents;
+        this.apiUrl = apiUrl;
+        this.timeout = timeout;
+        this.autoSend = false;
+    }
+
     public String getApiUrl() {
         return apiUrl;
     }

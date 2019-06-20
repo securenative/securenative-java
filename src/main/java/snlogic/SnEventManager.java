@@ -2,6 +2,7 @@ package snlogic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import exceptions.SecureNativeSDKException;
 import models.*;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -19,11 +20,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -33,31 +31,35 @@ public class SnEventManager implements EventManager {
     private final String EMPTY = "";
     private final String USER_AGENT_VALUE = "snlogic.SecureNative-java";
     private final String SN_VERSION = "SN-Version";
-    private final String SN_VERSION_VALUE = "";//TODO: figure out where the version come from maybe env var
-    private SecureNativeOptions options;
     private CloseableHttpClient client;
     private String apiKey;
     private Utils utils;
+    private ExecutorService executor;
+    private ConcurrentLinkedQueue<Message> events;
 
-
-
-    public SnEventManager(String apiKey, SecureNativeOptions options) throws Exception {
+    public SnEventManager(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
+        events = new ConcurrentLinkedQueue<>();
         if (isNullOrEmpty(apiKey) || options == null) {
-            throw new Exception("You must pass your snlogic.SecureNative api key");
-
+            throw new SecureNativeSDKException("You must pass your snlogic.SecureNative api key");
         }
 
         this.client = initializeHttpClient(options);
-        this.options = options;
         this.apiKey = apiKey;
         utils = new Utils();
+        executor =   Executors.newSingleThreadScheduledExecutor();
+        executor.execute(() -> {
+            Message msg = events.poll();
+            if (msg != null){
+                sendSync(msg.getSnEvent(),msg.getUrl());
+            }
+        });
     }
 
     @Override
     public SnEvent buildEvent(HttpServletRequest request, EventOptions options) {
         String decodedCookie = utils.base64decode(utils.getCookie(request, options != null && !Strings.isNullOrEmpty(options.getCookieName()) ? options.getCookieName() : SN_COOKIE_NAME));
         ClientFingurePrint clientFP = utils.parseClientFP(decodedCookie);
-        String eventype =  options == null || Strings.isNullOrEmpty(options.getEventType()) ? EventTypes.types.get(EventTypes.EventKey.LOG_IN) : options.getEventType();
+        String eventype =  options == null || Strings.isNullOrEmpty(options.getEventType()) ? EventTypes.LOG_IN.name() : options.getEventType();
         String cid = clientFP != null ? clientFP.getCid() : EMPTY;
         String vid = UUID.randomUUID().toString();
         String fp = clientFP != null ? clientFP.getFp() : EMPTY;
@@ -65,9 +67,8 @@ public class SnEventManager implements EventManager {
         String remoteIP = request.getRemoteAddr();
         String userAgent = options != null && options.getUserAgent() != null ? options.getUserAgent() : request.getHeader(USERAGENT_HEADER);
         User user = options != null && options.getUser() != null ? options.getUser() : new User("anonymous", null, null);
-        String device = options != null && options.getDevice() != null ? options.getDevice() : "";
-        Map params = options != null && options.getParams() != null ? options.getParams() : new HashMap();
-        return new SnEvent(eventype, cid, vid, fp, ip, remoteIP, userAgent, user, Instant.now().getEpochSecond(), device);
+        Device device = options != null && options.getDevice() != null ? options.getDevice() : null;
+        return new SnEvent(eventype, cid, vid, fp, ip, remoteIP, userAgent, user, Instant.now().getEpochSecond(),device);
     }
 
     @Override
@@ -88,7 +89,8 @@ public class SnEventManager implements EventManager {
 
             HttpResponse response = this.client.execute(httpPost);
             if(response.getStatusLine().getStatusCode() > 210){
-                new ActionResult(ActionType.type.ALLOW, 0.0, new String[0]);
+                events.add(new Message(event,requestUrl));
+                return new ActionResult(ActionType.type.ALLOW, 0.0, new String[0]);
             }
             BufferedReader rd = new BufferedReader(
                    new InputStreamReader(response.getEntity().getContent()));
@@ -124,7 +126,7 @@ public class SnEventManager implements EventManager {
     private CloseableHttpClient initializeHttpClient(SecureNativeOptions options){
         return HttpClients.custom().setUserAgent(USER_AGENT_VALUE)
                 .setConnectionTimeToLive(options.getTimeout(), TimeUnit.MILLISECONDS)
-                .setDefaultHeaders(Arrays.asList(new BasicHeader(SN_VERSION, SN_VERSION_VALUE),
+                .setDefaultHeaders(Arrays.asList(new BasicHeader(SN_VERSION, this.getVersion()),
                         new BasicHeader(HttpHeaders.AUTHORIZATION, this.apiKey)))
                 .build();
     }
@@ -138,8 +140,6 @@ public class SnEventManager implements EventManager {
         catch (Exception e){
             return "unknown";
         }
-
-
     }
-}
 
+}

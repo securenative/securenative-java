@@ -10,9 +10,9 @@ public class SnEvent {
     private String userAgent;
     private User user;
     private long ts;
-    private String device;
+    private Device device;
 
-    public SnEvent(String eventType, String cid, String vid, String fp, String ip, String remoteIP, String userAgent, User user, long ts, String device) {
+    public SnEvent(String eventType, String cid, String vid, String fp, String ip, String remoteIP, String userAgent, User user, long ts, Device device) {
         this.eventType = eventType;
         this.cid = cid;
         this.vid = vid;
@@ -97,11 +97,11 @@ public class SnEvent {
         this.ts = ts;
     }
 
-    public String getDevice() {
+    public Device getDevice() {
         return device;
     }
 
-    public void setDevice(String device) {
+    public void setDevice(Device device) {
         this.device = device;
     }
 
