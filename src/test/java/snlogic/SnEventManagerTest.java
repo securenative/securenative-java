@@ -47,7 +47,7 @@ public class SnEventManagerTest {
         when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("k","v"),new Cookie("_sn","X3NuX3ZhbHVl")});
         when(utils.base64decode(anyString())).thenReturn("base");
         SnEvent snEvent = snEventManager.buildEvent(request,  new EventOptions("ip", "userAgent","eventType"));
-        Assert.assertEquals("eventType", snEvent.getEvent());
+        Assert.assertEquals("eventType", snEvent.getEventType());
     }
 
 }

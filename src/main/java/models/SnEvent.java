@@ -1,9 +1,7 @@
 package models;
 
-import java.util.Map;
-
 public class SnEvent {
-    private String event;
+    private String eventType;
     private String cid;
     private String vid;
     private String fp;
@@ -13,10 +11,9 @@ public class SnEvent {
     private User user;
     private long ts;
     private String device;
-    private Map<String,String> params;
 
-    public SnEvent(String event, String cid, String vid, String fp, String ip, String remoteIP, String userAgent, User user, long ts, String device, Map<String,String> params) {
-        this.event = event;
+    public SnEvent(String eventType, String cid, String vid, String fp, String ip, String remoteIP, String userAgent, User user, long ts, String device) {
+        this.eventType = eventType;
         this.cid = cid;
         this.vid = vid;
         this.fp = fp;
@@ -26,15 +23,14 @@ public class SnEvent {
         this.user = user;
         this.ts = ts;
         this.device = device;
-        this.params = params;
     }
 
-    public String getEvent() {
-        return event;
+    public String getEventType() {
+        return eventType;
     }
 
-    public void setEvent(String event) {
-        this.event = event;
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
     }
 
     public String getCid() {
@@ -109,11 +105,4 @@ public class SnEvent {
         this.device = device;
     }
 
-    public Map<String, String> getParams() {
-        return params;
-    }
-
-    public void setParams(Map<String, String> params) {
-        this.params = params;
-    }
 }

@@ -67,7 +67,7 @@ public class SnEventManager implements EventManager {
         User user = options != null && options.getUser() != null ? options.getUser() : new User("anonymous", null, null);
         String device = options != null && options.getDevice() != null ? options.getDevice() : "";
         Map params = options != null && options.getParams() != null ? options.getParams() : new HashMap();
-        return new SnEvent(eventype, cid, vid, fp, ip, remoteIP, userAgent, user, Instant.now().getEpochSecond(), device, params);
+        return new SnEvent(eventype, cid, vid, fp, ip, remoteIP, userAgent, user, Instant.now().getEpochSecond(), device);
     }
 
     @Override
