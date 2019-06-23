@@ -2,8 +2,10 @@ package snlogic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import exceptions.SecureNativeSDKException;
 import models.ClientFingurePrint;
 import org.apache.http.conn.util.InetAddressUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
 import javax.crypto.Mac;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 public class Utils {
     private static String[] ipHeaders = {"x-forwarded-for", "x-client-ip", "x-real-ip", "x-forwarded", "x-cluster-client-ip", "forwarded-for", "forwarded", "via"};
     private static String COOKIE_NAME = "_sn";
-    private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
+    private static final String HMAC_SHA1_ALGORITHM = "HmacSHA512";
     private static String EMPTY= "";
 
     public Utils() {
@@ -66,7 +68,6 @@ public class Utils {
         Optional<String> bestCandidate = Optional.empty();
         String header = "";
         for (int i = 0; i < ipHeaders.length; i++) {
-
             List<String> candidates = Arrays.asList();
             header = request.getHeader(ipHeaders[i]);
             if (!Strings.isNullOrEmpty(header)) {
@@ -116,11 +117,15 @@ public class Utils {
         return formatter.toString();
     }
 
-    public String calculateRFC2104HMAC(String data, String key) throws NoSuchAlgorithmException, InvalidKeyException {
-        SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_SHA1_ALGORITHM);
-        Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
-        mac.init(signingKey);
-        return toHexString(mac.doFinal(data.getBytes()));
+    public String calculateRFC2104HMAC(String data, String key) throws SecureNativeSDKException {
+        try {
+            SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_SHA1_ALGORITHM);
+            Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
+            mac.init(signingKey);
+            return toHexString(mac.doFinal(data.getBytes()));
+        } catch (NoSuchAlgorithmException | InvalidKeyException  e) {
+                throw new SecureNativeSDKException("failed calculating hmac");
+        }
     }
 
 

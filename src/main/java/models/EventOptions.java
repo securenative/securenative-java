@@ -1,6 +1,8 @@
 package models;
 
-import java.util.Map;
+import javafx.util.Pair;
+
+import java.util.List;
 
 public class EventOptions {
     private String ip;
@@ -10,9 +12,9 @@ public class EventOptions {
     private Device device;
     private String cookieName;
     private String eventType;
-    private Map params;
+    private List <Pair<String, String>> params;
 
-    public EventOptions(String ip, String remoteIP, String userAgent, Device device, User user, String cookieName, String eventType, Map params) {
+    public EventOptions(String ip, String remoteIP, String userAgent, Device device, User user, String cookieName, String eventType, List<Pair<String, String>> params) {
         this.ip = ip;
         this.remoteIP = remoteIP;
         this.userAgent = userAgent;
@@ -85,11 +87,11 @@ public class EventOptions {
         this.eventType = eventType;
     }
 
-    public Map getParams() {
+    public List<Pair<String, String>> getParams() {
         return params;
     }
 
-    public void setParams(Map params) {
+    public void setParams(List<Pair<String, String>> params) {
         this.params = params;
     }
 

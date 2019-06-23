@@ -1,6 +1,6 @@
 package snlogic;
 
-import models.ActionResult;
+import models.RiskResult;
 import models.EventOptions;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface ISDK {
     void track(EventOptions options, HttpServletRequest request) throws Exception;
-    ActionResult verify(EventOptions options, HttpServletRequest request);
-    ActionResult flow(long flowId, EventOptions options, HttpServletRequest request);
+    RiskResult verify(EventOptions options, HttpServletRequest request);
+    RiskResult flow(long flowId, EventOptions options, HttpServletRequest request);
     String getApiKey();
 
 }

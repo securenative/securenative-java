@@ -1,5 +1,6 @@
 package snlogic;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import exceptions.SecureNativeSDKException;
@@ -36,6 +37,7 @@ public class SnEventManager implements EventManager {
     private Utils utils;
     private ExecutorService executor;
     private ConcurrentLinkedQueue<Message> events;
+    private ObjectMapper mapper;
 
     public SnEventManager(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         events = new ConcurrentLinkedQueue<>();
@@ -53,6 +55,7 @@ public class SnEventManager implements EventManager {
                 sendSync(msg.getSnEvent(),msg.getUrl());
             }
         });
+        mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Override
@@ -72,8 +75,7 @@ public class SnEventManager implements EventManager {
     }
 
     @Override
-    public ActionResult sendSync(SnEvent event, String requestUrl) {
-        ObjectMapper mapper = new ObjectMapper();
+    public RiskResult sendSync(SnEvent event, String requestUrl) {
         String stringEvent = null;
         String line;
         try {
@@ -90,7 +92,7 @@ public class SnEventManager implements EventManager {
             HttpResponse response = this.client.execute(httpPost);
             if(response.getStatusLine().getStatusCode() > 210){
                 events.add(new Message(event,requestUrl));
-                return new ActionResult(ActionType.type.ALLOW, 0.0, new String[0]);
+                return new RiskResult(ActionType.type.ALLOW.name(), 0.0, new String[0]);
             }
             BufferedReader rd = new BufferedReader(
                    new InputStreamReader(response.getEntity().getContent()));
@@ -99,12 +101,18 @@ public class SnEventManager implements EventManager {
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
-            return mapper.readValue(result.toString(), ActionResult.class);
+            try{
+                return mapper.readValue(result.toString(), RiskResult.class);
+            }
+            catch (Exception e){
+                return new RiskResult(ActionType.type.ALLOW.name(), 0.0, new String[0]);
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new ActionResult(ActionType.type.ALLOW, 0.0, new String[0]);
+        return new RiskResult(ActionType.type.ALLOW.name(), 0.0, new String[0]);
     }
 
     @Override

@@ -1,17 +1,17 @@
 package snlogic;
 
 import exceptions.SecureNativeSDKException;
+import javafx.util.Pair;
 import models.Device;
 import models.EventOptions;
-import models.SecureNativeOptions;
 import models.User;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -57,21 +57,18 @@ public class SecureNativeTest {
         SecureNative sn = new SecureNative("", null);
     }
 
-    @Test(expected = SecureNativeSDKException.class)
+    @Test
     public void callTrackWith7CustomParams()  throws Exception {
         SecureNative sn = new SecureNative("api", null);
-        Map mymap = new HashMap<String, String>() {
-            {
-                put("one", "one");
-                put("two", "two");
-                put("three", "three");
-                put("four", "four");
-                put("five", "five");
-                put("six", "six");
-                put("seven", "seven");
-            }
-        };
-        EventOptions options = new EventOptions("ip", "remoteIP", "userAgent" , new Device("1"), new User("1","name","email") , "cookieName" , "eventType", mymap);
+        List<Pair<String, String>> params = new ArrayList<>();
+        params.add(new Pair<>("one", "one"));
+        params.add(new Pair<>("two", "two"));
+        params.add(new Pair<>("three", "three"));
+        params.add(new Pair<>("four", "four"));
+        params.add(new Pair<>("five", "five"));
+        params.add(new Pair<>("six", "six"));
+        params.add(new Pair<>("seven", "seven"));
+        EventOptions options = new EventOptions("ip", "remoteIP", "userAgent" , new Device("1"), new User("1","name","email") , "cookieName" , "eventType", params);
         sn.track(options, request);
     }
 

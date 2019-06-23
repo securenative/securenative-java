@@ -2,7 +2,7 @@ package snlogic;
 
 import com.google.common.base.Strings;
 import exceptions.SecureNativeSDKException;
-import models.ActionResult;
+import models.RiskResult;
 import models.EventOptions;
 import models.SecureNativeOptions;
 import models.SnEvent;
@@ -56,22 +56,22 @@ public class SecureNative implements ISDK {
     }
 
     @Override
-    public void track(EventOptions options, HttpServletRequest request) throws SecureNativeSDKException {
+    public void track(EventOptions options, HttpServletRequest request) {
         if (options != null && options.getParams() != null && options.getParams().size() > MAX_CUSTOM_PARAMS) {
-            throw new SecureNativeSDKException("You can only specify maximum of " + MAX_CUSTOM_PARAMS + " params");
+            options.setParams(options.getParams().subList(0,5));
         }
         SnEvent event = this.eventManager.buildEvent(request, options);
         this.eventManager.sendSync(event, this.snOptions.getApiUrl() + "/track");
     }
 
     @Override
-    public ActionResult verify(EventOptions options, HttpServletRequest request) {
+    public RiskResult verify(EventOptions options, HttpServletRequest request) {
         SnEvent event = this.eventManager.buildEvent(request, options);
-        return this.eventManager.sendSync(event, this.snOptions.getApiUrl() + "verify");
+        return this.eventManager.sendSync(event, this.snOptions.getApiUrl() + "/verify");
     }
 
     @Override
-    public ActionResult flow(long flowId, EventOptions options, HttpServletRequest request) {
+    public RiskResult flow(long flowId, EventOptions options, HttpServletRequest request) {
         SnEvent event = this.eventManager.buildEvent(request, options);
         return this.eventManager.sendSync(event, this.snOptions.getApiUrl() + "/flow/" + flowId);
     }

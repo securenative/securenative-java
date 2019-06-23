@@ -1,7 +1,7 @@
 package snlogic;
 
 import com.google.common.base.Strings;
-import models.ActionResult;
+import models.RiskResult;
 import models.ActionType;
 import models.EventOptions;
 
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class VerifyRequestMiddleware implements Filter {
 
-    private SecureNative sn;
+    private ISDK sn;
 
     private Utils utils;
 
@@ -23,7 +23,7 @@ public class VerifyRequestMiddleware implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig){
-
+        utils = new Utils();
     }
 
     @Override
@@ -33,11 +33,11 @@ public class VerifyRequestMiddleware implements Filter {
 
         String cookie = utils.getCookie(req, null);
         if (Strings.isNullOrEmpty(cookie)){
-            ActionResult response = this.sn.verify(new EventOptions(utils.remoteIpFromRequest(req), req.getHeader("user-agent"), EventTypes.VERIFY.getType()), req);
-            if (ActionType.type.BLOCK == response.getAction()){
+            RiskResult response = this.sn.verify(new EventOptions(utils.remoteIpFromRequest(req), req.getHeader("user-agent"), EventTypes.VERIFY.getType()), req);
+            if (ActionType.type.BLOCK.name() == response.getRiskLevel()){
                 res.sendRedirect(String.valueOf(500));
             }
-            if (ActionType.type.REDIRECT == response.getAction()){
+            if (ActionType.type.REDIRECT.name() == response.getRiskLevel()){
                 res.sendRedirect("/error");
             }
         }
