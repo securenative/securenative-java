@@ -1,4 +1,4 @@
-package models;
+package com.securenative.models;
 
 public class User {
     private String id;

@@ -1,13 +1,10 @@
-package snlogic;
+package com.securenative.snlogic;
 
 import com.google.common.base.Strings;
-import exceptions.SecureNativeSDKException;
-import models.RiskResult;
-import models.EventOptions;
-import models.SecureNativeOptions;
-import models.SnEvent;
-
-import javax.servlet.http.HttpServletRequest;
+import com.securenative.exceptions.SecureNativeSDKException;
+import com.securenative.models.Event;
+import com.securenative.models.RiskResult;
+import com.securenative.models.SecureNativeOptions;
 
 public class SecureNative implements ISDK {
     private final int MAX_CUSTOM_PARAMS = 6;
@@ -23,7 +20,7 @@ public class SecureNative implements ISDK {
 
     public SecureNative(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         if (Strings.isNullOrEmpty(apiKey)) {
-            throw new SecureNativeSDKException("You must pass your snlogic.SecureNative api key");
+            throw new SecureNativeSDKException("You must pass your com.securenative.snlogic.SecureNative api key");
         }
         this.apiKey = apiKey;
         this.snOptions = initializeOptions(options);
@@ -56,23 +53,22 @@ public class SecureNative implements ISDK {
     }
 
     @Override
-    public void track(EventOptions options, HttpServletRequest request) {
-        if (options != null && options.getParams() != null && options.getParams().size() > MAX_CUSTOM_PARAMS) {
-            options.setParams(options.getParams().subList(0,5));
-        }
-        SnEvent event = this.eventManager.buildEvent(request, options);
+    public String getDefaultCookieName(){
+        return Utils.COOKIE_NAME;
+    }
+
+    @Override
+    public void track(Event event) {
         this.eventManager.sendSync(event, this.snOptions.getApiUrl() + "/track");
     }
 
     @Override
-    public RiskResult verify(EventOptions options, HttpServletRequest request) {
-        SnEvent event = this.eventManager.buildEvent(request, options);
+    public RiskResult verify(Event event) {
         return this.eventManager.sendSync(event, this.snOptions.getApiUrl() + "/verify");
     }
 
     @Override
-    public RiskResult flow(long flowId, EventOptions options, HttpServletRequest request) {
-        SnEvent event = this.eventManager.buildEvent(request, options);
+    public RiskResult flow(long flowId, Event event) {
         return this.eventManager.sendSync(event, this.snOptions.getApiUrl() + "/flow/" + flowId);
     }
 

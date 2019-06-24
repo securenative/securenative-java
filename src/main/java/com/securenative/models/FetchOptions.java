@@ -1,4 +1,4 @@
-package models;
+package com.securenative.models;
 
 import org.apache.http.message.BasicHeader;
 

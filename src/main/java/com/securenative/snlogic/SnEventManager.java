@@ -1,10 +1,10 @@
-package snlogic;
+package com.securenative.snlogic;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import exceptions.SecureNativeSDKException;
-import models.*;
+import com.securenative.exceptions.SecureNativeSDKException;
+import com.securenative.models.*;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -20,9 +20,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -30,7 +32,7 @@ public class SnEventManager implements EventManager {
     private final String SN_COOKIE_NAME = "_sn";
     private final String USERAGENT_HEADER = "user-agent";
     private final String EMPTY = "";
-    private final String USER_AGENT_VALUE = "snlogic.SecureNative-java";
+    private final String USER_AGENT_VALUE = "com.securenative.snlogic.SecureNative-java";
     private final String SN_VERSION = "SN-Version";
     private CloseableHttpClient client;
     private String apiKey;
@@ -42,7 +44,7 @@ public class SnEventManager implements EventManager {
     public SnEventManager(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         events = new ConcurrentLinkedQueue<>();
         if (isNullOrEmpty(apiKey) || options == null) {
-            throw new SecureNativeSDKException("You must pass your snlogic.SecureNative api key");
+            throw new SecureNativeSDKException("You must pass your com.securenative.snlogic.SecureNative api key");
         }
 
         this.client = initializeHttpClient(options);
@@ -59,23 +61,19 @@ public class SnEventManager implements EventManager {
     }
 
     @Override
-    public SnEvent buildEvent(HttpServletRequest request, EventOptions options) {
-        String decodedCookie = utils.base64decode(utils.getCookie(request, options != null && !Strings.isNullOrEmpty(options.getCookieName()) ? options.getCookieName() : SN_COOKIE_NAME));
-        ClientFingurePrint clientFP = utils.parseClientFP(decodedCookie);
-        String eventype =  options == null || Strings.isNullOrEmpty(options.getEventType()) ? EventTypes.LOG_IN.name() : options.getEventType();
-        String cid = clientFP != null ? clientFP.getCid() : EMPTY;
-        String vid = UUID.randomUUID().toString();
-        String fp = clientFP != null ? clientFP.getFp() : EMPTY;
-        String ip = options != null && options.getIp() != null ? options.getIp() : utils.remoteIpFromRequest(request);
+    public Event buildEventFromHttpServletRequest(HttpServletRequest request, Event event) {
+        String encodedCookie = utils.getCookie(request, event != null && !Strings.isNullOrEmpty(event.getCookieName()) ? event.getCookieName() : SN_COOKIE_NAME);
+        String eventype =  event == null || Strings.isNullOrEmpty(event.getEventType()) ? EventTypes.LOG_IN.name() : event.getEventType();
+        String ip = event != null && event.getIp() != null ? event.getIp() : utils.remoteIpFromRequest(request);
         String remoteIP = request.getRemoteAddr();
-        String userAgent = options != null && options.getUserAgent() != null ? options.getUserAgent() : request.getHeader(USERAGENT_HEADER);
-        User user = options != null && options.getUser() != null ? options.getUser() : new User("anonymous", null, null);
-        Device device = options != null && options.getDevice() != null ? options.getDevice() : null;
-        return new SnEvent(eventype, cid, vid, fp, ip, remoteIP, userAgent, user, Instant.now().getEpochSecond(),device);
+        String userAgent = event != null && event.getUserAgent() != null ? event.getUserAgent() : request.getHeader(USERAGENT_HEADER);
+        User user = event != null && event.getUser() != null ? event.getUser() : new User("anonymous", null, null);
+        Device device = event != null && event.getDevice() != null ? event.getDevice() : null;
+        return new SnEvent.EventBuilder(eventype).withCookieValue(encodedCookie).withIp(ip).withRemoteIP(remoteIP).withUserAgent(userAgent).withUser(user).withDevice(device).build();
     }
 
     @Override
-    public RiskResult sendSync(SnEvent event, String requestUrl) {
+    public RiskResult sendSync(Event event, String requestUrl) {
         String stringEvent = null;
         String line;
         try {
@@ -92,7 +90,7 @@ public class SnEventManager implements EventManager {
             HttpResponse response = this.client.execute(httpPost);
             if(response.getStatusLine().getStatusCode() > 210){
                 events.add(new Message(event,requestUrl));
-                return new RiskResult(ActionType.type.ALLOW.name(), 0.0, new String[0]);
+                return new RiskResult(ActionType.ALLOW.name(), 0.0, new String[0]);
             }
             BufferedReader rd = new BufferedReader(
                    new InputStreamReader(response.getEntity().getContent()));
@@ -105,14 +103,14 @@ public class SnEventManager implements EventManager {
                 return mapper.readValue(result.toString(), RiskResult.class);
             }
             catch (Exception e){
-                return new RiskResult(ActionType.type.ALLOW.name(), 0.0, new String[0]);
+                return new RiskResult(RiskLevel.low.name(), 0.0, new String[0]);
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new RiskResult(ActionType.type.ALLOW.name(), 0.0, new String[0]);
+        return new RiskResult(ActionType.ALLOW.name(), 0.0, new String[0]);
     }
 
     @Override

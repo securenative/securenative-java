@@ -1,19 +1,19 @@
-package models;
+package com.securenative.models;
 
 public class Message {
-    private SnEvent snEvent;
+    private Event snEvent;
     private String url;
 
-    public Message(SnEvent snEvent, String url) {
+    public Message(Event snEvent, String url) {
         this.snEvent = snEvent;
         this.url = url;
     }
 
-    public SnEvent getSnEvent() {
+    public Event getSnEvent() {
         return snEvent;
     }
 
-    public void setSnEvent(SnEvent snEvent) {
+    public void setSnEvent(Event snEvent) {
         this.snEvent = snEvent;
     }
 

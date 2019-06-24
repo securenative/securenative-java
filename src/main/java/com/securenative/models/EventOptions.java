@@ -1,7 +1,6 @@
-package models;
+package com.securenative.models;
 
-import javafx.util.Pair;
-
+import java.util.AbstractMap;
 import java.util.List;
 
 public class EventOptions {
@@ -11,10 +10,11 @@ public class EventOptions {
     private User user;
     private Device device;
     private String cookieName;
+    private String cookieValue;
     private String eventType;
-    private List <Pair<String, String>> params;
+    private List <AbstractMap.SimpleEntry<String, String>> params;
 
-    public EventOptions(String ip, String remoteIP, String userAgent, Device device, User user, String cookieName, String eventType, List<Pair<String, String>> params) {
+    public EventOptions(String ip, String remoteIP, String userAgent, Device device, User user, String cookieName, String cookieValue, String eventType, List<AbstractMap.SimpleEntry<String, String>> params) {
         this.ip = ip;
         this.remoteIP = remoteIP;
         this.userAgent = userAgent;
@@ -23,6 +23,7 @@ public class EventOptions {
         this.cookieName = cookieName;
         this.eventType = eventType;
         this.params = params;
+        this.cookieValue = cookieValue;
     }
 
     public EventOptions(String ip, String userAgent,String eventType) {
@@ -87,13 +88,23 @@ public class EventOptions {
         this.eventType = eventType;
     }
 
-    public List<Pair<String, String>> getParams() {
+    public List<AbstractMap.SimpleEntry<String, String>> getParams() {
         return params;
     }
 
-    public void setParams(List<Pair<String, String>> params) {
+    public void setParams(List<AbstractMap.SimpleEntry<String, String>> params) {
         this.params = params;
     }
+
+    public String getCookieValue() {
+        return cookieValue;
+    }
+
+    public void setCookieValue(String cookieValue) {
+        this.cookieValue = cookieValue;
+    }
+
+
 
 
 

@@ -1,7 +1,7 @@
-package snlogic;
+package com.securenative.snlogic;
 
 import com.google.common.base.Strings;
-import exceptions.SecureNativeSDKException;
+import com.securenative.exceptions.SecureNativeSDKException;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.stream.Collectors;
 
 public class VerifyWebHookMiddleware implements Filter {
     private String apikey;
@@ -40,7 +39,7 @@ public class VerifyWebHookMiddleware implements Filter {
         if (req != null && !Strings.isNullOrEmpty(req.getHeader(SINATURE_KEY))){
             signature = req.getHeader(SINATURE_KEY);
         }
-        String payload = getBody(servletRequest);//.lines().collect(Collectors.joining(System.lineSeparator()));
+        String payload = getBody(servletRequest);
         if (Strings.isNullOrEmpty(payload)) {
             res.sendError(400, "bad request");
             return;

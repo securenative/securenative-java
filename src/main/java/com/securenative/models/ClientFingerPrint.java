@@ -1,15 +1,12 @@
-package models;
+package com.securenative.models;
 
-public class ClientFingurePrint {
+public class ClientFingerPrint {
     private String cid;
     private String fp;
 
-    public ClientFingurePrint(String cid, String fp) {
+    public ClientFingerPrint(String cid, String fp) {
         this.cid = cid;
         this.fp = fp;
-    }
-
-    public ClientFingurePrint() {
     }
 
     public String getCid() {

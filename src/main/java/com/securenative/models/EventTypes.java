@@ -1,5 +1,4 @@
-package snlogic;
-
+package com.securenative.models;
 
 public enum EventTypes {
     LOG_IN("sn.user.login"),

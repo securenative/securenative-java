@@ -1,4 +1,4 @@
-package models;
+package com.securenative.models;
 
 public class SecureNativeOptions {
     private String apiUrl;

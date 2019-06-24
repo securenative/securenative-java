@@ -1,12 +1,10 @@
-package snlogic;
+package com.securenative.snlogic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import exceptions.SecureNativeSDKException;
-import models.ClientFingurePrint;
+import com.securenative.exceptions.SecureNativeSDKException;
+import com.securenative.models.ClientFingerPrint;
 import org.apache.http.conn.util.InetAddressUtils;
-import org.springframework.stereotype.Component;
-import org.springframework.web.util.WebUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -21,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class Utils {
     private static String[] ipHeaders = {"x-forwarded-for", "x-client-ip", "x-real-ip", "x-forwarded", "x-cluster-client-ip", "forwarded-for", "forwarded", "via"};
-    private static String COOKIE_NAME = "_sn";
+    public static String COOKIE_NAME = "_sn";
     private static final String HMAC_SHA1_ALGORITHM = "HmacSHA512";
     private static String EMPTY= "";
 
@@ -29,36 +27,13 @@ public class Utils {
     }
 
 
-    public String getCookie(HttpServletRequest request, String cookieName) {
-        if (request == null){
+    public String getCookie(HttpServletRequest request,final String cookieName) {
+        if (request == null || request.getCookies() == null || request.getCookies().length ==0){
             return null;
         }
-        cookieName = Strings.isNullOrEmpty(cookieName) ? COOKIE_NAME : cookieName;
-        Cookie cookie = WebUtils.getCookie(request, cookieName);
-        if (cookie != null){
-            return WebUtils.getCookie(request, cookieName).getValue();
-        }
-        return null;
+        Optional<Cookie> cookie = Arrays.stream(request.getCookies()).filter(x -> (Strings.isNullOrEmpty(cookieName) ? COOKIE_NAME : cookieName).equals(x.getName())).findFirst();
+        return cookie.isPresent() ? cookie.get().getValue() : null;
 
-    }
-
-    public String base64decode(String encodedString) {
-        if (Strings.isNullOrEmpty(encodedString)){
-            return "";
-        }
-        return String.valueOf(Base64.getDecoder().decode(encodedString));
-    }
-
-    public ClientFingurePrint parseClientFP(String json) {
-        if(Strings.isNullOrEmpty(json)){
-            return null;
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(json, ClientFingurePrint.class);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public String remoteIpFromRequest(HttpServletRequest request) {
