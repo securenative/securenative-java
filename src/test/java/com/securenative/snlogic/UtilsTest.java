@@ -51,8 +51,8 @@ public class UtilsTest {
 
     @Test
     public void testBase64(){
-        String encoded = "eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJla3MtYWRtaW4tdG9rZW4tNjlmZ2YiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZWtzLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2a";
-        String expected = "{\"alg\":\"RS256\",\"kid\":\"\"}{\"iss\":\"kubernetes/serviceaccount\",\"kubernetes.io/serviceaccount/namespace\":\"kube-system\",\"kubernetes.io/serviceaccount/secret.name\":\"eks-admin-token-69fgf\",\"kubernetes.io/serviceaccount/service-account.name\":\"eks-admin\",\"kubernetes.io/serv";
+        String encoded = "eyJpZCI6Im9iamVjdC05MTQ3ODo4MCIsImRlc2NyaXB0aW9uIjoiIiwic3ViamVjdHMiOlsiMkU4RTg0RjI5MEVFQjAwOTc2RDZFMTg0MjE5NkVFM0E0OEUxQjBCRiJdLCJyZXNvdXJjZXMiOlsib2JqZWN0LTkxNDc4OioiXSwiYWN0aW9ucyI6WyIqIl0sImVmZmVjdCI6ImFsbG93IiwiY29uZGl0aW9ucyI6bnVsbH0K";
+        String expected = "{\"id\":\"object-91478:80\",\"description\":\"\",\"subjects\":[\"2E8E84F290EEB00976D6E1842196EE3A48E1B0BF\"],\"resources\":[\"object-91478:*\"],\"actions\":[\"*\"],\"effect\":\"allow\",\"conditions\":null}\n";
         Assert.assertEquals(new String(Base64.getDecoder().decode(encoded), Charset.forName("UTF-8")),expected);
 
 
