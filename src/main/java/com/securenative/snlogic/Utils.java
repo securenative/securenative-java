@@ -21,8 +21,10 @@ import java.util.stream.Collectors;
 
 public class Utils {
     private static String[] ipHeaders = {"x-forwarded-for", "x-client-ip", "x-real-ip", "x-forwarded", "x-cluster-client-ip", "forwarded-for", "forwarded", "via"};
-    public static String COOKIE_NAME = "_sn";
+    public String COOKIE_NAME = "_sn";
+    public String USERAGENT_HEADER = "user-agent";
     private static final String HMAC_SHA1_ALGORITHM = "HmacSHA512";
+
     private static String EMPTY = "";
 
     public Utils() {
@@ -35,10 +37,9 @@ public class Utils {
         }
         Optional<Cookie> cookie = Arrays.stream(request.getCookies()).filter(x -> (Strings.isNullOrEmpty(cookieName) ? COOKIE_NAME : cookieName).equals(x.getName())).findFirst();
         return cookie.isPresent() ? cookie.get().getValue() : null;
-
     }
 
-    public <T> String remoteIpFromRequest(Function<String, String> headerExtractor) {
+    public String remoteIpFromRequest(Function<String, String> headerExtractor) {
         Optional<String> bestCandidate = Optional.empty();
         String header = "";
         for (int i = 0; i < ipHeaders.length; i++) {
@@ -47,7 +48,7 @@ public class Utils {
             if (!Strings.isNullOrEmpty(header)) {
                 candidates = Arrays.stream(header.split(",")).map(s -> s.trim()).filter(s -> !Strings.isNullOrEmpty(s) &&
                         (InetAddressUtils.isIPv4Address(s) || InetAddressUtils.isIPv6Address(s)) &&
-                        isPrivateIPAddress(s)).collect(Collectors.toList());
+                        !isPrivateIPAddress(s)).collect(Collectors.toList());
                 if (candidates.size() > 0) {
                     return candidates.get(0);
                 }
@@ -56,8 +57,7 @@ public class Utils {
                 bestCandidate = candidates.stream().filter(x -> isLoopBack(x)).findFirst();
             }
         }
-
-        return "";
+        return "127.0.0.1";
     }
 
     public String remoteIpFromServletRequest(HttpServletRequest request) {
@@ -109,6 +109,26 @@ public class Utils {
             throw new SecureNativeSDKException("failed calculating hmac");
         }
     }
+
+    private String calculateSignature (String payload, String apikey){
+        if (Strings.isNullOrEmpty(payload)){
+            return null;
+        }
+        try {
+            return this.calculateRFC2104HMAC(payload,apikey);
+        } catch (SecureNativeSDKException e) {
+            return null;
+        }
+    }
+
+    public boolean verifySnRequest(String payload, String hedaerSignature, String apiKey){
+        String signed = calculateSignature(payload, apiKey);
+        if (Strings.isNullOrEmpty(signed) || Strings.isNullOrEmpty(hedaerSignature)){
+            return false;
+        }
+        return hedaerSignature.equals(signed);
+    }
+
 
 
 }

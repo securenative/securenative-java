@@ -34,36 +34,25 @@ public class VerifyWebHookMiddleware implements Filter {
         HttpServletResponse res = (HttpServletResponse) servletResponse;
         HttpServletRequestWrapper n = new HttpServletRequestWrapper(req);
 
-
         String signature = "";
         if (req != null && !Strings.isNullOrEmpty(req.getHeader(SINATURE_KEY))){
             signature = req.getHeader(SINATURE_KEY);
         }
         String payload = getBody(servletRequest);
-        if (Strings.isNullOrEmpty(payload)) {
-            res.sendError(400, "bad request");
+        if (utils.verifySnRequest(payload,signature,this.apikey)){
+            filterChain.doFilter(req,res);
             return;
         }
-        String comparison_signature = "";
-        try {
-            comparison_signature = utils.calculateRFC2104HMAC(payload,apikey);
-        } catch (SecureNativeSDKException e) {
-            e.printStackTrace();
-            res.sendError(400, "bad request");
-            return;
-        }
-        if (!signature.equals(comparison_signature)){
-            res.sendError(401, "Mismatched signatures");
-            return;
-        }
-        filterChain.doFilter(req,res);
+        res.sendError(401, "Unauthorized");
+        return;
+
+
     }
 
     @Override
     public void destroy() {
 
     }
-
 
     private String getBody(ServletRequest servletRequest) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();

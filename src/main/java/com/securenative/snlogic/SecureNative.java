@@ -2,9 +2,9 @@ package com.securenative.snlogic;
 
 import com.google.common.base.Strings;
 import com.securenative.exceptions.SecureNativeSDKException;
-import com.securenative.models.Event;
-import com.securenative.models.RiskResult;
-import com.securenative.models.SecureNativeOptions;
+import com.securenative.models.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class SecureNative implements ISDK {
     private final int MAX_CUSTOM_PARAMS = 6;
@@ -17,6 +17,7 @@ public class SecureNative implements ISDK {
     private EventManager eventManager;
     private SecureNativeOptions snOptions;
     private String apiKey;
+    private Utils utils;
 
     public SecureNative(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         if (Strings.isNullOrEmpty(apiKey)) {
@@ -25,6 +26,7 @@ public class SecureNative implements ISDK {
         this.apiKey = apiKey;
         this.snOptions = initializeOptions(options);
         this.eventManager = new SnEventManager(apiKey,this.snOptions);
+        this.utils = new Utils();
     }
 
     private SecureNativeOptions initializeOptions(SecureNativeOptions options) {
@@ -54,7 +56,7 @@ public class SecureNative implements ISDK {
 
     @Override
     public String getDefaultCookieName(){
-        return Utils.COOKIE_NAME;
+        return this.utils.COOKIE_NAME;
     }
 
     @Override
@@ -75,5 +77,16 @@ public class SecureNative implements ISDK {
     @Override
     public String getApiKey() {
         return apiKey;
+    }
+
+    public Event buildEventFromHttpServletRequest(HttpServletRequest request, Event event) {
+        String encodedCookie = this.utils.getCookie(request, event != null && !Strings.isNullOrEmpty(event.getCookieName()) ? event.getCookieName() : this.utils.COOKIE_NAME);
+        String eventype =  event == null || Strings.isNullOrEmpty(event.getEventType()) ? EventTypes.LOG_IN.name() : event.getEventType();
+        String ip = event != null && event.getIp() != null ? event.getIp() : this.utils.remoteIpFromServletRequest(request);
+        String remoteIP = request.getRemoteAddr();
+        String userAgent = event != null && event.getUserAgent() != null ? event.getUserAgent() : request.getHeader(this.utils.USERAGENT_HEADER);
+        User user = event != null && event.getUser() != null ? event.getUser() : new User(null, null, "anonymous");
+        Device device = event != null && event.getDevice() != null ? event.getDevice() : null;
+        return new SnEvent.EventBuilder(eventype).withCookieValue(encodedCookie).withIp(ip).withRemoteIP(remoteIP).withUserAgent(userAgent).withUser(user).withDevice(device).build();
     }
 }
