@@ -3,11 +3,14 @@ package com.securenative.models;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
+import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.UUID;
 
-public class SnEvent implements Event{
+public class SnEvent implements Event {
+
+    private final static Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
     private String eventType;
     private String cid;
@@ -38,48 +41,49 @@ public class SnEvent implements Event{
         private String cookieValue;
 
 
-        public EventBuilder(String eventType){
+        public EventBuilder(String eventType) {
             this.eventType = eventType;
         }
 
-        public EventBuilder withIp(String ip){
+        public EventBuilder withIp(String ip) {
             this.ip = ip;
             return this;
         }
 
-        public EventBuilder withRemoteIP(String remoteIP){
+        public EventBuilder withRemoteIP(String remoteIP) {
             this.remoteIP = remoteIP;
             return this;
         }
 
-        public EventBuilder withUserAgent(String userAgent){
+        public EventBuilder withUserAgent(String userAgent) {
             this.userAgent = userAgent;
             return this;
         }
 
-        public EventBuilder withUser(User user){
+        public EventBuilder withUser(User user) {
             this.user = user;
             return this;
         }
 
 
-        public EventBuilder withDevice(Device device){
+        public EventBuilder withDevice(Device device) {
             this.device = device;
             return this;
         }
 
-        public EventBuilder withCookieValue(String cookieBase64Value){
-            if (Strings.isNullOrEmpty(cookieBase64Value)){
+        public EventBuilder withCookieValue(String cookieBase64Value) {
+            if (Strings.isNullOrEmpty(cookieBase64Value)) {
                 return this;
             }
-            ClientFingerPrint clientFP = this.parseClientFP( Base64.getDecoder().decode(cookieBase64Value).toString());
+            String decodedCookie = new String(Base64.getDecoder().decode(cookieBase64Value), DEFAULT_CHARSET);
+            ClientFingerPrint clientFP = this.parseClientFP(decodedCookie);
             this.cookieValue = cookieBase64Value;
             this.cid = clientFP != null ? clientFP.getCid() : "";
             this.fp = clientFP != null ? clientFP.getFp() : "";
             return this;
         }
 
-        public Event build(){
+        public Event build() {
             SnEvent event = new SnEvent();
             event.eventType = this.eventType;
             event.cid = this.cid;
@@ -95,8 +99,9 @@ public class SnEvent implements Event{
             event.CookieValue = this.cookieValue;
             return event;
         }
+
         private ClientFingerPrint parseClientFP(String json) {
-            if(Strings.isNullOrEmpty(json)){
+            if (Strings.isNullOrEmpty(json)) {
                 return null;
             }
             ObjectMapper mapper = new ObjectMapper();
@@ -108,7 +113,7 @@ public class SnEvent implements Event{
         }
 
         public String base64decode(String encodedString) {
-            if (Strings.isNullOrEmpty(encodedString)){
+            if (Strings.isNullOrEmpty(encodedString)) {
                 return "";
             }
             return String.valueOf(Base64.getDecoder().decode(encodedString));
@@ -215,7 +220,6 @@ public class SnEvent implements Event{
     public void setCookieValue(String cookieValue) {
         CookieValue = cookieValue;
     }
-
 
 
 }
