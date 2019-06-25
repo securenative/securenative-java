@@ -64,7 +64,7 @@ public class SnEventManager implements EventManager {
     public Event buildEventFromHttpServletRequest(HttpServletRequest request, Event event) {
         String encodedCookie = utils.getCookie(request, event != null && !Strings.isNullOrEmpty(event.getCookieName()) ? event.getCookieName() : SN_COOKIE_NAME);
         String eventype =  event == null || Strings.isNullOrEmpty(event.getEventType()) ? EventTypes.LOG_IN.name() : event.getEventType();
-        String ip = event != null && event.getIp() != null ? event.getIp() : utils.remoteIpFromRequest(request);
+        String ip = event != null && event.getIp() != null ? event.getIp() : utils.remoteIpFromServletRequest(request);
         String remoteIP = request.getRemoteAddr();
         String userAgent = event != null && event.getUserAgent() != null ? event.getUserAgent() : request.getHeader(USERAGENT_HEADER);
         User user = event != null && event.getUser() != null ? event.getUser() : new User("anonymous", null, null);

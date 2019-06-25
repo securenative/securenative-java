@@ -1,9 +1,7 @@
 package com.securenative.snlogic;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.securenative.exceptions.SecureNativeSDKException;
-import com.securenative.models.ClientFingerPrint;
 import org.apache.http.conn.util.InetAddressUtils;
 
 import javax.crypto.Mac;
@@ -14,21 +12,25 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Formatter;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Utils {
     private static String[] ipHeaders = {"x-forwarded-for", "x-client-ip", "x-real-ip", "x-forwarded", "x-cluster-client-ip", "forwarded-for", "forwarded", "via"};
     public static String COOKIE_NAME = "_sn";
     private static final String HMAC_SHA1_ALGORITHM = "HmacSHA512";
-    private static String EMPTY= "";
+    private static String EMPTY = "";
 
     public Utils() {
     }
 
 
-    public String getCookie(HttpServletRequest request,final String cookieName) {
-        if (request == null || request.getCookies() == null || request.getCookies().length ==0){
+    public String getCookie(HttpServletRequest request, final String cookieName) {
+        if (request == null || request.getCookies() == null || request.getCookies().length == 0) {
             return null;
         }
         Optional<Cookie> cookie = Arrays.stream(request.getCookies()).filter(x -> (Strings.isNullOrEmpty(cookieName) ? COOKIE_NAME : cookieName).equals(x.getName())).findFirst();
@@ -36,15 +38,12 @@ public class Utils {
 
     }
 
-    public String remoteIpFromRequest(HttpServletRequest request) {
-        if (request == null) {
-            return EMPTY;
-        }
+    public <T> String remoteIpFromRequest(Function<String, String> headerExtractor) {
         Optional<String> bestCandidate = Optional.empty();
         String header = "";
         for (int i = 0; i < ipHeaders.length; i++) {
             List<String> candidates = Arrays.asList();
-            header = request.getHeader(ipHeaders[i]);
+            header = headerExtractor.apply(ipHeaders[i]);
             if (!Strings.isNullOrEmpty(header)) {
                 candidates = Arrays.stream(header.split(",")).map(s -> s.trim()).filter(s -> !Strings.isNullOrEmpty(s) &&
                         (InetAddressUtils.isIPv4Address(s) || InetAddressUtils.isIPv6Address(s)) &&
@@ -59,6 +58,14 @@ public class Utils {
         }
 
         return "";
+    }
+
+    public String remoteIpFromServletRequest(HttpServletRequest request) {
+        if (request == null) {
+            return EMPTY;
+        }
+
+        return this.remoteIpFromRequest(request::getHeader);
     }
 
     private boolean isLoopBack(String ip) {
@@ -98,11 +105,10 @@ public class Utils {
             Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
             mac.init(signingKey);
             return toHexString(mac.doFinal(data.getBytes()));
-        } catch (NoSuchAlgorithmException | InvalidKeyException  e) {
-                throw new SecureNativeSDKException("failed calculating hmac");
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new SecureNativeSDKException("failed calculating hmac");
         }
     }
-
 
 
 }

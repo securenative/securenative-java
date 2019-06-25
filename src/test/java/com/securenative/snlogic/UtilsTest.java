@@ -1,6 +1,5 @@
 package com.securenative.snlogic;
 
-import com.securenative.models.ClientFingerPrint;
 import com.securenative.models.Event;
 import com.securenative.models.EventTypes;
 import com.securenative.models.SnEvent;
@@ -12,7 +11,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import static org.mockito.Mockito.mock;
@@ -48,7 +46,7 @@ public class UtilsTest {
 
     @Test
     public void remoteIpFromRequestWhenRequestNullExpectEmptyString(){
-        Assert.assertEquals(utils.remoteIpFromRequest(null),"");
+        Assert.assertEquals(utils.remoteIpFromServletRequest(null),"");
     }
 
 
