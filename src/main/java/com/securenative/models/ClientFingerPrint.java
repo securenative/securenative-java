@@ -1,10 +1,14 @@
 package com.securenative.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ClientFingerPrint {
     private String cid;
     private String fp;
 
-    public ClientFingerPrint(String cid, String fp) {
+    @JsonCreator
+    public ClientFingerPrint(@JsonProperty("cid") String cid, @JsonProperty("fp") String fp) {
         this.cid = cid;
         this.fp = fp;
     }
