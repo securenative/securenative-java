@@ -79,7 +79,7 @@ public class SnEventManager implements EventManager {
 
     @Override
     public void sendAsync(Event event, String url) {
-        this.asyncClient.setUrl(url);
+        this.asyncClient.setUrl(url).addHeader(AUTHORIZATION, this.apiKey);
         try {
             this.asyncClient.setBody(mapper.writeValueAsString(event));
         } catch (JsonProcessingException e) {

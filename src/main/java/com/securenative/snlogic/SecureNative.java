@@ -70,7 +70,7 @@ public class SecureNative implements ISDK {
     }
 
     @Override
-    public RiskResult flow(long flowId, Event event) {
+    public RiskResult flow(long flowId, Event event) {//FOR FUTURE PURPOSES
         return this.eventManager.sendSync(event, this.snOptions.getApiUrl() + "/flow/" + flowId);
     }
 
@@ -81,7 +81,7 @@ public class SecureNative implements ISDK {
 
     public Event buildEventFromHttpServletRequest(HttpServletRequest request, Event event) {
         String encodedCookie = this.utils.getCookie(request, event != null && !this.utils.isNullOrEmpty(event.getCookieName()) ? event.getCookieName() : this.utils.COOKIE_NAME);
-        String eventype =  event == null || this.utils.isNullOrEmpty(event.getEventType()) ? EventTypes.LOG_IN.name() : event.getEventType();
+        String eventype =  event == null || this.utils.isNullOrEmpty(event.getEventType()) ? EventTypes.LOG_IN.getType() : event.getEventType();
         String ip = event != null && event.getIp() != null ? event.getIp() : this.utils.remoteIpFromServletRequest(request);
         String remoteIP = request.getRemoteAddr();
         String userAgent = event != null && event.getUserAgent() != null ? event.getUserAgent() : request.getHeader(this.utils.USERAGENT_HEADER);
