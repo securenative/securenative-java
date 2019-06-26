@@ -1,8 +1,5 @@
 package com.securenative.snlogic;
 
-import com.google.common.base.Strings;
-import com.securenative.exceptions.SecureNativeSDKException;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -35,7 +32,7 @@ public class VerifyWebHookMiddleware implements Filter {
         HttpServletRequestWrapper n = new HttpServletRequestWrapper(req);
 
         String signature = "";
-        if (req != null && !Strings.isNullOrEmpty(req.getHeader(SINATURE_KEY))){
+        if (req != null && !this.utils.isNullOrEmpty(req.getHeader(SINATURE_KEY))){
             signature = req.getHeader(SINATURE_KEY);
         }
         String payload = getBody(servletRequest);
@@ -80,7 +77,6 @@ public class VerifyWebHookMiddleware implements Filter {
                 }
             }
         }
-        //Store request pody content in 'body' variable
         return stringBuilder.toString();
     }
 

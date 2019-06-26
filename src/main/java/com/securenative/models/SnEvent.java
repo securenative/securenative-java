@@ -1,11 +1,13 @@
 package com.securenative.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
+import com.securenative.snlogic.Utils;
 
 import java.nio.charset.Charset;
 import java.time.Instant;
+import java.util.AbstractMap;
 import java.util.Base64;
+import java.util.List;
 import java.util.UUID;
 
 public class SnEvent implements Event {
@@ -24,6 +26,8 @@ public class SnEvent implements Event {
     private Device device;
     private String CookieName;
     private String CookieValue;
+    private List<AbstractMap.SimpleEntry<String, String>> params;
+
 
     public static class EventBuilder {
 
@@ -39,10 +43,13 @@ public class SnEvent implements Event {
         private Device device;
         private String cookieName;
         private String cookieValue;
+        private Utils utils;
+        private List<AbstractMap.SimpleEntry<String, String>> params;
 
 
         public EventBuilder(String eventType) {
             this.eventType = eventType;
+            this.utils = new Utils();
         }
 
         public EventBuilder withIp(String ip) {
@@ -72,7 +79,7 @@ public class SnEvent implements Event {
         }
 
         public EventBuilder withCookieValue(String cookieBase64Value) {
-            if (Strings.isNullOrEmpty(cookieBase64Value)) {
+            if (this.utils.isNullOrEmpty(cookieBase64Value)) {
                 return this;
             }
             String decodedCookie = new String(Base64.getDecoder().decode(cookieBase64Value), DEFAULT_CHARSET);
@@ -80,6 +87,17 @@ public class SnEvent implements Event {
             this.cookieValue = cookieBase64Value;
             this.cid = clientFP != null ? clientFP.getCid() : "";
             this.fp = clientFP != null ? clientFP.getFp() : "";
+            return this;
+        }
+
+        public EventBuilder withParams(List<AbstractMap.SimpleEntry<String, String>> params){
+            if (params.size() > 6){
+                this.params = params.subList(0,6);
+            }
+            else{
+                this.params = params;
+            }
+
             return this;
         }
 
@@ -97,11 +115,12 @@ public class SnEvent implements Event {
             event.device = this.device;
             event.CookieName = this.cookieName;
             event.CookieValue = this.cookieValue;
+            event.params = this.params;
             return event;
         }
 
         private ClientFingerPrint parseClientFP(String json) {
-            if (Strings.isNullOrEmpty(json)) {
+            if (this.utils.isNullOrEmpty(json)) {
                 return null;
             }
             ObjectMapper mapper = new ObjectMapper();
@@ -113,7 +132,7 @@ public class SnEvent implements Event {
         }
 
         public String base64decode(String encodedString) {
-            if (Strings.isNullOrEmpty(encodedString)) {
+            if (this.utils.isNullOrEmpty(encodedString)) {
                 return "";
             }
             return String.valueOf(Base64.getDecoder().decode(encodedString));

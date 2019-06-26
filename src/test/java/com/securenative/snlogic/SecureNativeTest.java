@@ -2,7 +2,6 @@ package com.securenative.snlogic;
 
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.models.Device;
-import com.securenative.models.EventOptions;
 import com.securenative.models.SnEvent;
 import com.securenative.models.User;
 import org.junit.Before;

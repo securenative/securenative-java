@@ -1,55 +1,54 @@
 package com.securenative.snlogic;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.models.*;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.asynchttpclient.*;
 
-import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class SnEventManager implements EventManager {
     private final String USER_AGENT_VALUE = "com.securenative.snlogic.SecureNative-java";
     private final String SN_VERSION = "SN-Version";
-    private CloseableHttpClient client;
+    private BoundRequestBuilder asyncClient;
     private String apiKey;
     private Utils utils;
     private ExecutorService executor;
     private ConcurrentLinkedQueue<Message> events;
     private ObjectMapper mapper;
+    private int HTTP_STATUS_OK = 201;
+    private String AUTHORIZATION = "Authorization";
 
     public SnEventManager(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
+        this.utils = new Utils();
         events = new ConcurrentLinkedQueue<>();
-        if (isNullOrEmpty(apiKey) || options == null) {
+        if (this.utils.isNullOrEmpty(apiKey) || options == null) {
             throw new SecureNativeSDKException("You must pass your com.securenative.snlogic.SecureNative api key");
         }
-
-        this.client = initializeHttpClient(options);
+        this.asyncClient = initializeAsyncHttpClient(options);
         this.apiKey = apiKey;
-        utils = new Utils();
-        executor =   Executors.newSingleThreadScheduledExecutor();
+
+        executor = Executors.newSingleThreadScheduledExecutor();
         executor.execute(() -> {
-            Message msg = events.poll();
-            if (msg != null){
-                sendSync(msg.getSnEvent(),msg.getUrl());
+            try {
+                Thread.sleep((long)(Math.random() * 1000));
+                Message msg = events.poll();
+                if (msg != null) {
+                    sendSync(msg.getSnEvent(), msg.getUrl());
+                }
+            }
+             catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
         mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -57,77 +56,65 @@ public class SnEventManager implements EventManager {
 
 
     @Override
-    public RiskResult sendSync(Event event, String requestUrl) {
-        String stringEvent = null;
-        String line;
+    public RiskResult sendSync(Event event, String url) {
+        this.asyncClient.addHeader(AUTHORIZATION, this.apiKey).setUrl(url);
+
         try {
-            stringEvent = mapper.writeValueAsString(event);
-
-            HttpPost httpPost = new HttpPost(requestUrl);
-            httpPost.addHeader(HttpHeaders.AUTHORIZATION,this.apiKey);
-            httpPost.addHeader(this.utils.USERAGENT_HEADER,USER_AGENT_VALUE);
-            httpPost.addHeader(SN_VERSION,getVersion());
-            httpPost.addHeader("Accept","application/json");
-
-            httpPost.setEntity(new StringEntity(stringEvent));
-
-            HttpResponse response = this.client.execute(httpPost);
-            if(response.getStatusLine().getStatusCode() > 210){
-                events.add(new Message(event,requestUrl));
+            this.asyncClient.setBody(mapper.writeValueAsString(event));
+            Response response = this.asyncClient.execute().get();
+            if (response == null || response.getStatusCode() > HTTP_STATUS_OK) {
+                events.add(new Message(event, response.getUri().toUrl()));
+            }
+            String responseBody = response.getResponseBody();
+            if (utils.isNullOrEmpty(responseBody)){
                 return new RiskResult(RiskLevel.low.name(), 0.0, new String[0]);
             }
-            BufferedReader rd = new BufferedReader(
-                   new InputStreamReader(response.getEntity().getContent()));
-
-            StringBuffer result = new StringBuffer();
-            while ((line = rd.readLine()) != null) {
-                result.append(line);
-            }
-            try{
-                return mapper.readValue(result.toString(), RiskResult.class);
-            }
-            catch (Exception e){
-                return new RiskResult(RiskLevel.low.name(), 0.0, new String[0]);
-            }
-
-        } catch (IOException e) {
+            return mapper.readValue(responseBody, RiskResult.class);
+        } catch (InterruptedException | ExecutionException | IOException e) {
             e.printStackTrace();
         }
-
         return new RiskResult(RiskLevel.low.name(), 0.0, new String[0]);
+
     }
 
     @Override
-    public void sendAsync(SnEvent event, String url) {
-        //TODO: will be implemented in future version
+    public void sendAsync(Event event, String url) {
+        this.asyncClient.setUrl(url);
+        try {
+            this.asyncClient.setBody(mapper.writeValueAsString(event));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        this.asyncClient.execute(
+                new AsyncCompletionHandler<Object>() {
+                    @Override
+                    public Object onCompleted(Response response) {
+                        if (response.getStatusCode() > HTTP_STATUS_OK) {
+                            events.add(new Message(event, response.getUri().toUrl()));
+                        }
+                        return response;
+                    }
+                });
+
     }
 
-    private void setTimeout(Runnable runnable, int delay) { // Will be used in sendAsync
-        new Thread(() -> {
-            try {
-                Thread.sleep(delay);
-                runnable.run();
-            } catch (Exception e) {
-                System.err.println(e);
-            }
-        }).start();
+    private BoundRequestBuilder initializeAsyncHttpClient(SecureNativeOptions options) {
+        DefaultAsyncHttpClientConfig.Builder clientBuilder = Dsl.config()
+                .setConnectTimeout((int) options.getTimeout())
+                .setUserAgent(USER_AGENT_VALUE);
+        AsyncHttpClient client = Dsl.asyncHttpClient(clientBuilder);
+        return client.preparePost(options.getApiUrl())
+                .addHeader(SN_VERSION, this.getVersion()).addHeader("Accept", "application/json");
+
     }
 
-    private CloseableHttpClient initializeHttpClient(SecureNativeOptions options){
-        return HttpClients.custom().setUserAgent(USER_AGENT_VALUE)
-                .setConnectionTimeToLive(options.getTimeout(), TimeUnit.MILLISECONDS)
-                .setDefaultHeaders(Arrays.asList(new BasicHeader(SN_VERSION, this.getVersion()),
-                        new BasicHeader(HttpHeaders.AUTHORIZATION, this.apiKey)))
-                .build();
-    }
-
-    private String getVersion(){
-        try{
+    private String getVersion() {
+        try {
             MavenXpp3Reader reader = new MavenXpp3Reader();
             Model read = reader.read(new FileReader("pom.xml"));
             return read.getVersion();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return "unknown";
         }
     }

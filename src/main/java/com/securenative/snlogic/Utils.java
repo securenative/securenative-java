@@ -1,8 +1,6 @@
 package com.securenative.snlogic;
 
-import com.google.common.base.Strings;
 import com.securenative.exceptions.SecureNativeSDKException;
-import org.apache.http.conn.util.InetAddressUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -17,6 +15,7 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -24,7 +23,7 @@ public class Utils {
     public String COOKIE_NAME = "_sn";
     public String USERAGENT_HEADER = "user-agent";
     private static final String HMAC_SHA1_ALGORITHM = "HmacSHA512";
-
+    private Pattern VALID_IPV6_PATTERN = Pattern.compile("([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}", Pattern.CASE_INSENSITIVE);
     private static String EMPTY = "";
 
     public Utils() {
@@ -35,7 +34,7 @@ public class Utils {
         if (request == null || request.getCookies() == null || request.getCookies().length == 0) {
             return null;
         }
-        Optional<Cookie> cookie = Arrays.stream(request.getCookies()).filter(x -> (Strings.isNullOrEmpty(cookieName) ? COOKIE_NAME : cookieName).equals(x.getName())).findFirst();
+        Optional<Cookie> cookie = Arrays.stream(request.getCookies()).filter(x -> (this.isNullOrEmpty(cookieName) ? COOKIE_NAME : cookieName).equals(x.getName())).findFirst();
         return cookie.isPresent() ? cookie.get().getValue() : null;
     }
 
@@ -45,9 +44,9 @@ public class Utils {
         for (int i = 0; i < ipHeaders.length; i++) {
             List<String> candidates = Arrays.asList();
             header = headerExtractor.apply(ipHeaders[i]);
-            if (!Strings.isNullOrEmpty(header)) {
-                candidates = Arrays.stream(header.split(",")).map(s -> s.trim()).filter(s -> !Strings.isNullOrEmpty(s) &&
-                        (InetAddressUtils.isIPv4Address(s) || InetAddressUtils.isIPv6Address(s)) &&
+            if (!this.isNullOrEmpty(header)) {
+                candidates = Arrays.stream(header.split(",")).map(s -> s.trim()).filter(s -> !this.isNullOrEmpty(s) &&
+                        (isValidInet4Address(s) || this.isIpV6Address(s)) &&
                         !isPrivateIPAddress(s)).collect(Collectors.toList());
                 if (candidates.size() > 0) {
                     return candidates.get(0);
@@ -111,7 +110,7 @@ public class Utils {
     }
 
     private String calculateSignature (String payload, String apikey){
-        if (Strings.isNullOrEmpty(payload)){
+        if (this.isNullOrEmpty(payload)){
             return null;
         }
         try {
@@ -123,12 +122,37 @@ public class Utils {
 
     public boolean verifySnRequest(String payload, String hedaerSignature, String apiKey){
         String signed = calculateSignature(payload, apiKey);
-        if (Strings.isNullOrEmpty(signed) || Strings.isNullOrEmpty(hedaerSignature)){
+        if (this.isNullOrEmpty(signed) || this.isNullOrEmpty(hedaerSignature)){
             return false;
         }
         return hedaerSignature.equals(signed);
     }
 
+    public boolean isNullOrEmpty(final String s){
+        return s == null || s.length() == 0;
+    }
 
+    public boolean isValidInet4Address(String ip)
+    {
+        String[] groups = ip.split("\\.");
+
+        if (groups.length != 4)
+            return false;
+
+        try {
+            return Arrays.stream(groups)
+                    .filter(s -> s.length() > 1 && s.startsWith("0"))
+                    .map(Integer::parseInt)
+                    .filter(i -> (i >= 0 && i <= 255))
+                    .count() == 4;
+
+        } catch(NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean isIpV6Address(String ipAddress) {
+       return this.VALID_IPV6_PATTERN.matcher(ipAddress).matches();
+    }
 
 }

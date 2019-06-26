@@ -1,6 +1,5 @@
 package com.securenative.snlogic;
 
-import com.google.common.base.Strings;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.models.*;
 
@@ -20,20 +19,21 @@ public class SecureNative implements ISDK {
     private Utils utils;
 
     public SecureNative(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
-        if (Strings.isNullOrEmpty(apiKey)) {
+        this.utils = new Utils();
+        if (this.utils.isNullOrEmpty(apiKey)) {
             throw new SecureNativeSDKException("You must pass your com.securenative.snlogic.SecureNative api key");
         }
         this.apiKey = apiKey;
         this.snOptions = initializeOptions(options);
         this.eventManager = new SnEventManager(apiKey,this.snOptions);
-        this.utils = new Utils();
+
     }
 
     private SecureNativeOptions initializeOptions(SecureNativeOptions options) {
         if (options == null) {
             options = new SecureNativeOptions();
         }
-        if (Strings.isNullOrEmpty(options.getApiUrl())) {
+        if (this.utils.isNullOrEmpty(options.getApiUrl())) {
             options.setApiUrl(API_URL);
         }
 
@@ -61,7 +61,7 @@ public class SecureNative implements ISDK {
 
     @Override
     public void track(Event event) {
-        this.eventManager.sendSync(event, this.snOptions.getApiUrl() + "/track");
+        this.eventManager.sendAsync(event, this.snOptions.getApiUrl() + "/track");
     }
 
     @Override
@@ -80,8 +80,8 @@ public class SecureNative implements ISDK {
     }
 
     public Event buildEventFromHttpServletRequest(HttpServletRequest request, Event event) {
-        String encodedCookie = this.utils.getCookie(request, event != null && !Strings.isNullOrEmpty(event.getCookieName()) ? event.getCookieName() : this.utils.COOKIE_NAME);
-        String eventype =  event == null || Strings.isNullOrEmpty(event.getEventType()) ? EventTypes.LOG_IN.name() : event.getEventType();
+        String encodedCookie = this.utils.getCookie(request, event != null && !this.utils.isNullOrEmpty(event.getCookieName()) ? event.getCookieName() : this.utils.COOKIE_NAME);
+        String eventype =  event == null || this.utils.isNullOrEmpty(event.getEventType()) ? EventTypes.LOG_IN.name() : event.getEventType();
         String ip = event != null && event.getIp() != null ? event.getIp() : this.utils.remoteIpFromServletRequest(request);
         String remoteIP = request.getRemoteAddr();
         String userAgent = event != null && event.getUserAgent() != null ? event.getUserAgent() : request.getHeader(this.utils.USERAGENT_HEADER);

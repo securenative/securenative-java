@@ -1,6 +1,6 @@
 package com.securenative.models;
 
-import org.apache.http.message.BasicHeader;
+import com.sun.net.httpserver.Headers;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ public class FetchOptions {
     private String apiKey;
     private String url;
     private String method;
-    private List<BasicHeader> headers;
+    private List<Headers> headers;
 
-    public FetchOptions(String apiKey, String url, String method, List<BasicHeader> headers) {
+    public FetchOptions(String apiKey, String url, String method, List<Headers> headers) {
         this.apiKey = apiKey;
         this.url = url;
         this.method = method;
@@ -43,11 +43,11 @@ public class FetchOptions {
         this.method = method;
     }
 
-    public List<BasicHeader> getHeaders() {
+    public List<Headers> getHeaders() {
         return headers;
     }
 
-    public void setHeaders(List<BasicHeader> headers) {
+    public void setHeaders(List<Headers> headers) {
         this.headers = headers;
     }
 }
