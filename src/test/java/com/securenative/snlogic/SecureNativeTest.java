@@ -1,9 +1,8 @@
 package com.securenative.snlogic;
 
 import com.securenative.exceptions.SecureNativeSDKException;
-import com.securenative.models.Device;
-import com.securenative.models.SnEvent;
-import com.securenative.models.User;
+import com.securenative.models.*;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,8 +31,6 @@ public class SecureNativeTest {
         when(request.getHeader("header")).thenReturn("header");
         when(utils.getCookie(any(), anyString())).thenReturn("cookie");
         when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("k", "v"), new Cookie("_sn", "X3NuX3ZhbHVl")});
-
-
     }
 
     @Test(expected = SecureNativeSDKException.class)
@@ -50,16 +47,11 @@ public class SecureNativeTest {
     @Test
     public void initializeSnWhenApiKeyGoodAndOptionsNullTest() throws Exception {
         SecureNative sn = new SecureNative("api", null);
-    }
-
-    @Test(expected = SecureNativeSDKException.class)
-    public void initializeSnWithEmptyApikeyTest() throws Exception {
-        SecureNative sn = new SecureNative("", null);
+        Assert.assertEquals(sn.getApiKey(),"api");
     }
 
     @Test
-    public void callTrackWith7CustomParams() throws Exception {
-        SecureNative sn = new SecureNative("api", null);
+    public void callTrackWith7CustomParams() {
         List<AbstractMap.SimpleEntry<String, String>> params = new ArrayList<>();
         params.add(new AbstractMap.SimpleEntry<>("one", "one"));
         params.add(new AbstractMap.SimpleEntry<>("two", "two"));
@@ -68,8 +60,9 @@ public class SecureNativeTest {
         params.add(new AbstractMap.SimpleEntry<>("five", "five"));
         params.add(new AbstractMap.SimpleEntry<>("six", "six"));
         params.add(new AbstractMap.SimpleEntry<>("seven", "seven"));
-        SnEvent.EventBuilder builder = new SnEvent.EventBuilder("event").withIp("ip").withRemoteIP("remoteIP").withUserAgent("userAgent").withDevice(new Device("1")).withUser(new User("1", "name", "email")).withCookieValue("");
-        sn.track(builder.build());
+        Assert.assertEquals(6,new SnEvent.EventBuilder("event").withParams(params).build().getParams().size());
+
     }
+
 
 }

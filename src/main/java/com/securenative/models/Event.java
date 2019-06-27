@@ -1,5 +1,8 @@
 package com.securenative.models;
 
+import java.util.AbstractMap;
+import java.util.List;
+
 public interface Event {
     String getEventType();
     String getCid();
@@ -12,4 +15,5 @@ public interface Event {
     Device getDevice();
     String getCookieName();
     String getCookieValue();
+    List<AbstractMap.SimpleEntry<String, String>> getParams();
 }

@@ -38,6 +38,7 @@ public class Utils {
         return cookie.isPresent() ? cookie.get().getValue() : null;
     }
 
+
     public String remoteIpFromRequest(Function<String, String> headerExtractor) {
         Optional<String> bestCandidate = Optional.empty();
         String header = "";
@@ -109,7 +110,7 @@ public class Utils {
         }
     }
 
-    private String calculateSignature (String payload, String apikey){
+    private String calculateSignature(String payload, String apikey){
         if (this.isNullOrEmpty(payload)){
             return null;
         }
@@ -120,7 +121,7 @@ public class Utils {
         }
     }
 
-    public boolean verifySnRequest(String payload, String hedaerSignature, String apiKey){
+    public boolean isVerifiedSnRequest(String payload, String hedaerSignature, String apiKey){
         String signed = calculateSignature(payload, apiKey);
         if (this.isNullOrEmpty(signed) || this.isNullOrEmpty(hedaerSignature)){
             return false;
@@ -135,10 +136,8 @@ public class Utils {
     public boolean isValidInet4Address(String ip)
     {
         String[] groups = ip.split("\\.");
-
         if (groups.length != 4)
             return false;
-
         try {
             return Arrays.stream(groups)
                     .filter(s -> s.length() > 1 && s.startsWith("0"))

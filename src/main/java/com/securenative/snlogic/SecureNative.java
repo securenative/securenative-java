@@ -6,7 +6,7 @@ import com.securenative.models.*;
 import javax.servlet.http.HttpServletRequest;
 
 public class SecureNative implements ISDK {
-    private final int MAX_CUSTOM_PARAMS = 6;
+    private final String SN_HEADER = "x-securenative";
     private final String API_URL = "https://api.securenative.com/collector/api/v1";
     private final int INTERVAL = 1000;
     private final int MAX_EVENTS = 1000;
@@ -87,6 +87,6 @@ public class SecureNative implements ISDK {
         String userAgent = event != null && event.getUserAgent() != null ? event.getUserAgent() : request.getHeader(this.utils.USERAGENT_HEADER);
         User user = event != null && event.getUser() != null ? event.getUser() : new User(null, null, "anonymous");
         Device device = event != null && event.getDevice() != null ? event.getDevice() : null;
-        return new SnEvent.EventBuilder(eventype).withCookieValue(encodedCookie).withIp(ip).withRemoteIP(remoteIP).withUserAgent(userAgent).withUser(user).withDevice(device).build();
+        return new SnEvent.EventBuilder(eventype).withCookieValue(this.utils.isNullOrEmpty(encodedCookie) ? request.getHeader(SN_HEADER) : encodedCookie).withIp(ip).withRemoteIP(remoteIP).withUserAgent(userAgent).withUser(user).withDevice(device).build();
     }
 }

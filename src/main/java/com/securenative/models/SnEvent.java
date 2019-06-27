@@ -28,18 +28,16 @@ public class SnEvent implements Event {
     private String CookieValue;
     private List<AbstractMap.SimpleEntry<String, String>> params;
 
-
     public static class EventBuilder {
+        private final int MAX_CUSTOM_PARAMS = 6;
 
         private String eventType;
         private String cid;
-        private String vid;
         private String fp;
         private String ip;
         private String remoteIP;
         private String userAgent;
         private User user;
-        private long ts;
         private Device device;
         private String cookieName;
         private String cookieValue;
@@ -91,8 +89,8 @@ public class SnEvent implements Event {
         }
 
         public EventBuilder withParams(List<AbstractMap.SimpleEntry<String, String>> params){
-            if (params.size() > 6){
-                this.params = params.subList(0,6);
+            if (params.size() > MAX_CUSTOM_PARAMS){
+                this.params = params.subList(0,MAX_CUSTOM_PARAMS);
             }
             else{
                 this.params = params;
@@ -138,6 +136,7 @@ public class SnEvent implements Event {
             return String.valueOf(Base64.getDecoder().decode(encodedString));
         }
     }
+
 
     private SnEvent() {
 
@@ -239,6 +238,17 @@ public class SnEvent implements Event {
     public void setCookieValue(String cookieValue) {
         CookieValue = cookieValue;
     }
+
+
+    public List<AbstractMap.SimpleEntry<String, String>> getParams() {
+        return params;
+    }
+
+    public void setParams(List<AbstractMap.SimpleEntry<String, String>> params) {
+        this.params = params;
+    }
+
+
 
 
 }

@@ -2,7 +2,6 @@ package com.securenative.snlogic;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,21 +28,18 @@ public class VerifyWebHookMiddleware implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
-        HttpServletRequestWrapper n = new HttpServletRequestWrapper(req);
 
         String signature = "";
         if (req != null && !this.utils.isNullOrEmpty(req.getHeader(SINATURE_KEY))){
             signature = req.getHeader(SINATURE_KEY);
         }
         String payload = getBody(servletRequest);
-        if (utils.verifySnRequest(payload,signature,this.apikey)){
+        if (utils.isVerifiedSnRequest(payload,signature,this.apikey)){
             filterChain.doFilter(req,res);
             return;
         }
         res.sendError(401, "Unauthorized");
         return;
-
-
     }
 
     @Override
