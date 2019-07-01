@@ -30,7 +30,4 @@ public enum EventTypes {
     EventTypes(String eventType) {
         this.type = eventType;
     }
-
-
-
 }

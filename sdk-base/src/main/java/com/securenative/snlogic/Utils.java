@@ -1,11 +1,14 @@
 package com.securenative.snlogic;
 
+
+
+
+
+
 import com.securenative.exceptions.SecureNativeSDKException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.InvalidKeyException;
@@ -21,21 +24,19 @@ import java.util.stream.Collectors;
 public class Utils {
     private static String[] ipHeaders = {"x-forwarded-for", "x-client-ip", "x-real-ip", "x-forwarded", "x-cluster-client-ip", "forwarded-for", "forwarded", "via"};
     public String COOKIE_NAME = "_sn";
-    public String USERAGENT_HEADER = "user-agent";
-    private static final String HMAC_SHA1_ALGORITHM = "HmacSHA512";
+    public final String SN_HEADER = "x-securenative";
+    public final String USERAGENT_HEADER = "user-agent";
+    private final String HMAC_SHA1_ALGORITHM = "HmacSHA512";
     private Pattern VALID_IPV6_PATTERN = Pattern.compile("([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}", Pattern.CASE_INSENSITIVE);
-    private static String EMPTY = "";
+    public static final String EMPTY = "";
 
     public Utils() {
     }
 
 
-    public String getCookie(HttpServletRequest request, final String cookieName) {
-        if (request == null || request.getCookies() == null || request.getCookies().length == 0) {
-            return null;
-        }
-        Optional<Cookie> cookie = Arrays.stream(request.getCookies()).filter(x -> (this.isNullOrEmpty(cookieName) ? COOKIE_NAME : cookieName).equals(x.getName())).findFirst();
-        return cookie.isPresent() ? cookie.get().getValue() : null;
+
+    public String getCookie(){
+        return "";
     }
 
 
@@ -60,13 +61,7 @@ public class Utils {
         return "127.0.0.1";
     }
 
-    public String remoteIpFromServletRequest(HttpServletRequest request) {
-        if (request == null) {
-            return EMPTY;
-        }
 
-        return this.remoteIpFromRequest(request::getHeader);
-    }
 
     private boolean isLoopBack(String ip) {
         try {

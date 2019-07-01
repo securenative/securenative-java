@@ -1,5 +1,6 @@
 package com.securenative.models;
 
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

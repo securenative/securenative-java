@@ -64,6 +64,4 @@ public class SecureNativeOptions {
     public void setAutoSend(Boolean autoSend) {
         this.autoSend = autoSend;
     }
-
-
 }

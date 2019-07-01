@@ -15,9 +15,7 @@ public class FetchOptions {
         this.url = url;
         this.method = method;
         this.headers = headers;
-
     }
-
 
     public String getApiKey() {
         return apiKey;

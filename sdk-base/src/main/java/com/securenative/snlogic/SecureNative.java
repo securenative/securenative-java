@@ -1,12 +1,12 @@
 package com.securenative.snlogic;
 
-import com.securenative.exceptions.SecureNativeSDKException;
-import com.securenative.models.*;
 
-import javax.servlet.http.HttpServletRequest;
+import com.securenative.exceptions.SecureNativeSDKException;
+import com.securenative.models.Event;
+import com.securenative.models.RiskResult;
+import com.securenative.models.SecureNativeOptions;
 
 public class SecureNative implements ISDK {
-    private final String SN_HEADER = "x-securenative";
     private final String API_URL = "https://api.securenative.com/collector/api/v1";
     private final int INTERVAL = 1000;
     private final int MAX_EVENTS = 1000;
@@ -79,14 +79,4 @@ public class SecureNative implements ISDK {
         return apiKey;
     }
 
-    public Event buildEventFromHttpServletRequest(HttpServletRequest request, Event event) {
-        String encodedCookie = this.utils.getCookie(request, event != null && !this.utils.isNullOrEmpty(event.getCookieName()) ? event.getCookieName() : this.utils.COOKIE_NAME);
-        String eventype =  event == null || this.utils.isNullOrEmpty(event.getEventType()) ? EventTypes.LOG_IN.getType() : event.getEventType();
-        String ip = event != null && event.getIp() != null ? event.getIp() : this.utils.remoteIpFromServletRequest(request);
-        String remoteIP = request.getRemoteAddr();
-        String userAgent = event != null && event.getUserAgent() != null ? event.getUserAgent() : request.getHeader(this.utils.USERAGENT_HEADER);
-        User user = event != null && event.getUser() != null ? event.getUser() : new User(null, null, "anonymous");
-        Device device = event != null && event.getDevice() != null ? event.getDevice() : null;
-        return new SnEvent.EventBuilder(eventype).withCookieValue(this.utils.isNullOrEmpty(encodedCookie) ? request.getHeader(SN_HEADER) : encodedCookie).withIp(ip).withRemoteIP(remoteIP).withUserAgent(userAgent).withUser(user).withDevice(device).build();
     }
-}

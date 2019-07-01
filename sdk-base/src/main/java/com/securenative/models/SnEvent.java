@@ -247,8 +247,4 @@ public class SnEvent implements Event {
     public void setParams(List<AbstractMap.SimpleEntry<String, String>> params) {
         this.params = params;
     }
-
-
-
-
 }
