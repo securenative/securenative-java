@@ -47,6 +47,7 @@ public class VerifyWebHookMiddleware implements Filter {
         return;
     }
 
+
     @Override
     public void destroy() {
 
