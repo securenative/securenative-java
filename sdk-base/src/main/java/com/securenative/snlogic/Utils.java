@@ -28,7 +28,7 @@ public class Utils {
     public final String USERAGENT_HEADER = "user-agent";
     private final String HMAC_SHA1_ALGORITHM = "HmacSHA512";
     private Pattern VALID_IPV6_PATTERN = Pattern.compile("([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}", Pattern.CASE_INSENSITIVE);
-    public static final String EMPTY = "";
+
 
     public Utils() {
     }
