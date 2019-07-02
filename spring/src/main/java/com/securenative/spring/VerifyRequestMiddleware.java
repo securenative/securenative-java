@@ -1,4 +1,8 @@
-package com.securenative.snlogic;
+package com.securenative.spring;
+
+import com.securenative.snlogic.ISDK;
+import com.securenative.snlogic.SecureNative;
+import com.securenative.snlogic.Utils;
 
 import javax.servlet.*;
 import java.io.IOException;
