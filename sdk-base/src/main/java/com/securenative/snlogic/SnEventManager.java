@@ -9,8 +9,8 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.asynchttpclient.*;
 
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -41,13 +41,12 @@ public class SnEventManager implements EventManager {
         executor = Executors.newSingleThreadScheduledExecutor();
         executor.execute(() -> {
             try {
-                Thread.sleep((long)(Math.random() * 1000));
+                Thread.sleep((long) (Math.random() * 1000));
                 Message msg = events.poll();
                 if (msg != null) {
                     sendSync(msg.getSnEvent(), msg.getUrl());
                 }
-            }
-             catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
@@ -57,7 +56,7 @@ public class SnEventManager implements EventManager {
 
     @Override
     public RiskResult sendSync(Event event, String url) {
-        this.asyncClient.addHeader(AUTHORIZATION, this.apiKey).setUrl(url);
+        this.asyncClient.setHeader(AUTHORIZATION, this.apiKey).setUrl(url);
 
         try {
             this.asyncClient.setBody(mapper.writeValueAsString(event));
@@ -66,7 +65,7 @@ public class SnEventManager implements EventManager {
                 events.add(new Message(event, response.getUri().toUrl()));
             }
             String responseBody = response.getResponseBody();
-            if (utils.isNullOrEmpty(responseBody)){
+            if (utils.isNullOrEmpty(responseBody)) {
                 return new RiskResult(RiskLevel.low.name(), 0.0, new String[0]);
             }
             return mapper.readValue(responseBody, RiskResult.class);
@@ -79,7 +78,7 @@ public class SnEventManager implements EventManager {
 
     @Override
     public void sendAsync(Event event, String url) {
-        this.asyncClient.setUrl(url).addHeader(AUTHORIZATION, this.apiKey);
+        this.asyncClient.setUrl(url).setHeader(AUTHORIZATION, this.apiKey);
         try {
             this.asyncClient.setBody(mapper.writeValueAsString(event));
         } catch (JsonProcessingException e) {
@@ -112,8 +111,9 @@ public class SnEventManager implements EventManager {
     private String getVersion() {
         try {
             MavenXpp3Reader reader = new MavenXpp3Reader();
-            Model read = reader.read(new FileReader("pom.xml"));
-            return read.getVersion();
+            String pomResource = "/META-INF/maven/com.securenative.java/sdk-base/pom.xml";
+            Model read = reader.read(new InputStreamReader(SnEventManager.class.getResourceAsStream(pomResource)));
+            return read.getParent().getVersion();
         } catch (Exception e) {
             return "unknown";
         }
