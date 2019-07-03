@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>akka-http</artifactId>
+    <artifactId>akka</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -48,21 +48,31 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <version>${maven-scala-plugin.version}</version>
+                <!-- https://mvnrepository.com/artifact/net.alchim31.maven/scala-maven-plugin -->
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.2.2</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>add-source</goal>
                             <goal>compile</goal>
-                            <goal>testCompile</goal>
                         </goals>
                     </execution>
+                    <execution>                         <!-- from here -->
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>doc-jar</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                    </execution>                        <!-- to here -->
                 </executions>
             </plugin>
             <plugin>

@@ -1,4 +1,4 @@
-package com.securenative.akka
+package com.securenative.java.akka
 
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.server.directives.{BasicDirectives, MarshallingDirectives}
