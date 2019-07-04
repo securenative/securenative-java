@@ -2,18 +2,34 @@
 # Java SDK for SecureNative
 
 
-**[SecureNative](https://www.securenative.com/) SecureNative is rethinking-security-as-a-service, disrupting the cyber security space and the way enterprises consume and implement security solutions.**
+**[SecureNative](https://www.securenative.com/) is rethinking-security-as-a-service, disrupting the cyber security space and the way enterprises consume and implement security solutions.**
+
+
+#SDK
+
+This Java sdk is very light, comes with only two dependencies (httpAsyncClient and Jackson).
+In addition, you can find two modules that can help you:
+
+[Spring](https://github.com/securenative/securenative-java/tree/master/spring) or any web application that uses javax.servlet
+
+[akka-http](https://github.com/securenative/securenative-java/tree/master/akka-http)
 
 # Quickstart
 
 When using Maven, add the following dependency to your `pom.xml` file:
 ```xml
-        <dependency>
-            <groupId>com.securenative.java</groupId>
-            <artifactId>com.securenative.java</artifactId>
-            <version>0.1.2</version>
-        </dependency>
+      <dependency>
+        <groupId>com.securenative.java</groupId>
+        <artifactId>sdk-base</artifactId>
+        <version>0.2.2</version>
+      </dependency>
 ```
+
+Gradle:
+
+compile group: 'com.securenative.java', name: 'sdk-base', version: 'LATEST'
+
+
 
 ## Initialize the SDK
 
@@ -62,7 +78,7 @@ Event event = new SnEvent.EventBuilder(EventTypes.LOG_IN.getType()).
         try {
             secureNative = new SecureNative(API_KEY,new SecureNativeOptions());
             Event event = new SnEvent.EventBuilder(EventTypes.LOG_IN.getType()).
-                                        withUser(new User("","","apple@sucks.com")).
+                                        withUser(new User("","","chuck@norris.com")).
                                         withIp("35.199.23.1").
                                         withCookieValue("eyJjaWQiOiJkYzgyYjdhZS00ODFkLTQyODItYTMyZC0xZTU1Njk2ZjNmZTQiLCJmcCI6Ijk5NGYzZjVjZTRiYWUwODQzMTRhOTFkNzgyN2I1MWYuMjQ3MDBmOWYxOTg2ODAwYWI0ZmNjODgwNTMwZGQwZWQifQ").
                                         withRemoteIP("35.199.23.1").
@@ -89,7 +105,7 @@ You can build an event from HttpServletRequest or from combination between event
         try {
             secureNative = new SecureNative(API_KEY,new SecureNativeOptions());
             Event e = new SnEvent.EventBuilder(EventTypes.LOG_IN.getType()).
-                                                    withUser(new User("","","apple@sucks.com")).
+                                                    withUser(new User("","","chuck@norris.com")).
                                                     build();
             Event event = secureNative.buildEventFromHttpServletRequest(request, e);
             secureNative.track(event);
@@ -154,7 +170,7 @@ Apply our filter to verify the request is from us, example in spring:
  @Bean
     public FilterRegistrationBean<VerifyWebHookMiddleware> filterWebhook() throws SecureNativeSDKException {
         FilterRegistrationBean < VerifyWebHookMiddleware > registrationBean = new FilterRegistrationBean();
-        VerifyWebHookMiddleware customURLFilter = new VerifyWebHookMiddleware("CD70B8F2CF32FEA5ED190C5E630BD6864F144155");
+        VerifyWebHookMiddleware customURLFilter = new VerifyWebHookMiddleware("API KEY");
         registrationBean.setFilter(customURLFilter);
         return registrationBean;
     }
