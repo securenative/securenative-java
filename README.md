@@ -169,7 +169,7 @@ Apply our filter to verify the request is from us, example in spring:
 
  @Bean
     public FilterRegistrationBean<VerifyWebHookMiddleware> filterWebhook() throws SecureNativeSDKException {
-        FilterRegistrationBean < VerifyWebHookMiddleware > registrationBean = new FilterRegistrationBean();
+        FilterRegistrationBean <VerifyWebHookMiddleware> registrationBean = new FilterRegistrationBean();
         VerifyWebHookMiddleware customURLFilter = new VerifyWebHookMiddleware("API KEY");
         registrationBean.setFilter(customURLFilter);
         return registrationBean;
