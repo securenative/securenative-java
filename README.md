@@ -62,6 +62,7 @@ You can pass empty SecureNativeOptions object or you can set the following:
 Once the SDK has been initialized, tracking requests are sent through the SDK
 instance. Make sure you build event with the EventBuilder:
 
+ ```java
 Event event = new SnEvent.EventBuilder(EventTypes.LOG_IN.getType()).
                             withUser(new User("","","apple@sucks.com")).
                             withIp("35.199.23.1").
@@ -69,6 +70,7 @@ Event event = new SnEvent.EventBuilder(EventTypes.LOG_IN.getType()).
                             withRemoteIP("35.199.23.1").
                             withUserAgent("Mozilla/5.0 (Linux; U; Android 4.4.2; zh-cn; GT-I9500 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko)Version/4.0 MQQBrowser/5.0 QQ-URL-Manager Mobile Safari/537.36").
                             build();
+ ```
 
 **Example**
 

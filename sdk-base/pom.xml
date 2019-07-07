@@ -5,7 +5,7 @@
     <parent>
         <artifactId>sdk-parent</artifactId>
         <groupId>com.securenative.java</groupId>
-        <version>${global.version}</version>
+        <version>0.2.2</version>
     </parent>
     <artifactId>sdk-base</artifactId>
     <modelVersion>4.0.0</modelVersion>
