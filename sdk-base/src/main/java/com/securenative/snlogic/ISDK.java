@@ -10,5 +10,4 @@ public interface ISDK {
     RiskResult flow(long flowId, Event event);
     String getApiKey();
     String getDefaultCookieName();
-
 }

@@ -33,7 +33,7 @@ public class SnEventManager implements EventManager {
         this.utils = new Utils();
         events = new ConcurrentLinkedQueue<>();
         if (this.utils.isNullOrEmpty(apiKey) || options == null) {
-            throw new SecureNativeSDKException("You must pass your com.securenative.snlogic.SecureNative api key");
+            throw new SecureNativeSDKException("You must pass a valid api key");
         }
         this.asyncClient = initializeAsyncHttpClient(options);
         this.apiKey = apiKey;

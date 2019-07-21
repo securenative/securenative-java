@@ -1,10 +1,5 @@
 package com.securenative.snlogic;
 
-
-
-
-
-
 import com.securenative.exceptions.SecureNativeSDKException;
 
 import javax.crypto.Mac;
@@ -32,8 +27,6 @@ public class Utils {
 
     public Utils() {
     }
-
-
 
     public String getCookie(){
         return "";

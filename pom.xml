@@ -145,7 +145,7 @@
     <properties>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
-        <global.version>0.2.2</global.version>
+        <global.version>0.2.3</global.version>
     </properties>
 
 

@@ -21,7 +21,7 @@ When using Maven, add the following dependency to your `pom.xml` file:
       <dependency>
         <groupId>com.securenative.java</groupId>
         <artifactId>sdk-base</artifactId>
-        <version>0.2.2</version>
+        <version>0.2.3</version>
       </dependency>
 ```
 

@@ -11,7 +11,7 @@ public class SecureNative implements ISDK {
     private final int INTERVAL = 1000;
     private final int MAX_EVENTS = 1000;
     private final Boolean AUTO_SEND = true;
-    private final long DEFAULT_TIMEOUT = 1500;
+    private final int DEFAULT_TIMEOUT = 1500;
 
     private EventManager eventManager;
     private SecureNativeOptions snOptions;

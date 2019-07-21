@@ -5,7 +5,7 @@
     <parent>
         <artifactId>sdk-parent</artifactId>
         <groupId>com.securenative.java</groupId>
-        <version>0.2.2</version>
+        <version>0.2.3</version>
     </parent>
     <artifactId>sdk-base</artifactId>
     <modelVersion>4.0.0</modelVersion>
@@ -144,7 +144,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.9</version>
+            <version>2.9.9.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
