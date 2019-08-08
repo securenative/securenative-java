@@ -95,7 +95,6 @@ public class VerifyWebHookMiddleware implements Filter {
         }
         return utils.remoteIpFromRequest(request::getHeader);
     }
-
     public Event buildEventFromHttpServletRequest(HttpServletRequest request, Event event) {
         String encodedCookie = getCookie(request, event != null && !this.utils.isNullOrEmpty(event.getCookieName()) ? event.getCookieName() : this.utils.COOKIE_NAME);
         encodedCookie = utils.isNullOrEmpty(encodedCookie) && !utils.isNullOrEmpty(event.getCookieValue()) ? event.getCookieValue() : encodedCookie;

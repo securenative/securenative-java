@@ -21,7 +21,7 @@ public class SecureNative implements ISDK {
     public SecureNative(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         this.utils = new Utils();
         if (this.utils.isNullOrEmpty(apiKey)) {
-            throw new SecureNativeSDKException("You must pass your com.securenative.snlogic.SecureNative api key");
+            throw new SecureNativeSDKException("You must pass your SecureNative api key");
         }
         this.apiKey = apiKey;
         this.snOptions = initializeOptions(options);
