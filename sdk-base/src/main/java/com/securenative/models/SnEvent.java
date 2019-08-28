@@ -50,6 +50,17 @@ public class SnEvent implements Event {
             this.utils = new Utils();
         }
 
+
+        public EventBuilder withCid(String cid) {
+            this.cid = cid;
+            return this;
+        }
+
+        public EventBuilder withFp(String fp) {
+            this.fp = fp;
+            return this;
+        }
+
         public EventBuilder withIp(String ip) {
             this.ip = ip;
             return this;
