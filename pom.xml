@@ -6,7 +6,7 @@
 
     <groupId>com.securenative.java</groupId>
     <artifactId>sdk-parent</artifactId>
-    <version>${global.version}</version>
+    <version>0.2.4</version>
     <url>https://github.com/securenative/securenative-java</url>
     <licenses>
         <license>

@@ -2,12 +2,16 @@ package com.securenative.snlogic;
 
 import com.securenative.exceptions.SecureNativeSDKException;
 
-import javax.crypto.Mac;
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
@@ -23,13 +27,10 @@ public class Utils {
     public final String USERAGENT_HEADER = "user-agent";
     private final String HMAC_SHA1_ALGORITHM = "HmacSHA512";
     private Pattern VALID_IPV6_PATTERN = Pattern.compile("([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}", Pattern.CASE_INSENSITIVE);
+    private final int AES_KEY_SIZE = 32;
 
 
     public Utils() {
-    }
-
-    public String getCookie(){
-        return "";
     }
 
 
@@ -53,7 +54,6 @@ public class Utils {
         }
         return "127.0.0.1";
     }
-
 
 
     private boolean isLoopBack(String ip) {
@@ -98,31 +98,30 @@ public class Utils {
         }
     }
 
-    private String calculateSignature(String payload, String apikey){
-        if (this.isNullOrEmpty(payload)){
+    private String calculateSignature(String payload, String apikey) {
+        if (this.isNullOrEmpty(payload)) {
             return null;
         }
         try {
-            return this.calculateRFC2104HMAC(payload,apikey);
+            return this.calculateRFC2104HMAC(payload, apikey);
         } catch (SecureNativeSDKException e) {
             return null;
         }
     }
 
-    public boolean isVerifiedSnRequest(String payload, String hedaerSignature, String apiKey){
+    public boolean isVerifiedSnRequest(String payload, String hedaerSignature, String apiKey) {
         String signed = calculateSignature(payload, apiKey);
-        if (this.isNullOrEmpty(signed) || this.isNullOrEmpty(hedaerSignature)){
+        if (this.isNullOrEmpty(signed) || this.isNullOrEmpty(hedaerSignature)) {
             return false;
         }
         return hedaerSignature.equals(signed);
     }
 
-    public boolean isNullOrEmpty(final String s){
+    public boolean isNullOrEmpty(final String s) {
         return s == null || s.length() == 0;
     }
 
-    public boolean isValidInet4Address(String ip)
-    {
+    public boolean isValidInet4Address(String ip) {
         String[] groups = ip.split("\\.");
         if (groups.length != 4)
             return false;
@@ -133,13 +132,39 @@ public class Utils {
                     .filter(i -> (i >= 0 && i <= 255))
                     .count() == 4;
 
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return false;
         }
     }
 
     private boolean isIpV6Address(String ipAddress) {
-       return this.VALID_IPV6_PATTERN.matcher(ipAddress).matches();
+        return this.VALID_IPV6_PATTERN.matcher(ipAddress).matches();
     }
 
+    public String decryptAES(String s, String key)
+            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException,
+            IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+        if (s == null || s.length() == 0) {
+            return s;
+        }
+        byte[] cipherText = hexToByteArray(s);
+        SecretKeySpec skeySpec = new SecretKeySpec(key.substring(0, 32).getBytes("UTF-8"), "AES");
+        byte[] ivBytes = Arrays.copyOfRange(cipherText, 0, AES_KEY_SIZE / 2);
+        cipherText = Arrays.copyOfRange(cipherText, AES_KEY_SIZE / 2, cipherText.length);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        AlgorithmParameterSpec IVspec = new IvParameterSpec(ivBytes);
+        cipher.init(Cipher.DECRYPT_MODE, skeySpec, IVspec);
+        return new String(cipher.doFinal(cipherText), "UTF-8");
+    }
+
+    private byte[] hexToByteArray(String s) {
+        byte[] retValue = null;
+        if (s != null && s.length() != 0) {
+            retValue = new byte[s.length() / 2];
+            for (int i = 0; i < retValue.length; i++) {
+                retValue[i] = (byte) Integer.parseInt(s.substring(2 * i, 2 * i + 2), 16);
+            }
+        }
+        return retValue;
+    }
 }

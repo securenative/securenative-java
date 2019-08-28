@@ -1,5 +1,7 @@
 package com.securenative.spring;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.securenative.models.*;
 import com.securenative.snlogic.Utils;
 
@@ -19,10 +21,14 @@ public class VerifyWebHookMiddleware implements Filter {
     private Utils utils;
     private final String EMPTY = "";
     private final String SINATURE_KEY = "x-securenative";
+    private ObjectMapper mapper;
+
 
     public VerifyWebHookMiddleware(String apiKey) {
         this.apikey = apiKey;
         this.utils = new Utils();
+        mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 
     }
 
@@ -36,12 +42,12 @@ public class VerifyWebHookMiddleware implements Filter {
         HttpServletResponse res = (HttpServletResponse) servletResponse;
 
         String signature = "";
-        if (req != null && !this.utils.isNullOrEmpty(req.getHeader(SINATURE_KEY))){
+        if (req != null && !this.utils.isNullOrEmpty(req.getHeader(SINATURE_KEY))) {
             signature = req.getHeader(SINATURE_KEY);
         }
         String payload = getBody(servletRequest);
-        if (utils.isVerifiedSnRequest(payload,signature,this.apikey)){
-            filterChain.doFilter(req,res);
+        if (utils.isVerifiedSnRequest(payload, signature, this.apikey)) {
+            filterChain.doFilter(req, res);
             return;
         }
         res.sendError(401, "Unauthorized");
@@ -95,16 +101,27 @@ public class VerifyWebHookMiddleware implements Filter {
         }
         return utils.remoteIpFromRequest(request::getHeader);
     }
+
     public Event buildEventFromHttpServletRequest(HttpServletRequest request, Event event) {
         String encodedCookie = getCookie(request, event != null && !this.utils.isNullOrEmpty(event.getCookieName()) ? event.getCookieName() : this.utils.COOKIE_NAME);
         encodedCookie = utils.isNullOrEmpty(encodedCookie) && !utils.isNullOrEmpty(event.getCookieValue()) ? event.getCookieValue() : encodedCookie;
-        String eventype =  event == null || this.utils.isNullOrEmpty(event.getEventType()) ? EventTypes.LOG_IN.getType() : event.getEventType();
+        String decodedCookie = "";
+        ClientFingerPrint clientFingerPrint = new ClientFingerPrint("", "");
+        try {
+            decodedCookie = utils.decryptAES(encodedCookie, this.apikey);
+            clientFingerPrint = mapper.readValue(decodedCookie, ClientFingerPrint.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String eventype = event == null || this.utils.isNullOrEmpty(event.getEventType()) ? EventTypes.LOG_IN.getType() : event.getEventType();
         String ip = event != null && event.getIp() != null ? event.getIp() : remoteIpFromServletRequest(request);
         String remoteIP = request.getRemoteAddr();
         String userAgent = event != null && event.getUserAgent() != null ? event.getUserAgent() : request.getHeader(this.utils.USERAGENT_HEADER);
         User user = event != null && event.getUser() != null ? event.getUser() : new User(null, null, "anonymous");
         Device device = event != null && event.getDevice() != null ? event.getDevice() : null;
-        return new SnEvent.EventBuilder(eventype).withCookieValue(this.utils.isNullOrEmpty(encodedCookie) ? request.getHeader(utils.SN_HEADER) : encodedCookie).withIp(ip).withRemoteIP(remoteIP).withUserAgent(userAgent).withUser(user).withDevice(device).build();
+        return new SnEvent.EventBuilder(eventype).withCookieValue(this.utils.isNullOrEmpty(decodedCookie) ? request.getHeader(utils.SN_HEADER) : encodedCookie).withIp(ip).withRemoteIP(remoteIP).withUserAgent(userAgent).withUser(user).withDevice(device).withCid(clientFingerPrint.getCid()).withFp(clientFingerPrint.getFp()).
+        build();
     }
 
 

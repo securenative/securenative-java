@@ -6,15 +6,20 @@ public class SecureNativeOptions {
     private long maxEvents;
     private long timeout;
     private Boolean autoSend;
+    private Boolean isSdkEnabled;
 
-    public SecureNativeOptions(){}
+    public SecureNativeOptions(){
+        this.autoSend = true;
+        this.isSdkEnabled = true;
+    }
 
-    public SecureNativeOptions(String apiUrl, int interval, long maxEvents, int timeout, boolean autoSend) {
+    public SecureNativeOptions(String apiUrl, int interval, long maxEvents, int timeout, boolean autoSend, boolean isSdkEnabled) {
         this.interval = interval;
         this.maxEvents = maxEvents;
         this.apiUrl = apiUrl;
         this.timeout = timeout;
         this.autoSend = autoSend;
+        this.isSdkEnabled = isSdkEnabled;
     }
 
     public SecureNativeOptions(String apiUrl, int interval, long maxEvents, int timeout) {
@@ -22,7 +27,9 @@ public class SecureNativeOptions {
         this.maxEvents = maxEvents;
         this.apiUrl = apiUrl;
         this.timeout = timeout;
-        this.autoSend = false;
+        this.autoSend = true;
+        this.isSdkEnabled = true;
+
     }
 
     public String getApiUrl() {
@@ -63,5 +70,13 @@ public class SecureNativeOptions {
 
     public void setAutoSend(Boolean autoSend) {
         this.autoSend = autoSend;
+    }
+
+    public Boolean getSdkEnabled() {
+        return isSdkEnabled;
+    }
+
+    public void setSdkEnabled(Boolean sdkEnabled) {
+        isSdkEnabled = sdkEnabled;
     }
 }
