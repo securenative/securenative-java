@@ -18,7 +18,10 @@ public class SecureNative implements ISDK {
     private String apiKey;
     private Utils utils;
 
-    public SecureNative(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
+    private static SecureNative secureNative = null;
+
+
+    private SecureNative(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         this.utils = new Utils();
         if (this.utils.isNullOrEmpty(apiKey)) {
             throw new SecureNativeSDKException("You must pass your SecureNative api key");
@@ -26,7 +29,23 @@ public class SecureNative implements ISDK {
         this.apiKey = apiKey;
         this.snOptions = initializeOptions(options);
         this.eventManager = new SnEventManager(apiKey,this.snOptions);
+    }
 
+
+    public static SecureNative init(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
+        if (secureNative == null) {
+            secureNative = new SecureNative(apiKey, options);
+            return secureNative;
+        }
+
+        throw new SecureNativeSDKException("This SDK was already initialized");
+    }
+
+    public static SecureNative getInstance() throws SecureNativeSDKException {
+        if (secureNative == null) {
+            throw new SecureNativeSDKException("Secure Native SDK wasnt initialized yet, please call init first");
+        }
+        return secureNative;
     }
 
     private SecureNativeOptions initializeOptions(SecureNativeOptions options) {

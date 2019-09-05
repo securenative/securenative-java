@@ -7,7 +7,7 @@ import com.securenative.models.Event;
 import com.securenative.models.EventTypes;
 import com.securenative.models.SnEvent;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.AbstractMap;
@@ -17,42 +17,27 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 
 public class SecureNativeTest{
-    Utils utils;
+    static Utils utils;
+    static SecureNative sn;
+    static String API_KEY = "ApiKey";
 
-
-    @Before
-    public void setup() {
+    @BeforeClass
+    public static void runOnceBeforeClass() throws SecureNativeSDKException {
         utils = mock(Utils.class);
-    }
-
-    @Test(expected = SecureNativeSDKException.class)
-    public void initializeSnWhenApiKeyNullTest() throws Exception {
-        SecureNative sn = new SecureNative(null, null);
-    }
-
-
-    @Test(expected = SecureNativeSDKException.class)
-    public void initializeSnWhenApiKeyEmptyTest() throws Exception {
-        SecureNative sn = new SecureNative("", null);
+        sn = SecureNative.init(API_KEY, null);
     }
 
     @Test
-    public void initializeSnWhenApiKeyGoodAndOptionsNullTest() throws Exception {
-        SecureNative sn = new SecureNative("api", null);
-        Assert.assertEquals(sn.getApiKey(),"api");
+    public void makeSureItsTheSameInstanceTest() throws Exception {
+        SecureNative sn0 = SecureNative.getInstance();
+        Assert.assertEquals(sn0.getApiKey(),API_KEY);
     }
 
     @Test
     public void TestBasicTrack() throws Exception {
-        SecureNative sn = new SecureNative("api", null);
+        SecureNative sn1 = SecureNative.getInstance();
         Event event = new SnEvent.EventBuilder(EventTypes.LOG_OUT.getType()).withCookieValue("ewoJImNpZCI6ICJjaWRWYWx1ZSIsCgkiZnAiOiAidiIKfQ==").withDevice(new Device("id")).withIp("ip").build();
-        sn.track(event);
-    }
-
-    @Test
-    public void TestBasicVerify() throws Exception {
-        SecureNative sn = new SecureNative("api", null);
-        Assert.assertEquals(sn.getApiKey(),"api");
+        sn1.track(event);
     }
 
     @Test
