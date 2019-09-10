@@ -7,19 +7,22 @@ public class SecureNativeOptions {
     private long timeout;
     private Boolean autoSend;
     private Boolean isSdkEnabled;
+    private Boolean debugMode;
 
     public SecureNativeOptions(){
         this.autoSend = true;
         this.isSdkEnabled = true;
+        this.debugMode = false;
     }
 
-    public SecureNativeOptions(String apiUrl, int interval, long maxEvents, int timeout, boolean autoSend, boolean isSdkEnabled) {
+    public SecureNativeOptions(String apiUrl, int interval, long maxEvents, int timeout, boolean autoSend, boolean isSdkEnabled, boolean debugMode) {
         this.interval = interval;
         this.maxEvents = maxEvents;
         this.apiUrl = apiUrl;
         this.timeout = timeout;
         this.autoSend = autoSend;
         this.isSdkEnabled = isSdkEnabled;
+        this.debugMode = debugMode;
     }
 
     public SecureNativeOptions(String apiUrl, int interval, long maxEvents, int timeout) {
@@ -29,6 +32,7 @@ public class SecureNativeOptions {
         this.timeout = timeout;
         this.autoSend = true;
         this.isSdkEnabled = true;
+        this.debugMode = false;
 
     }
 
@@ -78,5 +82,13 @@ public class SecureNativeOptions {
 
     public void setSdkEnabled(Boolean sdkEnabled) {
         isSdkEnabled = sdkEnabled;
+    }
+
+    public Boolean getDebugMode() {
+        return debugMode;
+    }
+
+    public void setDebugMode(Boolean debugMode) {
+        this.debugMode = debugMode;
     }
 }

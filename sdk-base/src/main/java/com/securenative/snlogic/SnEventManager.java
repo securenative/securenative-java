@@ -39,6 +39,7 @@ public class SnEventManager implements EventManager {
         this.apiKey = apiKey;
 
         executor = Executors.newSingleThreadScheduledExecutor();
+        Logger.getLogger().info(String.format("Starting thread listening to messages queue"));
         executor.execute(() -> {
             try {
                 Thread.sleep((long) (Math.random() * 1000));
@@ -62,12 +63,15 @@ public class SnEventManager implements EventManager {
             this.asyncClient.setBody(mapper.writeValueAsString(event));
             Response response = this.asyncClient.execute().get();
             if (response == null || response.getStatusCode() > HTTP_STATUS_OK) {
+                Logger.getLogger().info(String.format("Secure Native http call failed to end point: %s  with event type %s. adding back to queue.", url, event.getEventType()));
                 events.add(new Message(event, response.getUri().toUrl()));
             }
             String responseBody = response.getResponseBody();
             if (utils.isNullOrEmpty(responseBody)) {
+                Logger.getLogger().info(String.format("Secure Native http call to %s returned with empty response. returning default risk result.", url));
                 return new RiskResult(RiskLevel.low.name(), 0.0, new String[0]);
             }
+            Logger.getLogger().info(String.format("Secure Native http call to %s was successful.", url));
             return mapper.readValue(responseBody, RiskResult.class);
         } catch (InterruptedException | ExecutionException | IOException e) {
             e.printStackTrace();
@@ -82,7 +86,7 @@ public class SnEventManager implements EventManager {
         try {
             this.asyncClient.setBody(mapper.writeValueAsString(event));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            Logger.getLogger().info(String.format("Secure Native async http call failed to end point: %s  with event type %s. error: %s", url, event.getEventType(),e));
         }
 
         this.asyncClient.execute(
@@ -90,6 +94,7 @@ public class SnEventManager implements EventManager {
                     @Override
                     public Object onCompleted(Response response) {
                         if (response.getStatusCode() > HTTP_STATUS_OK) {
+                            Logger.getLogger().info(String.format("Secure Native http call failed to end point: %s  with event type %s. adding back to queue.", url, event.getEventType()));
                             events.add(new Message(event, response.getUri().toUrl()));
                         }
                         return response;
@@ -103,6 +108,7 @@ public class SnEventManager implements EventManager {
                 .setConnectTimeout((int) options.getTimeout())
                 .setUserAgent(USER_AGENT_VALUE);
         AsyncHttpClient client = Dsl.asyncHttpClient(clientBuilder);
+        Logger.getLogger().info("Initialized Http client");
         return client.preparePost(options.getApiUrl())
                 .addHeader(SN_VERSION, this.getVersion()).addHeader("Accept", "application/json");
 
