@@ -28,9 +28,12 @@ public class SnEventManager implements EventManager {
     private ObjectMapper mapper;
     private int HTTP_STATUS_OK = 201;
     private String AUTHORIZATION = "Authorization";
+    private SecureNativeOptions options;
+    RiskResult defaultRiskResult = new RiskResult(RiskLevel.low.name(), 0.0, new String[0]);
 
     public SnEventManager(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         this.utils = new Utils();
+        this.options = options;
         events = new ConcurrentLinkedQueue<>();
         if (this.utils.isNullOrEmpty(apiKey) || options == null) {
             throw new SecureNativeSDKException("You must pass a valid api key");
@@ -38,25 +41,31 @@ public class SnEventManager implements EventManager {
         this.asyncClient = initializeAsyncHttpClient(options);
         this.apiKey = apiKey;
 
-        executor = Executors.newSingleThreadScheduledExecutor();
-        Logger.getLogger().info(String.format("Starting thread listening to messages queue"));
-        executor.execute(() -> {
-            try {
-                Thread.sleep((long) (Math.random() * 1000));
-                Message msg = events.poll();
-                if (msg != null) {
-                    sendSync(msg.getSnEvent(), msg.getUrl());
+        if (this.options.getSdkEnabled() != null && !this.options.getSdkEnabled()) {
+            executor = Executors.newSingleThreadScheduledExecutor();
+            Logger.getLogger().info(String.format("Starting thread listening to messages queue"));
+            executor.execute(() -> {
+                try {
+                    Thread.sleep((long) (Math.random() * 1000));
+                    Message msg = events.poll();
+                    if (msg != null) {
+                        sendSync(msg.getSnEvent(), msg.getUrl());
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+            });
+        }
         mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
 
     @Override
     public RiskResult sendSync(Event event, String url) {
+        if (this.options.getSdkEnabled() != null && !this.options.getSdkEnabled()) {
+            return defaultRiskResult;
+        }
+
         this.asyncClient.setHeader(AUTHORIZATION, this.apiKey).setUrl(url);
 
         try {
@@ -69,24 +78,27 @@ public class SnEventManager implements EventManager {
             String responseBody = response.getResponseBody();
             if (utils.isNullOrEmpty(responseBody)) {
                 Logger.getLogger().info(String.format("Secure Native http call to %s returned with empty response. returning default risk result.", url));
-                return new RiskResult(RiskLevel.low.name(), 0.0, new String[0]);
+                return defaultRiskResult;
             }
             Logger.getLogger().info(String.format("Secure Native http call to %s was successful.", url));
             return mapper.readValue(responseBody, RiskResult.class);
         } catch (InterruptedException | ExecutionException | IOException e) {
             e.printStackTrace();
         }
-        return new RiskResult(RiskLevel.low.name(), 0.0, new String[0]);
+        return defaultRiskResult;
 
     }
 
     @Override
     public void sendAsync(Event event, String url) {
+        if (this.options.getSdkEnabled() != null && !this.options.getSdkEnabled()) {
+            return;
+        }
         this.asyncClient.setUrl(url).setHeader(AUTHORIZATION, this.apiKey);
         try {
             this.asyncClient.setBody(mapper.writeValueAsString(event));
         } catch (JsonProcessingException e) {
-            Logger.getLogger().info(String.format("Secure Native async http call failed to end point: %s  with event type %s. error: %s", url, event.getEventType(),e));
+            Logger.getLogger().info(String.format("Secure Native async http call failed to end point: %s  with event type %s. error: %s", url, event.getEventType(), e));
         }
 
         this.asyncClient.execute(
