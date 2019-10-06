@@ -122,7 +122,7 @@ public class Utils {
         return hedaerSignature.equals(signed);
     }
 
-    public boolean isNullOrEmpty(final String s) {
+    public static boolean isNullOrEmpty(final String s) {
         return s == null || s.length() == 0;
     }
 
