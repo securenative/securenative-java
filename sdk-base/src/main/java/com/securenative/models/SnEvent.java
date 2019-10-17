@@ -1,16 +1,33 @@
 package com.securenative.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.snlogic.Utils;
 
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.AbstractMap;
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class SnEvent implements Event {
+   public enum ParamsKeys {
+       PARAM_1("param_1"),
+       PARAM_2("param_2"),
+       PARAM_3("param_3"),
+       PARAM_4("param_4"),
+       PARAM_5("param_5"),
+       PARAM_6("param_6");
+
+       private String param;
+
+        ParamsKeys(String param) {
+           this.param = param;
+       }
+       @Override
+       public String toString(){
+            return this.param;
+       }
+    }
+    protected static Set paramKeys = new HashSet(Arrays.asList(ParamsKeys.PARAM_1.name(),ParamsKeys.PARAM_2.name(),ParamsKeys.PARAM_3.name(),ParamsKeys.PARAM_4.name(),ParamsKeys.PARAM_5.name(),ParamsKeys.PARAM_6.name()));
 
     private final static Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
@@ -26,11 +43,9 @@ public class SnEvent implements Event {
     private Device device;
     private String CookieName;
     private String CookieValue;
-    private List<AbstractMap.SimpleEntry<String, String>> params;
+    private Map<String, String> params;
 
     public static class EventBuilder {
-        private final int MAX_CUSTOM_PARAMS = 6;
-
         private String eventType;
         private String cid;
         private String fp;
@@ -42,7 +57,7 @@ public class SnEvent implements Event {
         private String cookieName;
         private String cookieValue;
         private Utils utils;
-        private List<AbstractMap.SimpleEntry<String, String>> params;
+        private Map<String, String> params;
 
 
         public EventBuilder(String eventType) {
@@ -99,14 +114,25 @@ public class SnEvent implements Event {
             return this;
         }
 
-        public EventBuilder withParams(List<AbstractMap.SimpleEntry<String, String>> params){
-            if (params.size() > MAX_CUSTOM_PARAMS){
-                this.params = params.subList(0,MAX_CUSTOM_PARAMS);
+        public EventBuilder withParams(Map<String, String> params) throws SecureNativeSDKException{
+            if (params == null){
+                params = new HashMap<>();
+                params.put(ParamsKeys.PARAM_1.toString(),"");
+                params.put(ParamsKeys.PARAM_2.toString(),"");
+                params.put(ParamsKeys.PARAM_3.toString(),"");
+                params.put(ParamsKeys.PARAM_4.toString(),"");
+                params.put(ParamsKeys.PARAM_5.toString(),"");
+                params.put(ParamsKeys.PARAM_6.toString(),"");
             }
             else{
-                this.params = params;
+                Iterator<String> i = params.keySet().iterator();
+                while(i.hasNext()){
+                    if(!paramKeys.contains(i)){
+                        throw new SecureNativeSDKException("Key must be of param_1..param_6");
+                    }
+                }
             }
-
+            this.params = params;
             return this;
         }
 
@@ -251,11 +277,11 @@ public class SnEvent implements Event {
     }
 
 
-    public List<AbstractMap.SimpleEntry<String, String>> getParams() {
+    public Map<String, String> getParams() {
         return params;
     }
 
-    public void setParams(List<AbstractMap.SimpleEntry<String, String>> params) {
+    public void setParams(Map<String, String> params) {
         this.params = params;
     }
 }

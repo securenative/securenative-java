@@ -3,6 +3,7 @@ package com.securenative.spring;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.securenative.models.*;
+import com.securenative.snlogic.Logger;
 import com.securenative.snlogic.Utils;
 
 import javax.servlet.*;
@@ -50,6 +51,7 @@ public class VerifyWebHookMiddleware implements Filter {
             filterChain.doFilter(req, res);
             return;
         }
+        Logger.getLogger().info("Request have been blocked due to incompatible signature");
         res.sendError(401, "Unauthorized");
         return;
     }
@@ -103,17 +105,18 @@ public class VerifyWebHookMiddleware implements Filter {
     }
 
     public Event buildEventFromHttpServletRequest(HttpServletRequest request, Event event) {
+        Logger.getLogger().info(String.format("building event from http servlet request"));
         String encodedCookie = getCookie(request, event != null && !this.utils.isNullOrEmpty(event.getCookieName()) ? event.getCookieName() : this.utils.COOKIE_NAME);
         encodedCookie = utils.isNullOrEmpty(encodedCookie) && !utils.isNullOrEmpty(event.getCookieValue()) ? event.getCookieValue() : encodedCookie;
+        Logger.getLogger().info("Decoding cookie " + encodedCookie);
         String decodedCookie = "";
         ClientFingerPrint clientFingerPrint = new ClientFingerPrint("", "");
         try {
-            decodedCookie = utils.decryptAES(encodedCookie, this.apikey);
+            decodedCookie = utils.decrypt(encodedCookie, this.apikey);
             clientFingerPrint = mapper.readValue(decodedCookie, ClientFingerPrint.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger().info(String.format("Failed decoding cookie %s", encodedCookie));
         }
-
         String eventype = event == null || this.utils.isNullOrEmpty(event.getEventType()) ? EventTypes.LOG_IN.getType() : event.getEventType();
         String ip = event != null && event.getIp() != null ? event.getIp() : remoteIpFromServletRequest(request);
         String remoteIP = request.getRemoteAddr();
