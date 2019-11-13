@@ -5,6 +5,7 @@ import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.models.Event;
 import com.securenative.models.RiskResult;
 import com.securenative.models.SecureNativeOptions;
+import org.apache.logging.log4j.util.Strings;
 
 public class SecureNative implements ISDK {
     private final String API_URL = "https://api.securenative.com/collector/api/v1";
@@ -24,11 +25,19 @@ public class SecureNative implements ISDK {
 
 
     private SecureNative(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
+        String apiKeyEnvVar = Strings.EMPTY;
+        try{
+            apiKeyEnvVar = System.getenv("SN_API_KEY");
+        }
+        catch (Exception e){
+            //logger is not initialized yet
+        }
+
         this.utils = new Utils();
-        if (this.utils.isNullOrEmpty(apiKey)) {
+        if (this.utils.isNullOrEmpty(apiKey) && this.utils.isNullOrEmpty(apiKeyEnvVar)) {
             throw new SecureNativeSDKException("You must pass your SecureNative api key");
         }
-        this.apiKey = apiKey;
+        this.apiKey = this.utils.isNullOrEmpty(apiKey) ? apiKeyEnvVar : apiKey;
         this.snOptions = initializeOptions(options);
         this.eventManager = new SnEventManager(apiKey,this.snOptions);
         Logger.setLoggingEnable(this.snOptions.getDebugMode());
