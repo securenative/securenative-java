@@ -21,7 +21,6 @@ public class SnEventManager implements EventManager {
     private final String USER_AGENT_VALUE = "com.securenative.snlogic.SecureNative-java";
     private final String SN_VERSION = "SN-Version";
     private BoundRequestBuilder asyncClient;
-    private String apiKey;
     private Utils utils;
     private ExecutorService executor;
     private ConcurrentLinkedQueue<Message> events;
@@ -31,15 +30,14 @@ public class SnEventManager implements EventManager {
     private SecureNativeOptions options;
     RiskResult defaultRiskResult = new RiskResult(RiskLevel.low.name(), 0.0, new String[0]);
 
-    public SnEventManager(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
+    public SnEventManager(SecureNativeOptions options) throws SecureNativeSDKException {
         this.utils = new Utils();
         this.options = options;
         events = new ConcurrentLinkedQueue<>();
-        if (this.utils.isNullOrEmpty(apiKey) || options == null) {
+        if (this.utils.isNullOrEmpty(options.getApiKey()) || options == null) {
             throw new SecureNativeSDKException("You must pass a valid api key");
         }
         this.asyncClient = initializeAsyncHttpClient(options);
-        this.apiKey = apiKey;
 
         if (this.options.getSdkEnabled() != null && !this.options.getSdkEnabled()) {
             executor = Executors.newSingleThreadScheduledExecutor();
@@ -66,7 +64,7 @@ public class SnEventManager implements EventManager {
             return defaultRiskResult;
         }
 
-        this.asyncClient.setHeader(AUTHORIZATION, this.apiKey).setUrl(url);
+        this.asyncClient.setHeader(AUTHORIZATION, this.options.getApiKey()).setUrl(url);
 
         try {
             this.asyncClient.setBody(mapper.writeValueAsString(event));
@@ -94,7 +92,7 @@ public class SnEventManager implements EventManager {
         if (this.options.getSdkEnabled() != null && !this.options.getSdkEnabled()) {
             return;
         }
-        this.asyncClient.setUrl(url).setHeader(AUTHORIZATION, this.apiKey);
+        this.asyncClient.setUrl(url).setHeader(AUTHORIZATION, this.options.getApiKey());
         try {
             this.asyncClient.setBody(mapper.writeValueAsString(event));
         } catch (JsonProcessingException e) {

@@ -1,14 +1,20 @@
 package com.securenative.snlogic;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.models.Event;
 import com.securenative.models.RiskResult;
 import com.securenative.models.SecureNativeOptions;
-import org.apache.logging.log4j.util.Strings;
+
+import java.io.File;
+import java.io.IOException;
 
 public class SecureNative implements ISDK {
     private final String API_URL = "https://api.securenative.com/collector/api/v1";
+    private final String SECURE_NATIVE_CONFIG_FILE_PATH = "SECURE_NATIVE_CONFIG_FILE_PATH";
+
+    private final String API_KEY_ENV_VAR = "SECURENATIVE_API_KEY";
     private final int INTERVAL = 1000;
     private final int MAX_EVENTS = 1000;
     private final Boolean AUTO_SEND = true;
@@ -18,36 +24,22 @@ public class SecureNative implements ISDK {
 
     private EventManager eventManager;
     private SecureNativeOptions snOptions;
-    private String apiKey;
-    private Utils utils;
 
     private static ISDK secureNative = null;
+    private Utils utils;
 
 
-    private SecureNative(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
-        String apiKeyEnvVar = Strings.EMPTY;
-        try{
-            apiKeyEnvVar = System.getenv("SN_API_KEY");
-        }
-        catch (Exception e){
-            //logger is not initialized yet
-        }
-
-        this.utils = new Utils();
-        if (this.utils.isNullOrEmpty(apiKey) && this.utils.isNullOrEmpty(apiKeyEnvVar)) {
-            throw new SecureNativeSDKException("You must pass your SecureNative api key");
-        }
-        this.apiKey = this.utils.isNullOrEmpty(apiKey) ? apiKeyEnvVar : apiKey;
+    private SecureNative(SecureNativeOptions options) throws SecureNativeSDKException {
+        utils = new Utils();
         this.snOptions = initializeOptions(options);
-        this.eventManager = new SnEventManager(apiKey,this.snOptions);
+        this.eventManager = new SnEventManager(this.snOptions);
         Logger.setLoggingEnable(this.snOptions.getDebugMode());
     }
 
-
-    public static ISDK init(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
+    public static ISDK init(SecureNativeOptions options) throws SecureNativeSDKException {
         if (secureNative == null) {
-            secureNative = new SecureNative(apiKey, options);
-            if(options != null && options.getDebugMode() != null){
+            secureNative = new SecureNative(options);
+            if (options != null && options.getDebugMode() != null) {
                 Logger.setLoggingEnable(options.getDebugMode());
             }
             return secureNative;
@@ -62,11 +54,20 @@ public class SecureNative implements ISDK {
         return secureNative;
     }
 
-    private SecureNativeOptions initializeOptions(SecureNativeOptions options) {
+    private SecureNativeOptions initializeOptions(SecureNativeOptions options) throws SecureNativeSDKException {
         if (options == null) {
             Logger.getLogger().info("SecureNative options are empty, initializing default values");
-            options = new SecureNativeOptions();
+            SecureNativeOptions optFromEnv = loadFromEnv();
+            options = optFromEnv == null ? new SecureNativeOptions() : optFromEnv;
         }
+
+        if (options.getApiKey() == null) {
+            options.setApiKey(getApiKeyFromEnv());
+            if (options.getApiKey() == null) {
+                throw new SecureNativeSDKException("couldnt find api key");
+            }
+        }
+
         if (this.utils.isNullOrEmpty(options.getApiUrl())) {
             options.setApiUrl(API_URL);
         }
@@ -81,24 +82,47 @@ public class SecureNative implements ISDK {
         if (options.isAutoSend() == null) {
             options.setAutoSend(AUTO_SEND);
         }
-        if (options.getSdkEnabled() == null){
+        if (options.getSdkEnabled() == null) {
             options.setSdkEnabled(SDK_ENABLED);
         }
-        if (options.getDebugMode() == null){
+        if (options.getDebugMode() == null) {
             options.setSdkEnabled(DEBUG_LOG);
         }
-        if(options.getTimeout() == 0){
+        if (options.getTimeout() == 0) {
             options.setTimeout(DEFAULT_TIMEOUT);
         }
-        if(options.getDebugMode() == null){
+        if (options.getDebugMode() == null) {
             options.setDebugMode(false);
         }
 
         return options;
     }
 
+    private SecureNativeOptions loadFromEnv() {
+        try {
+            String snConfigPath = System.getenv(SECURE_NATIVE_CONFIG_FILE_PATH);
+            if (!this.utils.isNullOrEmpty(snConfigPath)) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                File file = new File(snConfigPath);
+                return objectMapper.readValue(file, SecureNativeOptions.class);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String getApiKeyFromEnv() {
+        try {
+            return System.getenv(API_KEY_ENV_VAR);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
-    public String getDefaultCookieName(){
+    public String getDefaultCookieName() {
         return this.utils.COOKIE_NAME;
     }
 
@@ -122,7 +146,8 @@ public class SecureNative implements ISDK {
 
     @Override
     public String getApiKey() {
-        return apiKey;
+        return this.snOptions.getApiKey();
     }
 
-    }
+
+}

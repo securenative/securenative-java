@@ -1,6 +1,8 @@
 package com.securenative.models;
 
 public class SecureNativeOptions {
+    private String apiKey;
+    private String appName;
     private String apiUrl;
     private int interval;
     private long maxEvents;
@@ -8,14 +10,26 @@ public class SecureNativeOptions {
     private Boolean autoSend;
     private Boolean isSdkEnabled;
     private Boolean debugMode;
+    private String minSupportedVersion;
 
     public SecureNativeOptions(){
         this.autoSend = true;
         this.isSdkEnabled = true;
         this.debugMode = false;
+        this.minSupportedVersion = "1.8.0";
     }
 
-    public SecureNativeOptions(String apiUrl, int interval, long maxEvents, int timeout, boolean autoSend, boolean isSdkEnabled, boolean debugMode) {
+    public SecureNativeOptions(String apiKey){
+        this.apiKey = apiKey;
+        this.autoSend = true;
+        this.isSdkEnabled = true;
+        this.debugMode = false;
+        this.minSupportedVersion = "1.8.0";
+    }
+
+    public SecureNativeOptions(String apiKey, String appName, String apiUrl, int interval, long maxEvents, int timeout, boolean autoSend, boolean isSdkEnabled, boolean debugMode, String minSupportedVersion) {
+        this.apiKey = apiKey;
+        this.appName = appName;
         this.interval = interval;
         this.maxEvents = maxEvents;
         this.apiUrl = apiUrl;
@@ -23,9 +37,11 @@ public class SecureNativeOptions {
         this.autoSend = autoSend;
         this.isSdkEnabled = isSdkEnabled;
         this.debugMode = debugMode;
+        this.minSupportedVersion = minSupportedVersion;
     }
 
-    public SecureNativeOptions(String apiUrl, int interval, long maxEvents, int timeout) {
+    public SecureNativeOptions(String apiKey,String apiUrl, int interval, long maxEvents, int timeout) {
+        this.apiKey = apiKey;
         this.interval = interval;
         this.maxEvents = maxEvents;
         this.apiUrl = apiUrl;
@@ -33,7 +49,7 @@ public class SecureNativeOptions {
         this.autoSend = true;
         this.isSdkEnabled = true;
         this.debugMode = false;
-
+        this.minSupportedVersion = "1.8.0";
     }
 
     public String getApiUrl() {
@@ -90,5 +106,29 @@ public class SecureNativeOptions {
 
     public void setDebugMode(Boolean debugMode) {
         this.debugMode = debugMode;
+    }
+
+    public String getMinSupportedVersion() {
+        return minSupportedVersion;
+    }
+
+    public void setMinSupportedVersion(String minSupportedVersion) {
+        this.minSupportedVersion = minSupportedVersion;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 }

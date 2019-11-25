@@ -16,13 +16,6 @@ public class AgentTest {
     }
 
     @Test
-    public void testPomPath(){
-        String pomXmlPaths = getPomXmlPaths();
-        Assert.assertTrue(pomXmlPaths.equals("debugger-agent-storage.jar"));
-        System.out.println(pomXmlPaths);
-    }
-
-    @Test
     public void changeClassTest(){
         changeClassMethod(TestClassForByteBuddy.class, TestClassForByteBuddy2.class, "returnOne");
         TestClassForByteBuddy testClassForByteBuddy = new TestClassForByteBuddy();

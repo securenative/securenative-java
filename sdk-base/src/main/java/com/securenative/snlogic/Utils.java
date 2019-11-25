@@ -22,6 +22,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+
 public class Utils {
     private static String[] ipHeaders = {"x-forwarded-for", "x-client-ip", "x-real-ip", "x-forwarded", "x-cluster-client-ip", "forwarded-for", "forwarded", "via"};
     public String COOKIE_NAME = "_sn";
@@ -30,7 +31,6 @@ public class Utils {
     private final String HMAC_SHA1_ALGORITHM = "HmacSHA512";
     private Pattern VALID_IPV6_PATTERN = Pattern.compile("([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}", Pattern.CASE_INSENSITIVE);
     private final int AES_KEY_SIZE = 32;
-
 
     public Utils() {
     }
@@ -48,7 +48,7 @@ public class Utils {
                         (isValidInet4Address(s) || this.isIpV6Address(s)) &&
                         !isPrivateIPAddress(s)).collect(Collectors.toList());
                 if (candidates.size() > 0) {
-                    Logger.getLogger().info(String.format("Extracted remote ip %s",candidates.get(0)));
+                    Logger.getLogger().info(String.format("Extracted remote ip %s", candidates.get(0)));
                     return candidates.get(0);
                 }
             }
@@ -173,9 +173,10 @@ public class Utils {
         }
         return retValue;
     }
+
     private final static char[] HEX = new char[]{
             '0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 
     private static String byteArrayToHex(byte[] byteArray) {
@@ -186,13 +187,13 @@ public class Utils {
         return hexBuffer.toString();
     }
 
-    private byte[] pad (byte[] buf, int size){
+    private byte[] pad(byte[] buf, int size) {
         int bufLen = buf.length;
-        int padLen = size - bufLen%size;
-        byte[] padded = new byte[bufLen+padLen];
-        padded = Arrays.copyOf(buf,bufLen+padLen);
+        int padLen = size - bufLen % size;
+        byte[] padded = new byte[bufLen + padLen];
+        padded = Arrays.copyOf(buf, bufLen + padLen);
         for (int i = 0; i < padLen; i++) {
-            padded[bufLen+i] = (byte)padLen;
+            padded[bufLen + i] = (byte) padLen;
         }
         return padded;
     }
@@ -212,11 +213,14 @@ public class Utils {
         if (mod != 0) {
             text = String.format(text + "%" + (16 - mod) + "s", " ");
         }
-        return byteArrayToHex(cipher.doFinal(addAll(ivBytes,text.getBytes("UTF-8")))).trim();
+        return byteArrayToHex(cipher.doFinal(addAll(ivBytes, text.getBytes("UTF-8")))).trim();
     }
+
     private static byte[] addAll(final byte[] array1, byte[] array2) {
         byte[] joinedArray = Arrays.copyOf(array1, array1.length + array2.length);
         System.arraycopy(array2, 0, joinedArray, array1.length, array2.length);
         return joinedArray;
     }
+
+
 }
