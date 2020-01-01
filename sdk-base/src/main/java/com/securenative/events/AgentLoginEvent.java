@@ -1,14 +1,16 @@
 package com.securenative.events;
 
 import com.securenative.models.EventTypes;
-import com.securenative.utils.PackageManager;
-import com.securenative.utils.SnPackage;
+import com.securenative.packagemanager.PackageManager;
+import com.securenative.packagemanager.SnPackage;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.ZonedDateTime;
 
 public class AgentLoginEvent {
+    private static final String PACKAGE_FILE_NAME = "pom.xml";
+
     public String eventType;
     public Long ts;
     public SnPackage snPackage;
@@ -21,13 +23,15 @@ public class AgentLoginEvent {
     public Agent agent;
 
     public AgentLoginEvent(String framework, String frameworkVersion, String appName) {
-        SnPackage appPkg = PackageManager.getPackage(""); // TODO implement me
-        SnPackage agentPkg = PackageManager.getPackage("");
+        String cwd = System.getProperty("user.dir");
+
+        SnPackage appPkg = PackageManager.getPackage(String.join(cwd, PACKAGE_FILE_NAME));
+        SnPackage agentPkg = PackageManager.getPackage(String.join("/sdk-base/", PACKAGE_FILE_NAME));
 
         this.appName = appName;
         this.framework = new Framework(framework, frameworkVersion);
 
-        this.snPackage = new SnPackage(appPkg.getName(), appPkg.getDescription(), appPkg.getVersion(), appPkg.getDependencies(), appPkg.getDependenciesHash());
+        this.snPackage = new SnPackage(appPkg.getArtifactId(), appPkg.getGroupId(), appPkg.getVersion(), appPkg.getDependencies(), appPkg.getDependenciesHash());
 
         this.eventType = EventTypes.AGENT_LOG_IN.getType();
 
@@ -45,7 +49,7 @@ public class AgentLoginEvent {
             hostId = InetAddress.getLocalHost().getHostAddress();
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            // TODO add logging
         }
         this.os = new Os(hostId, hostname, System.getProperty("os.arch"), System.getProperty("os.name"), Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().totalMemory());
 
