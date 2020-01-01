@@ -30,7 +30,7 @@ public class SecureNative implements ISDK {
         }
         this.apiKey = apiKey;
         this.snOptions = initializeOptions(options);
-        this.eventManager = new SnEventManager(apiKey,this.snOptions);
+        this.eventManager = new SnEventManager(apiKey, this.snOptions);
         Logger.setLoggingEnable(this.snOptions.getDebugMode());
     }
 
@@ -38,7 +38,7 @@ public class SecureNative implements ISDK {
     public static ISDK init(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         if (secureNative == null) {
             secureNative = new SecureNative(apiKey, options);
-            if(options != null && options.getDebugMode() != null){
+            if (options != null && options.getDebugMode() != null) {
                 Logger.setLoggingEnable(options.getDebugMode());
             }
             return secureNative;
@@ -72,16 +72,16 @@ public class SecureNative implements ISDK {
         if (options.isAutoSend() == null) {
             options.setAutoSend(AUTO_SEND);
         }
-        if (options.getSdkEnabled() == null){
+        if (options.getSdkEnabled() == null) {
             options.setSdkEnabled(SDK_ENABLED);
         }
-        if (options.getDebugMode() == null){
+        if (options.getDebugMode() == null) {
             options.setSdkEnabled(DEBUG_LOG);
         }
-        if(options.getTimeout() == 0){
+        if (options.getTimeout() == 0) {
             options.setTimeout(DEFAULT_TIMEOUT);
         }
-        if(options.getDebugMode() == null){
+        if (options.getDebugMode() == null) {
             options.setDebugMode(false);
         }
 
@@ -89,8 +89,29 @@ public class SecureNative implements ISDK {
     }
 
     @Override
-    public String getDefaultCookieName(){
+    public String getDefaultCookieName() {
         return this.utils.COOKIE_NAME;
+    }
+
+    // TODO implement the following:
+    @Override
+    public Boolean agentLogin() {
+        return null;
+    }
+
+    @Override
+    public Boolean agentLogout() {
+        return null;
+    }
+
+    @Override
+    public Boolean startAgent() {
+        return null;
+    }
+
+    @Override
+    public void stopAgent() {
+
     }
 
     @Override
@@ -106,7 +127,7 @@ public class SecureNative implements ISDK {
     }
 
     @Override
-    public RiskResult flow(long flowId, Event event) {//FOR FUTURE PURPOSES
+    public RiskResult flow(long flowId, Event event) { // FOR FUTURE PURPOSES
         Logger.getLogger().info("Flow event call");
         return this.eventManager.sendSync(event, this.snOptions.getApiUrl() + "/flow/" + flowId);
     }
@@ -116,4 +137,4 @@ public class SecureNative implements ISDK {
         return apiKey;
     }
 
-    }
+}
