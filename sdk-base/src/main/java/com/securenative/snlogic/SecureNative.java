@@ -1,10 +1,13 @@
 package com.securenative.snlogic;
 
 
+import com.securenative.events.EventFactory;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.models.Event;
+import com.securenative.models.EventTypes;
 import com.securenative.models.RiskResult;
 import com.securenative.models.SecureNativeOptions;
+import com.securenative.modulemanager.ModuleManager;
 
 public class SecureNative implements ISDK {
     private final String API_URL = "https://api.securenative.com/collector/api/v1";
@@ -15,6 +18,7 @@ public class SecureNative implements ISDK {
     private final Boolean DEBUG_LOG = false;
     private final int DEFAULT_TIMEOUT = 1500;
 
+    private Boolean isAgentStarted = false;
     private EventManager eventManager;
     private SecureNativeOptions snOptions;
     private String apiKey;
@@ -22,6 +26,12 @@ public class SecureNative implements ISDK {
 
     private static ISDK secureNative = null;
 
+    public ModuleManager moduleManager;
+
+    public SecureNative(ModuleManager moduleManager, SecureNativeOptions snOptions) {
+        this.moduleManager = moduleManager;
+        this.snOptions = snOptions;
+    }
 
     private SecureNative(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         this.utils = new Utils();
@@ -95,7 +105,22 @@ public class SecureNative implements ISDK {
 
     // TODO implement the following:
     @Override
-    public Boolean agentLogin() {
+    public String agentLogin() {
+        Logger.getLogger().debug("Performing agent login");
+        String requestUrl = this.snOptions.getApiUrl() + "/agent-login";
+
+        String framework = this.moduleManager.getFramework();
+        String frameworkVersion = this.moduleManager.getFrameworkVersion();
+
+        // TODO finish create event
+        Event event = EventFactory.createEvent(EventTypes.AGENT_LOG_IN, framework, frameworkVersion, this.snOptions.getAppName());
+        try {
+            String sessionId = this.eventManager.sendAgentEvent(event, requestUrl);
+            Logger.getLogger().debug(String.join("Agent successfully logged-in, sessionId: %s", sessionId));
+            return sessionId;
+        } catch (Exception e) {
+            Logger.getLogger().debug(String.join("Failed to perform agent login: %s", e.toString()));
+        }
         return null;
     }
 

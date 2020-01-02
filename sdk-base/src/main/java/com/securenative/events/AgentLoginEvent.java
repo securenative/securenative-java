@@ -1,5 +1,6 @@
 package com.securenative.events;
 
+import com.securenative.models.Event;
 import com.securenative.models.EventTypes;
 import com.securenative.packagemanager.PackageManager;
 import com.securenative.packagemanager.SnPackage;
@@ -8,14 +9,13 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.ZonedDateTime;
 
-public class AgentLoginEvent {
+public class AgentLoginEvent implements Event {
     private static final String PACKAGE_FILE_NAME = "pom.xml";
 
     public String eventType;
     public Long ts;
     public SnPackage snPackage;
     public String appName;
-    public String env;
     public SnProcess process;
     public SnRuntime snRuntime;
     public Os os;
@@ -54,9 +54,13 @@ public class AgentLoginEvent {
         this.os = new Os(hostId, hostname, System.getProperty("os.arch"), System.getProperty("os.name"), Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().totalMemory());
 
         this.agent = new Agent("Java", agentPkg.getVersion(), System.getProperty("java.class.path"));
-        this.env = System.getenv("JAVA_ENV");
 
         this.ts = ZonedDateTime.now().toEpochSecond();
+    }
+
+    @Override
+    public String getEventType() {
+        return this.eventType;
     }
 }
 

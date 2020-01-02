@@ -10,7 +10,7 @@ public interface ISDK {
     RiskResult flow(long flowId, Event event);
     String getApiKey();
     String getDefaultCookieName();
-    Boolean agentLogin();
+    String  agentLogin();
     Boolean agentLogout();
     Boolean startAgent();
     void stopAgent();
