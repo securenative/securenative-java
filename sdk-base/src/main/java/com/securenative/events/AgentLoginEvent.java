@@ -2,8 +2,9 @@ package com.securenative.events;
 
 import com.securenative.models.Event;
 import com.securenative.models.EventTypes;
-import com.securenative.packagemanager.PackageManager;
-import com.securenative.packagemanager.SnPackage;
+import com.securenative.snlogic.PackageManager;
+import com.securenative.snlogic.SnPackage;
+import com.securenative.snlogic.Logger;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -49,7 +50,7 @@ public class AgentLoginEvent implements Event {
             hostId = InetAddress.getLocalHost().getHostAddress();
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            // TODO add logging
+            Logger.getLogger().debug(String.join("Could not find hostname and/or host address; ", e.toString()));
         }
         this.os = new Os(hostId, hostname, System.getProperty("os.arch"), System.getProperty("os.name"), Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().totalMemory());
 

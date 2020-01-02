@@ -1,4 +1,4 @@
-package com.securenative.packagemanager;
+package com.securenative.snlogic;
 
 import com.securenative.utils.SnUtils;
 import org.w3c.dom.Document;
@@ -24,7 +24,7 @@ public class PackageManager {
             document = builder.parse(new File(filePath));
             document.getDocumentElement().normalize();
         } catch (ParserConfigurationException | IOException | SAXException e) {
-            // TODO add logging
+            Logger.getLogger().debug(String.join("Could not parse pom file; ", e.toString()));
         }
 
         return document;

@@ -115,6 +115,22 @@ public class SnEventManager implements EventManager {
 
     }
 
+    // TODO implement this
+    @Override
+    public void stopEventsPersist() {
+
+    }
+
+    @Override
+    public void startEventsPersist() {
+
+    }
+
+    @Override
+    public String sendAgentEvent(Event event, String requestUrl) {
+        return null;
+    }
+
     private BoundRequestBuilder initializeAsyncHttpClient(SecureNativeOptions options) {
         DefaultAsyncHttpClientConfig.Builder clientBuilder = Dsl.config()
                 .setConnectTimeout((int) options.getTimeout())

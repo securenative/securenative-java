@@ -1,8 +1,9 @@
-package com.securenative.modulemanager;
+package com.securenative.snlogic;
 
 public class ModuleManager {
     public String framework;
 
+    // TODO implement me
     public ModuleManager() {
     }
 

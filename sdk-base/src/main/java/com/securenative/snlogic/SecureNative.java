@@ -7,7 +7,6 @@ import com.securenative.models.Event;
 import com.securenative.models.EventTypes;
 import com.securenative.models.RiskResult;
 import com.securenative.models.SecureNativeOptions;
-import com.securenative.modulemanager.ModuleManager;
 
 public class SecureNative implements ISDK {
     private final String API_URL = "https://api.securenative.com/collector/api/v1";
@@ -103,7 +102,6 @@ public class SecureNative implements ISDK {
         return this.utils.COOKIE_NAME;
     }
 
-    // TODO implement the following:
     @Override
     public String agentLogin() {
         Logger.getLogger().debug("Performing agent login");
@@ -112,11 +110,10 @@ public class SecureNative implements ISDK {
         String framework = this.moduleManager.getFramework();
         String frameworkVersion = this.moduleManager.getFrameworkVersion();
 
-        // TODO finish create event
         Event event = EventFactory.createEvent(EventTypes.AGENT_LOG_IN, framework, frameworkVersion, this.snOptions.getAppName());
         try {
             String sessionId = this.eventManager.sendAgentEvent(event, requestUrl);
-            Logger.getLogger().debug(String.join("Agent successfully logged-in, sessionId: %s", sessionId));
+            Logger.getLogger().debug(String.join("Agent successfully logged-in, sessionId: ", sessionId));
             return sessionId;
         } catch (Exception e) {
             Logger.getLogger().debug(String.join("Failed to perform agent login: %s", e.toString()));
@@ -126,7 +123,18 @@ public class SecureNative implements ISDK {
 
     @Override
     public Boolean agentLogout() {
-        return null;
+        Logger.getLogger().debug("Performing agent logout");
+        String requestUrl = this.snOptions.getApiUrl() + "/agent-logout";
+
+        Event event = EventFactory.createEvent(EventTypes.AGENT_LOG_OUT);
+        try {
+            this.eventManager.sendAgentEvent(event, requestUrl);
+            Logger.getLogger().debug("Agent successfully logged-out");
+            return true;
+        } catch (Exception e) {
+            Logger.getLogger().debug(String.join("Failed to perform agent logout; ", e.toString()));
+        }
+        return false;
     }
 
     @Override
@@ -136,7 +144,14 @@ public class SecureNative implements ISDK {
 
     @Override
     public void stopAgent() {
-
+        if (this.isAgentStarted) {
+            Logger.getLogger().debug("Attempting to stop agent");
+      Boolean status = this.agentLogout();
+            if (status) {
+                this.eventManager.stopEventsPersist();
+                this.isAgentStarted = false;
+            }
+        }
     }
 
     @Override

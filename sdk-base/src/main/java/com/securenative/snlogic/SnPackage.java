@@ -1,4 +1,4 @@
-package com.securenative.packagemanager;
+package com.securenative.snlogic;
 
 public class SnPackage {
     String artifactId;
