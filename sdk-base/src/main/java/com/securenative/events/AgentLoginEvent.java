@@ -1,6 +1,5 @@
 package com.securenative.events;
 
-import com.securenative.models.Event;
 import com.securenative.models.EventTypes;
 import com.securenative.snlogic.PackageManager;
 import com.securenative.snlogic.SnPackage;

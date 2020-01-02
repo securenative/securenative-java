@@ -5,7 +5,7 @@ public class InterceptorManager {
     public InterceptorManager() {
     }
 
-    public void applyInterceptors() {
-        
+    public static void applyInterceptors() {
+
     }
 }

@@ -2,7 +2,7 @@ package com.securenative.snlogic;
 
 
 import com.securenative.exceptions.SecureNativeSDKException;
-import com.securenative.models.Event;
+import com.securenative.events.Event;
 import com.securenative.models.RiskResult;
 
 public interface ISDK {

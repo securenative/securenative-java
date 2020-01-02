@@ -1,6 +1,7 @@
 package com.securenative.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.securenative.events.Event;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.snlogic.Utils;
 

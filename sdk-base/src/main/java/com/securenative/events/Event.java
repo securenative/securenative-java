@@ -1,4 +1,4 @@
-package com.securenative.models;
+package com.securenative.events;
 
 public interface Event {
     String getEventType();

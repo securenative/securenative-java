@@ -14,4 +14,12 @@ public class ModuleManager {
     public String getFrameworkVersion() {
         return null;
     }
+
+    public String getModule() {
+        return null;
+    }
+
+    public String getModuleVersion() {
+        return null;
+    }
 }

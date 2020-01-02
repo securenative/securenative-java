@@ -5,7 +5,7 @@ import com.securenative.events.EventFactory;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.middleware.IMiddleware;
 import com.securenative.middleware.MiddlewareFactory;
-import com.securenative.models.Event;
+import com.securenative.events.Event;
 import com.securenative.models.EventTypes;
 import com.securenative.models.RiskResult;
 import com.securenative.models.SecureNativeOptions;
@@ -155,6 +155,11 @@ public class SecureNative implements ISDK {
                 Logger.getLogger().debug("Skipping agent start");
                 return false;
             }
+
+            // TODO:
+            // 1.   create middleware factory and apply some interface to existing ones
+            // 2.   create interception manager and apply it to byte-body
+            // 3.   attach sessionid to agent header
 
             // create middleware
             this.middleware = MiddlewareFactory.createMiddleware(this);

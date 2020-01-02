@@ -3,6 +3,7 @@ package com.securenative.snlogic;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.securenative.events.Event;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.models.*;
 import org.apache.maven.model.Model;

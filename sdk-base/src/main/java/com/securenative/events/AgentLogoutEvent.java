@@ -1,6 +1,5 @@
 package com.securenative.events;
 
-import com.securenative.models.Event;
 import com.securenative.models.EventTypes;
 
 import java.time.ZonedDateTime;

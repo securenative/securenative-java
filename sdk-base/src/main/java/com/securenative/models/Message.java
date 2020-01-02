@@ -1,5 +1,7 @@
 package com.securenative.models;
 
+import com.securenative.events.Event;
+
 public class Message {
     private Event snEvent;
     private String url;
