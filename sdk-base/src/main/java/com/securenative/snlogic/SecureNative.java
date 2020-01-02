@@ -3,6 +3,8 @@ package com.securenative.snlogic;
 
 import com.securenative.events.EventFactory;
 import com.securenative.exceptions.SecureNativeSDKException;
+import com.securenative.middleware.IMiddleware;
+import com.securenative.middleware.MiddlewareFactory;
 import com.securenative.models.Event;
 import com.securenative.models.EventTypes;
 import com.securenative.models.RiskResult;
@@ -26,8 +28,12 @@ public class SecureNative implements ISDK {
     private static ISDK secureNative = null;
 
     public ModuleManager moduleManager;
+    public IMiddleware middleware;
 
     public SecureNative(ModuleManager moduleManager, SecureNativeOptions snOptions) {
+        this.utils = new Utils();
+        this.snOptions = initializeOptions(snOptions);
+        Logger.setLoggingEnable(this.snOptions.getDebugMode());
         this.moduleManager = moduleManager;
         this.snOptions = snOptions;
     }
@@ -138,15 +144,50 @@ public class SecureNative implements ISDK {
     }
 
     @Override
-    public Boolean startAgent() {
-        return null;
+    public Boolean startAgent() throws SecureNativeSDKException {
+        if (!this.isAgentStarted) {
+            Logger.getLogger().debug("Attempting to start agent");
+            if (this.snOptions.getApiKey() == null) {
+                throw new SecureNativeSDKException("You must pass your SecureNative api key");
+            }
+
+            if (this.snOptions.isAgentDisable()) {
+                Logger.getLogger().debug("Skipping agent start");
+                return false;
+            }
+
+            // create middleware
+            this.middleware = MiddlewareFactory.createMiddleware(this);
+            this.middleware.verifyWebhook = this.middleware.verifyWebhook.bind(this.middleware);
+            this.middleware.verifyRequest = this.middleware.verifyRequest.bind(this.middleware);
+
+            // apply interceptors
+            InterceptorManager.applyInterceptors(this.moduleManager, this.middleware.verifyRequest, this.middleware.errorHandler);
+
+            // obtain session
+            String sessionId = this.agentLogin();
+            if (sessionId != null) {
+                // TODO check setSessionId
+                this.eventManager.setSessionId(sessionId);
+                this.eventManager.startEventsPersist();
+                this.isAgentStarted = true;
+
+                Logger.getLogger().debug("Agent successfully started!");
+                return true;
+            } else {
+                Logger.getLogger().debug("No session obtained, unable to start agent!");
+            }
+        } else {
+            Logger.getLogger().debug("Agent already started, skipping");
+        }
+        return false;
     }
 
     @Override
     public void stopAgent() {
         if (this.isAgentStarted) {
             Logger.getLogger().debug("Attempting to stop agent");
-      Boolean status = this.agentLogout();
+            Boolean status = this.agentLogout();
             if (status) {
                 this.eventManager.stopEventsPersist();
                 this.isAgentStarted = false;

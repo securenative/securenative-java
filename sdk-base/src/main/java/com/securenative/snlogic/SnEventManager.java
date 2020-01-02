@@ -127,6 +127,11 @@ public class SnEventManager implements EventManager {
     }
 
     @Override
+    public void setSessionId(String sessionId) {
+
+    }
+
+    @Override
     public String sendAgentEvent(Event event, String requestUrl) {
         return null;
     }

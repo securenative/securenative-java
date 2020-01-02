@@ -1,6 +1,7 @@
 package com.securenative.snlogic;
 
 
+import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.models.Event;
 import com.securenative.models.RiskResult;
 
@@ -12,6 +13,6 @@ public interface ISDK {
     String getDefaultCookieName();
     String  agentLogin();
     Boolean agentLogout();
-    Boolean startAgent();
+    Boolean startAgent() throws SecureNativeSDKException;
     void stopAgent();
 }

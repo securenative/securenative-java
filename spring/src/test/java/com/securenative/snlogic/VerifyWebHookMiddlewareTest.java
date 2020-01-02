@@ -15,7 +15,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -43,19 +42,19 @@ public class VerifyWebHookMiddlewareTest {
 
     @Test
     public void buildEventFromHttpServletWhenEventNullTest() throws Exception {
-        when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("_sn",encrypted),new Cookie("n","v")});
+        when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("_sn", encrypted), new Cookie("n", "v")});
         when(request.getHeader("header")).thenReturn("header");
         when(request.getHeader(this.utils.USERAGENT_HEADER)).thenReturn("user_agent_header_test");
         when(request.getRemoteAddr()).thenReturn("address");
         Event event = v.buildEventFromHttpServletRequest(request, null);
-        Assert.assertEquals(event.getEventType(),"sn.user.login");
-        Assert.assertEquals(event.getCid(),"198a41ff-a10f-4cda-a2f3-a9ca80c0703b");
-        Assert.assertEquals(event.getFp(),"6d8cabd95987f8318b1fe01593d5c2a5.24700f9f1986800ab4fcc880530dd0ed");
-        Assert.assertEquals(event.getIp(),"127.0.0.1");
-        Assert.assertEquals(event.getRemoteIP(),"address");
-        Assert.assertEquals(event.getUserAgent(),"user_agent_header_test");
-        Assert.assertEquals(event.getUser().getEmail(),"anonymous");
-        Assert.assertEquals(event.getCookieValue(),encrypted);
+        Assert.assertEquals(event.getEventType(), "sn.user.login");
+        Assert.assertEquals(event.getCid(), "198a41ff-a10f-4cda-a2f3-a9ca80c0703b");
+        Assert.assertEquals(event.getFp(), "6d8cabd95987f8318b1fe01593d5c2a5.24700f9f1986800ab4fcc880530dd0ed");
+        Assert.assertEquals(event.getIp(), "127.0.0.1");
+        Assert.assertEquals(event.getRemoteIP(), "address");
+        Assert.assertEquals(event.getUserAgent(), "user_agent_header_test");
+        Assert.assertEquals(event.getUser().getEmail(), "anonymous");
+        Assert.assertEquals(event.getCookieValue(), encrypted);
     }
 
     @Test
@@ -64,20 +63,20 @@ public class VerifyWebHookMiddlewareTest {
         when(request.getHeader(this.utils.USERAGENT_HEADER)).thenReturn("user_agent_header_test");
         when(request.getRemoteAddr()).thenReturn("address");
         Event event = v.buildEventFromHttpServletRequest(request, new SnEvent.EventBuilder(EventTypes.LOG_OUT.getType()).withCookieValue(encrypted).withDevice(new Device("id")).withIp("ip").build());
-        Assert.assertEquals(event.getEventType(),"sn.user.logout");
-        Assert.assertEquals(event.getCid(),"198a41ff-a10f-4cda-a2f3-a9ca80c0703b");
-        Assert.assertEquals(event.getFp(),"6d8cabd95987f8318b1fe01593d5c2a5.24700f9f1986800ab4fcc880530dd0ed");
-        Assert.assertEquals(event.getIp(),"ip");
-        Assert.assertEquals(event.getDevice().getId(),"id");
-        Assert.assertEquals(event.getCookieValue(),encrypted);
+        Assert.assertEquals(event.getEventType(), "sn.user.logout");
+        Assert.assertEquals(event.getCid(), "198a41ff-a10f-4cda-a2f3-a9ca80c0703b");
+        Assert.assertEquals(event.getFp(), "6d8cabd95987f8318b1fe01593d5c2a5.24700f9f1986800ab4fcc880530dd0ed");
+        Assert.assertEquals(event.getIp(), "ip");
+        Assert.assertEquals(event.getDevice().getId(), "id");
+        Assert.assertEquals(event.getCookieValue(), encrypted);
     }
 
     @Test
     public void testEncryptionDecryption() throws NoSuchPaddingException, BadPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, UnsupportedEncodingException, InvalidAlgorithmParameterException {
         Utils utilsEnc = new Utils();
-        String enc = utilsEnc.encrypt(a,key);
-        String dec = utilsEnc.decrypt(enc,key);
-        Assert.assertEquals(a,dec);
+        String enc = utilsEnc.encrypt(a, key);
+        String dec = utilsEnc.decrypt(enc, key);
+        Assert.assertEquals(a, dec);
 
     }
 }
