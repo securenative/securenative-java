@@ -49,7 +49,7 @@ public class Utils {
                         (isValidInet4Address(s) || this.isIpV6Address(s)) &&
                         !isPrivateIPAddress(s)).collect(Collectors.toList());
                 if (candidates.size() > 0) {
-                    Logger.getLogger().info(String.format("Extracted remote ip %s",candidates.get(0)));
+                    Logger.getLogger().info(String.format("Extracted remote ip %s", candidates.get(0)));
                     return candidates.get(0);
                 }
             }
@@ -104,8 +104,8 @@ public class Utils {
         }
     }
 
-    private String calculateSignature(String payload, String apikey) {
-        if (this.isNullOrEmpty(payload)) {
+    private static String calculateSignature(String payload, String apikey) {
+        if (isNullOrEmpty(payload)) {
             return null;
         }
         try {
@@ -115,9 +115,9 @@ public class Utils {
         }
     }
 
-    public boolean isVerifiedSnRequest(String payload, String hedaerSignature, String apiKey) {
+    public static boolean isVerifiedSnRequest(String payload, String hedaerSignature, String apiKey) {
         String signed = calculateSignature(payload, apiKey);
-        if (this.isNullOrEmpty(signed) || this.isNullOrEmpty(hedaerSignature)) {
+        if (isNullOrEmpty(signed) || isNullOrEmpty(hedaerSignature)) {
             return false;
         }
         return hedaerSignature.equals(signed);
@@ -174,9 +174,10 @@ public class Utils {
         }
         return retValue;
     }
+
     private final static char[] HEX = new char[]{
             '0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 
     private static String byteArrayToHex(byte[] byteArray) {
@@ -187,13 +188,13 @@ public class Utils {
         return hexBuffer.toString();
     }
 
-    private byte[] pad (byte[] buf, int size){
+    private byte[] pad(byte[] buf, int size) {
         int bufLen = buf.length;
-        int padLen = size - bufLen%size;
-        byte[] padded = new byte[bufLen+padLen];
-        padded = Arrays.copyOf(buf,bufLen+padLen);
+        int padLen = size - bufLen % size;
+        byte[] padded = new byte[bufLen + padLen];
+        padded = Arrays.copyOf(buf, bufLen + padLen);
         for (int i = 0; i < padLen; i++) {
-            padded[bufLen+i] = (byte)padLen;
+            padded[bufLen + i] = (byte) padLen;
         }
         return padded;
     }
@@ -213,8 +214,9 @@ public class Utils {
         if (mod != 0) {
             text = String.format(text + "%" + (16 - mod) + "s", " ");
         }
-        return byteArrayToHex(cipher.doFinal(addAll(ivBytes,text.getBytes("UTF-8")))).trim();
+        return byteArrayToHex(cipher.doFinal(addAll(ivBytes, text.getBytes("UTF-8")))).trim();
     }
+
     private static byte[] addAll(final byte[] array1, byte[] array2) {
         byte[] joinedArray = Arrays.copyOf(array1, array1.length + array2.length);
         System.arraycopy(array2, 0, joinedArray, array1.length, array2.length);

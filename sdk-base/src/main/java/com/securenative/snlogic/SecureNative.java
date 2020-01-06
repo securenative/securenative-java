@@ -1,11 +1,11 @@
 package com.securenative.snlogic;
 
 
+import com.securenative.events.Event;
 import com.securenative.events.EventFactory;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.middleware.IMiddleware;
 import com.securenative.middleware.MiddlewareFactory;
-import com.securenative.events.Event;
 import com.securenative.models.EventTypes;
 import com.securenative.models.RiskResult;
 import com.securenative.models.SecureNativeOptions;
@@ -40,7 +40,7 @@ public class SecureNative implements ISDK {
 
     private SecureNative(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         this.utils = new Utils();
-        if (this.utils.isNullOrEmpty(apiKey)) {
+        if (Utils.isNullOrEmpty(apiKey)) {
             throw new SecureNativeSDKException("You must pass your SecureNative api key");
         }
         this.apiKey = apiKey;
@@ -63,7 +63,7 @@ public class SecureNative implements ISDK {
 
     public static ISDK getInstance() throws SecureNativeSDKException {
         if (secureNative == null) {
-            throw new SecureNativeSDKException("Secure Native SDK wasnt initialized yet, please call init first");
+            throw new SecureNativeSDKException("Secure Native SDK wasn't initialized yet, please call init first");
         }
         return secureNative;
     }
@@ -157,14 +157,11 @@ public class SecureNative implements ISDK {
             }
 
             // TODO:
-            // 1.   create middleware factory and apply some interface to existing ones
             // 2.   create interception manager and apply it to byte-body
             // 3.   attach sessionid to agent header
 
             // create middleware
             this.middleware = MiddlewareFactory.createMiddleware(this);
-            this.middleware.verifyWebhook = this.middleware.verifyWebhook.bind(this.middleware);
-            this.middleware.verifyRequest = this.middleware.verifyRequest.bind(this.middleware);
 
             // apply interceptors
             InterceptorManager.applyInterceptors(this.moduleManager, this.middleware.verifyRequest, this.middleware.errorHandler);
