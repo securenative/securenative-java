@@ -4,6 +4,7 @@ package com.securenative.snlogic;
 import com.securenative.events.Event;
 import com.securenative.events.EventFactory;
 import com.securenative.exceptions.SecureNativeSDKException;
+import com.securenative.interceptors.InterceptorManager;
 import com.securenative.middleware.IMiddleware;
 import com.securenative.middleware.MiddlewareFactory;
 import com.securenative.models.EventTypes;
@@ -49,7 +50,6 @@ public class SecureNative implements ISDK {
         Logger.setLoggingEnable(this.snOptions.getDebugMode());
     }
 
-
     public static ISDK init(String apiKey, SecureNativeOptions options) throws SecureNativeSDKException {
         if (secureNative == null) {
             secureNative = new SecureNative(apiKey, options);
@@ -73,7 +73,7 @@ public class SecureNative implements ISDK {
             Logger.getLogger().info("SecureNative options are empty, initializing default values");
             options = new SecureNativeOptions();
         }
-        if (this.utils.isNullOrEmpty(options.getApiUrl())) {
+        if (Utils.isNullOrEmpty(options.getApiUrl())) {
             options.setApiUrl(API_URL);
         }
 
@@ -164,7 +164,7 @@ public class SecureNative implements ISDK {
             this.middleware = MiddlewareFactory.createMiddleware(this);
 
             // apply interceptors
-            InterceptorManager.applyInterceptors(this.moduleManager, this.middleware.verifyRequest, this.middleware.errorHandler);
+            InterceptorManager.applyInterceptors(this.moduleManager, this.middleware);
 
             // obtain session
             String sessionId = this.agentLogin();
@@ -219,5 +219,4 @@ public class SecureNative implements ISDK {
     public String getApiKey() {
         return apiKey;
     }
-
 }
