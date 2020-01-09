@@ -5,8 +5,6 @@ import com.securenative.events.Event;
 import com.securenative.events.EventFactory;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.interceptors.InterceptorManager;
-import com.securenative.middleware.IMiddleware;
-import com.securenative.middleware.MiddlewareFactory;
 import com.securenative.models.EventTypes;
 import com.securenative.models.RiskResult;
 import com.securenative.models.SecureNativeOptions;
@@ -29,7 +27,6 @@ public class SecureNative implements ISDK {
     private static ISDK secureNative = null;
 
     public ModuleManager moduleManager;
-    public IMiddleware middleware;
 
     public SecureNative(ModuleManager moduleManager, SecureNativeOptions snOptions) {
         this.utils = new Utils();
@@ -156,21 +153,14 @@ public class SecureNative implements ISDK {
                 return false;
             }
 
-            // TODO:
-            // 2.   create interception manager and apply it to byte-body
-            // 3.   attach sessionid to agent header
-
-            // create middleware
-            this.middleware = MiddlewareFactory.createMiddleware(this);
-
             // apply interceptors
-            InterceptorManager.applyInterceptors(this.moduleManager, this.middleware);
+            InterceptorManager.applyModuleInterceptors(this.moduleManager, this);
 
             // obtain session
             String sessionId = this.agentLogin();
             if (sessionId != null) {
-                // TODO check setSessionId
-                this.eventManager.setSessionId(sessionId);
+                InterceptorManager.applyAgentInterceptor(sessionId);
+                // TODO add event persist
                 this.eventManager.startEventsPersist();
                 this.isAgentStarted = true;
 

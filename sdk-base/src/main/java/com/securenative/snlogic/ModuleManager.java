@@ -1,25 +1,26 @@
 package com.securenative.snlogic;
 
+
 public class ModuleManager {
     public String framework;
+    public String frameworkVersion;
 
-    // TODO implement me
-    public ModuleManager() {
+    public ModuleManager(String modulePath) {
+        SnPackage snPackage = PackageManager.getPackage(modulePath);
+
+        for (int i=0; i < snPackage.dependencies.length; i++) {
+            if (snPackage.dependencies[i].groupId.toLowerCase().contains("spring")) {
+                this.framework = snPackage.dependencies[i].groupId;
+                this.frameworkVersion = snPackage.dependencies[i].version;
+            }
+        }
     }
 
     public String getFramework() {
-        return framework;
+        return this.framework;
     }
 
     public String getFrameworkVersion() {
-        return null;
-    }
-
-    public String getModule() {
-        return null;
-    }
-
-    public String getModuleVersion() {
-        return null;
+        return this.frameworkVersion;
     }
 }
