@@ -103,7 +103,7 @@ public class Utils {
         }
     }
 
-    private static String calculateSignature(String payload, String apikey) {
+    private String calculateSignature(String payload, String apikey) {
         if (isNullOrEmpty(payload)) {
             return null;
         }
@@ -114,8 +114,8 @@ public class Utils {
         }
     }
 
-    public static boolean isVerifiedSnRequest(String payload, String hedaerSignature, String apiKey) {
-        String signed = calculateSignature(payload, apiKey);
+    public boolean isVerifiedSnRequest(String payload, String hedaerSignature, String apiKey) {
+        String signed = this.calculateSignature(payload, apiKey);
         if (isNullOrEmpty(signed) || isNullOrEmpty(hedaerSignature)) {
             return false;
         }
