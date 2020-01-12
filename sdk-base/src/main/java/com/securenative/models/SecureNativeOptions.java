@@ -1,24 +1,26 @@
 package com.securenative.models;
 
-public class SecureNativeOptions {
-    private String apiUrl;
-    private int interval;
-    private long maxEvents;
-    private long timeout;
-    private Boolean autoSend;
-    private Boolean isSdkEnabled;
-    private Boolean debugMode;
-    private String appName;
-    private String apiKey;
-    private Boolean isAgentDisable;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    public SecureNativeOptions(){
+public class SecureNativeOptions {
+    @JsonProperty("apiUrl") private String apiUrl;
+    @JsonProperty("interval") private int interval;
+    @JsonProperty("maxEvents") private long maxEvents;
+    @JsonProperty("timeout") private long timeout;
+    @JsonProperty("autoSend") private Boolean autoSend;
+    @JsonProperty("isSdkEnabled") private Boolean isSdkEnabled;
+    @JsonProperty("debugMode") private Boolean debugMode;
+    @JsonProperty("appName") private String appName;
+    @JsonProperty("apiKey") private String apiKey;
+    @JsonProperty("isAgentDisable") private Boolean isAgentDisable;
+
+    public SecureNativeOptions() {
         this.autoSend = true;
         this.isSdkEnabled = true;
         this.debugMode = false;
     }
 
-    public SecureNativeOptions(String apiKey,Boolean isAgentDisable, String appName, String apiUrl, int interval, long maxEvents, int timeout, boolean autoSend, boolean isSdkEnabled, boolean debugMode) {
+    public SecureNativeOptions(String apiKey, Boolean isAgentDisable, String appName, String apiUrl, int interval, long maxEvents, int timeout, boolean autoSend, boolean isSdkEnabled, boolean debugMode) {
         this.interval = interval;
         this.maxEvents = maxEvents;
         this.apiUrl = apiUrl;
@@ -108,5 +110,25 @@ public class SecureNativeOptions {
 
     public void setDebugMode(Boolean debugMode) {
         this.debugMode = debugMode;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public void setAgentDisable(Boolean agentDisable) {
+        isAgentDisable = agentDisable;
+    }
+
+    public Boolean getAutoSend() {
+        return autoSend;
+    }
+
+    public Boolean getAgentDisable() {
+        return isAgentDisable;
     }
 }

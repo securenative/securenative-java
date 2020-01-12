@@ -15,9 +15,11 @@ import java.io.InputStreamReader;
 public class SpringVerifyWebhookMiddleware implements Filter {
     private SecureNative secureNative;
     private final String SIGNATURE_KEY = "x-securenative";
+    private Utils utils;
 
     public SpringVerifyWebhookMiddleware(SecureNative secureNative) {
         this.secureNative = secureNative;
+        this.utils = new Utils();
     }
 
     @Override
@@ -34,7 +36,7 @@ public class SpringVerifyWebhookMiddleware implements Filter {
             signature = req.getHeader(SIGNATURE_KEY);
         }
         String payload = getBody(servletRequest);
-        if (Utils.isVerifiedSnRequest(payload, signature, this.secureNative.getApiKey())) {
+        if (this.utils.isVerifiedSnRequest(payload, signature, this.secureNative.getApiKey())) {
             filterChain.doFilter(req, res);
             return;
         }
