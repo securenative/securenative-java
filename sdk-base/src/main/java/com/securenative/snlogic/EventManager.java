@@ -11,8 +11,6 @@ public interface EventManager {
 
     void sendAsync(Event event, String url);
 
-    void setSessionId(String sessionId);
-
     void stopEventsPersist();
 
     void startEventsPersist();

@@ -38,7 +38,9 @@ public class PackageManager {
             Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element eElement = (Element) node;
-                dependencies[j] = new Dependency(eElement.getAttribute("groupId"), eElement.getAttribute("artifactId"), eElement.getAttribute("version"));
+                String name = eElement.getElementsByTagName("groupId").item(0).getTextContent().concat(
+                        ":").concat(eElement.getElementsByTagName("artifactId").item(0).getTextContent());
+                dependencies[j] = new Dependency(name, eElement.getElementsByTagName("version").item(0).getTextContent());
                 j += 1;
             }
         }
@@ -62,11 +64,22 @@ public class PackageManager {
         NodeList deps = document.getElementsByTagName("dependencies");
         NodeList parent = document.getElementsByTagName("parent");
 
+        String artifactId;
+        String groupId;
+        String version;
+
+        if (parent.getLength() > 0) {
+            artifactId = parseParent(parent, "artifactId");
+            groupId = parseParent(parent, "groupId");
+            version = parseParent(parent, "version");
+        } else {
+            artifactId = document.getElementsByTagName("artifactId").item(0).getTextContent();
+            groupId = document.getElementsByTagName("groupId").item(0).getTextContent();
+            version = document.getElementsByTagName("version").item(0).getTextContent();
+        }
+
         Dependency[] dependencies = parseDependencies(deps);
         String dependenciesHash = SnUtils.calculateHash(Arrays.toString(dependencies));
-        String artifactId = parseParent(parent, "artifactId");
-        String groupId = parseParent(parent, "groupId");
-        String version = parseParent(parent, "version");
 
         return new SnPackage(artifactId, groupId, version, dependencies, dependenciesHash);
     }

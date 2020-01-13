@@ -1,9 +1,10 @@
 package com.securenative.events;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.securenative.models.EventTypes;
+import com.securenative.snlogic.Logger;
 import com.securenative.snlogic.PackageManager;
 import com.securenative.snlogic.SnPackage;
-import com.securenative.snlogic.Logger;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -12,15 +13,15 @@ import java.time.ZonedDateTime;
 public class AgentLoginEvent implements Event {
     private static final String PACKAGE_FILE_NAME = "pom.xml";
 
-    public String eventType;
-    public Long ts;
-    public SnPackage snPackage;
-    public String appName;
-    public SnProcess process;
-    public SnRuntime snRuntime;
-    public Os os;
-    public Framework framework;
-    public Agent agent;
+    @JsonProperty("eventType") public String eventType;
+    @JsonProperty("ts") public Long ts;
+    @JsonProperty("package") public SnPackage snPackage;
+    @JsonProperty("appName") public String appName;
+    @JsonProperty("process") public SnProcess process;
+    @JsonProperty("runtime") public SnRuntime snRuntime;
+    @JsonProperty("os") public Os os;
+    @JsonProperty("framework") public Framework framework;
+    @JsonProperty("agent") public Agent agent;
 
     public AgentLoginEvent(String framework, String frameworkVersion, String appName) {
         String cwd = System.getProperty("user.dir");
@@ -65,9 +66,9 @@ public class AgentLoginEvent implements Event {
 }
 
 class SnProcess {
-    Long pid;
-    String name;
-    String cwd;
+    @JsonProperty("pid") Long pid;
+    @JsonProperty("name") String name;
+    @JsonProperty("cwd") String cwd;
 
     public SnProcess(Long pid, String name, String cwd) {
         this.pid = pid;
@@ -77,8 +78,8 @@ class SnProcess {
 }
 
 class SnRuntime {
-    String type;
-    String version;
+    @JsonProperty("type") String type;
+    @JsonProperty("version") String version;
 
     public SnRuntime(String type, String version) {
         this.type = type;
@@ -87,12 +88,12 @@ class SnRuntime {
 }
 
 class Os {
-    String hostId;
-    String hostname;
-    String arch;
-    String platform;
-    Integer cpus;
-    Long totalMemory;
+    @JsonProperty("hostId") String hostId;
+    @JsonProperty("hostName") String hostname;
+    @JsonProperty("arch") String arch;
+    @JsonProperty("platform") String platform;
+    @JsonProperty("cpus") Integer cpus;
+    @JsonProperty("totalMemory") Long totalMemory;
 
     public Os(String hostId, String hostname, String arch, String platform, Integer cpus, Long totalMemory) {
         this.hostId = hostId;
@@ -105,8 +106,8 @@ class Os {
 }
 
 class Framework {
-    String type;
-    String version;
+    @JsonProperty("type") String type;
+    @JsonProperty("version") String version;
 
     public Framework(String type, String version) {
         this.type = type;
@@ -115,9 +116,9 @@ class Framework {
 }
 
 class Agent {
-    String type;
-    String version;
-    String path;
+    @JsonProperty("type") String type;
+    @JsonProperty("version") String version;
+    @JsonProperty("path") String path;
 
     public Agent(String type, String version, String path) {
         this.type = type;

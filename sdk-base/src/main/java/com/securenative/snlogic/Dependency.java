@@ -1,13 +1,21 @@
 package com.securenative.snlogic;
 
-public class Dependency {
-    String groupId;
-    String artifactId;
-    String version;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    public Dependency(String groupId, String artifactId, String version) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
+public class Dependency {
+    @JsonProperty("name") String name;
+    @JsonProperty("version") String version;
+
+    public Dependency(String name, String version) {
+        this.name = name;
         this.version = version;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }

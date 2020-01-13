@@ -28,10 +28,12 @@ public class SecureNative implements ISDK {
 
     public ModuleManager moduleManager;
 
-    public SecureNative(ModuleManager moduleManager, SecureNativeOptions snOptions) {
+    public SecureNative(ModuleManager moduleManager, SecureNativeOptions snOptions) throws SecureNativeSDKException {
+        this.apiKey = snOptions.getApiKey();
         this.utils = new Utils();
         this.snOptions = initializeOptions(snOptions);
         Logger.setLoggingEnable(this.snOptions.getDebugMode());
+        this.eventManager = new SnEventManager(this.apiKey, this.snOptions);
         this.moduleManager = moduleManager;
         this.snOptions = snOptions;
     }
@@ -116,10 +118,16 @@ public class SecureNative implements ISDK {
         Event event = EventFactory.createEvent(EventTypes.AGENT_LOG_IN, framework, frameworkVersion, this.snOptions.getAppName());
         try {
             String sessionId = this.eventManager.sendAgentEvent(event, requestUrl);
-            Logger.getLogger().debug(String.join("Agent successfully logged-in, sessionId: ", sessionId));
+
+            if (sessionId.toLowerCase().equals("invalid api key id")) {
+                Logger.getLogger().debug("Failed to perform agent login: Invalid api key id");
+                return null;
+            }
+
+            Logger.getLogger().debug(String.format("Agent successfully logged-in, sessionId: %s", sessionId));
             return sessionId;
         } catch (Exception e) {
-            Logger.getLogger().debug(String.join("Failed to perform agent login: %s", e.toString()));
+            Logger.getLogger().debug(String.format("Failed to perform agent login: %s", e.toString()));
         }
         return null;
     }
@@ -168,11 +176,12 @@ public class SecureNative implements ISDK {
                 return true;
             } else {
                 Logger.getLogger().debug("No session obtained, unable to start agent!");
+                return false;
             }
         } else {
             Logger.getLogger().debug("Agent already started, skipping");
+            return false;
         }
-        return false;
     }
 
     @Override

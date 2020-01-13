@@ -14,10 +14,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
-import java.util.Arrays;
-import java.util.Formatter;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -220,5 +217,30 @@ public class Utils {
         byte[] joinedArray = Arrays.copyOf(array1, array1.length + array2.length);
         System.arraycopy(array2, 0, joinedArray, array1.length, array2.length);
         return joinedArray;
+    }
+
+    public static int versionCompare(String str1, String str2) {
+        try (Scanner s1 = new Scanner(str1);
+             Scanner s2 = new Scanner(str2)) {
+            s1.useDelimiter("\\.");
+            s2.useDelimiter("\\.");
+
+            while (s1.hasNextInt() && s2.hasNextInt()) {
+                int v1 = s1.nextInt();
+                int v2 = s2.nextInt();
+                if (v1 < v2) {
+                    return -1;
+                } else if (v1 > v2) {
+                    return 1;
+                }
+            }
+
+            if (s1.hasNextInt() && s1.nextInt() != 0)
+                return 1;
+            if (s2.hasNextInt() && s2.nextInt() != 0)
+                return -1;
+
+            return 0;
+        }
     }
 }

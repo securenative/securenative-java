@@ -128,13 +128,27 @@ public class SnEventManager implements EventManager {
     }
 
     @Override
-    public void setSessionId(String sessionId) {
-
-    }
-
-    @Override
     public String sendAgentEvent(Event event, String requestUrl) {
-        return null;
+        this.asyncClient.setHeader(AUTHORIZATION, this.apiKey).setUrl(requestUrl);
+        try {
+            this.asyncClient.setBody(mapper.writeValueAsString(event));
+            Response response = this.asyncClient.execute().get();
+            if (response == null || response.getStatusCode() > HTTP_STATUS_OK) {
+                Logger.getLogger().info(String.format("Secure Native http call failed to end point: %s  with event type %s. adding back to queue.", requestUrl, event.getEventType()));
+                assert response != null;
+                events.add(new Message(event, response.getUri().toUrl()));
+            }
+            String responseBody = response.getResponseBody();
+            if (Utils.isNullOrEmpty(responseBody)) {
+                Logger.getLogger().info(String.format("Secure Native http call to %s returned with empty response. returning default risk result.", requestUrl));
+                return "";
+            }
+            Logger.getLogger().info(String.format("Secure Native http call to %s was successful.", requestUrl));
+            return responseBody;
+        } catch (InterruptedException | ExecutionException | IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     private BoundRequestBuilder initializeAsyncHttpClient(SecureNativeOptions options) {

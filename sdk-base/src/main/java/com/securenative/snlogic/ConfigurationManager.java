@@ -16,96 +16,98 @@ public class ConfigurationManager {
     public static SecureNativeOptions getConfig() {
         if (config == null) {
             SecureNativeOptions fileConfig = readConfigFile();
+            config = new SecureNativeOptions();
 
-            if (!fileConfig.getApiUrl().isEmpty()) {
+            if (fileConfig != null && !fileConfig.getApiUrl().isEmpty()) {
                 config.setApiUrl(fileConfig.getApiUrl());
             } else {
-                if (!System.getenv("SECURENATIVE_API_URL").isEmpty()) {
+                if (System.getenv("SECURENATIVE_API_URL") != null) {
                     config.setApiUrl(System.getenv("SECURENATIVE_API_URL"));
                 } else {
                     config.setApiUrl("https://api.securenative.com/collector/api/v1");
                 }
             }
 
-            if (!fileConfig.getApiKey().isEmpty()) {
+            if (fileConfig != null && !fileConfig.getApiKey().isEmpty()) {
                 config.setApiKey(fileConfig.getApiKey());
             } else {
-                if (!System.getenv("SECURENATIVE_API_KEY").isEmpty()) {
+                if (System.getenv("SECURENATIVE_API_KEY") != null) {
                     config.setApiKey(System.getenv("SECURENATIVE_API_KEY"));
                 } else {
                     config.setApiKey(null);
                 }
             }
 
-            if (!fileConfig.getAppName().isEmpty()) {
+            if (fileConfig != null && !fileConfig.getAppName().isEmpty()) {
                 config.setAppName(fileConfig.getAppName());
             } else {
-                if (!System.getenv("SECURENATIVE_APP_NAME").isEmpty()) {
+                if (System.getenv("SECURENATIVE_APP_NAME") != null) {
                     config.setAppName(System.getenv("SECURENATIVE_APP_NAME"));
                 } else {
                     config.setAppName("");
                 }
             }
 
-            if (fileConfig.getInterval() != 0) {
+            if (fileConfig != null && fileConfig.getInterval() != 0) {
                 config.setInterval(fileConfig.getInterval());
             } else {
-                if (!System.getenv("SECURENATIVE_INTERVAL").isEmpty()) {
+                if (System.getenv("SECURENATIVE_INTERVAL") != null) {
                     config.setInterval(Integer.parseInt(System.getenv("SECURENATIVE_INTERVAL")));
                 } else {
                     config.setInterval(1000);
                 }
             }
 
-            if (fileConfig.getMaxEvents() != 0) {
+            if (fileConfig != null && fileConfig.getMaxEvents() != 0) {
                 config.setMaxEvents(fileConfig.getMaxEvents());
             } else {
-                if (!System.getenv("SECURENATIVE_MAX_EVENTS").isEmpty()) {
+                if (System.getenv("SECURENATIVE_MAX_EVENTS") != null) {
                     config.setMaxEvents(Integer.parseInt(System.getenv("SECURENATIVE_MAX_EVENTS")));
                 } else {
                     config.setMaxEvents(1000);
                 }
             }
 
-            if (fileConfig.getTimeout() != 0) {
+            if (fileConfig != null && fileConfig.getTimeout() != 0) {
                 config.setTimeout(fileConfig.getTimeout());
             } else {
-                if (!System.getenv("SECURENATIVE_TIMEOUT").isEmpty()) {
+                if (System.getenv("SECURENATIVE_TIMEOUT") != null) {
                     config.setTimeout(Integer.parseInt(System.getenv("SECURENATIVE_TIMEOUT")));
                 } else {
                     config.setTimeout(1500);
                 }
             }
 
-            if (fileConfig.getAutoSend() == null) {
+            if (fileConfig != null && fileConfig.getAutoSend() == null) {
                 config.setAutoSend(fileConfig.getAutoSend());
             } else {
-                if (!System.getenv("SECURENATIVE_AUTO_SEND").isEmpty()) {
+                if (System.getenv("SECURENATIVE_AUTO_SEND") != null) {
                     config.setAutoSend(Boolean.parseBoolean(System.getenv("SECURENATIVE_AUTO_SEND")));
                 } else {
                     config.setAutoSend(true);
                 }
             }
 
-            if (fileConfig.getAgentDisable() == null) {
+            if (fileConfig != null && fileConfig.getAgentDisable() == null) {
                 config.setAgentDisable(fileConfig.getAgentDisable());
             } else {
-                if (!System.getenv("SECURENATIVE_DISABLE").isEmpty()) {
+                if (System.getenv("SECURENATIVE_DISABLE") != null) {
                     config.setAgentDisable(Boolean.parseBoolean(System.getenv("SECURENATIVE_DISABLE")));
                 } else {
                     config.setAgentDisable(false);
                 }
             }
 
-            if (fileConfig.getDebugMode() == null) {
+            if (fileConfig != null && fileConfig.getDebugMode() == null) {
                 config.setDebugMode(fileConfig.getDebugMode());
             } else {
-                if (!System.getenv("SECURENATIVE_DEBUG_MODE").isEmpty()) {
+                if (System.getenv("SECURENATIVE_DEBUG_MODE") != null) {
                     config.setDebugMode(Boolean.parseBoolean(System.getenv("SECURENATIVE_DEBUG_MODE")));
                 } else {
                     config.setDebugMode(false);
                 }
             }
+            config.setMinSupportedVersion("8");
         }
 
         return config;

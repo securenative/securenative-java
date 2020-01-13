@@ -13,6 +13,7 @@ public class SecureNativeOptions {
     @JsonProperty("appName") private String appName;
     @JsonProperty("apiKey") private String apiKey;
     @JsonProperty("isAgentDisable") private Boolean isAgentDisable;
+    @JsonProperty("minSupportedVersion") private String minSupportedVersion;
 
     public SecureNativeOptions() {
         this.autoSend = true;
@@ -130,5 +131,13 @@ public class SecureNativeOptions {
 
     public Boolean getAgentDisable() {
         return isAgentDisable;
+    }
+
+    public void setMinSupportedVersion(String minSupportedVersion) {
+        this.minSupportedVersion = minSupportedVersion;
+    }
+
+    public String getMinSupportedVersion() {
+        return minSupportedVersion;
     }
 }
