@@ -116,17 +116,6 @@ public class SnEventManager implements EventManager {
 
     }
 
-    // TODO implement this
-    @Override
-    public void stopEventsPersist() {
-
-    }
-
-    @Override
-    public void startEventsPersist() {
-
-    }
-
     @Override
     public String sendAgentEvent(Event event, String requestUrl) {
         this.asyncClient.setHeader(AUTHORIZATION, this.apiKey).setUrl(requestUrl);

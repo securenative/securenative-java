@@ -171,7 +171,6 @@ public class SecureNative implements ISDK {
             if (sessionId != null) {
                 sessionId = parseSessionId(sessionId);
                 InterceptorManager.applyAgentInterceptor(sessionId);
-                this.eventManager.startEventsPersist();
                 this.isAgentStarted = true;
 
                 Logger.getLogger().debug("Agent successfully started!");
@@ -192,7 +191,6 @@ public class SecureNative implements ISDK {
             Logger.getLogger().debug("Attempting to stop agent");
             Boolean status = this.agentLogout();
             if (status) {
-                this.eventManager.stopEventsPersist();
                 this.isAgentStarted = false;
             }
         }
