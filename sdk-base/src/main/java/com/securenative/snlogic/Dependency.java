@@ -12,10 +12,10 @@ public class Dependency {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getVersion() {
-        return version;
+        return this.version;
     }
 }

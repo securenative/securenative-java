@@ -8,6 +8,7 @@ import com.securenative.interceptors.InterceptorManager;
 import com.securenative.models.EventTypes;
 import com.securenative.models.RiskResult;
 import com.securenative.models.SecureNativeOptions;
+import org.json.JSONObject;
 
 public class SecureNative implements ISDK {
     private final String API_URL = "https://api.securenative.com/collector/api/v1";
@@ -149,11 +150,12 @@ public class SecureNative implements ISDK {
     }
 
     @Override
-    public Boolean startAgent() throws SecureNativeSDKException {
+    public Boolean startAgent() {
         if (!this.isAgentStarted) {
             Logger.getLogger().debug("Attempting to start agent");
             if (this.snOptions.getApiKey() == null) {
-                throw new SecureNativeSDKException("You must pass your SecureNative api key");
+                Logger.getLogger().error("You must pass your SecureNative api key");
+                return false;
             }
 
             if (this.snOptions.isAgentDisable()) {
@@ -167,8 +169,8 @@ public class SecureNative implements ISDK {
             // obtain session
             String sessionId = this.agentLogin();
             if (sessionId != null) {
+                sessionId = parseSessionId(sessionId);
                 InterceptorManager.applyAgentInterceptor(sessionId);
-                // TODO add event persist
                 this.eventManager.startEventsPersist();
                 this.isAgentStarted = true;
 
@@ -217,5 +219,10 @@ public class SecureNative implements ISDK {
     @Override
     public String getApiKey() {
         return apiKey;
+    }
+
+    private String parseSessionId(String sessionId) {
+        final JSONObject session = new JSONObject(sessionId);
+        return session.getString("sessionId");
     }
 }

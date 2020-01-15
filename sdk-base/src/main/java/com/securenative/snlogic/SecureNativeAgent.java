@@ -16,6 +16,12 @@ public class SecureNativeAgent {
         // Get relevant module
         ModuleManager moduleManager = new ModuleManager(appPkg);
         SecureNative secureNative = null;
+        try {
+            secureNative = new SecureNative(moduleManager, config);
+        } catch (SecureNativeSDKException e) {
+            Logger.getLogger().error("Could not find securenative api key. aborting.");
+            System.exit(1);
+        }
 
         // Init logger
         Logger.setLoggingEnable(true);
@@ -30,17 +36,13 @@ public class SecureNativeAgent {
             System.exit(1);
         }
 
-        // TODO add shutdown hook
-        try {
-            secureNative = new SecureNative(moduleManager, config);
-            secureNative.startAgent();
-        } catch (SecureNativeSDKException e) {
-            Logger.getLogger().error("Could not find securenative api key. aborting.");
-            System.exit(1);
-        }
+        SecureNative finalSecureNative = secureNative;
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            Logger.getLogger().debug("Received exit signal, exiting..");
+            finalSecureNative.stopAgent();
+            System.exit(0);
+        }));
 
-        Logger.getLogger().debug("Received exit signal, exiting..");
-        secureNative.stopAgent();
-        System.exit(0);
+        secureNative.startAgent();
     }
 }
