@@ -3,8 +3,10 @@ package com.securenative.snlogic;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.models.SecureNativeOptions;
 
+import java.lang.instrument.Instrumentation;
+
 public class SecureNativeAgent {
-    public static void main(String[] args) {
+    public static void premain(String args, Instrumentation inst) {
         // Set package information
         String PACKAGE_FILE_NAME = "/pom.xml";
         SnPackage appPkg = PackageManager.getPackage(System.getProperty("user.dir").concat(PACKAGE_FILE_NAME));

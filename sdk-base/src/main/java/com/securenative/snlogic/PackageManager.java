@@ -61,7 +61,7 @@ public class PackageManager {
     public static SnPackage getPackage(String packageFilePath) {
         Document document = readPackageFile(packageFilePath);
 
-        NodeList deps = document.getElementsByTagName("dependencies");
+        NodeList deps = document.getElementsByTagName("dependency");
         NodeList parent = document.getElementsByTagName("parent");
 
         String artifactId;
