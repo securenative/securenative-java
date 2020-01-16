@@ -11,7 +11,7 @@ public class SecureNativeAgent {
         SecureNativeOptions config = ConfigurationManager.getConfig();
 
         // Set default app name
-        config.setAppName(appPkg.groupId.concat(":").concat(appPkg.getArtifactId()));
+        config.setAppName(appPkg.getName());
 
         // Get relevant module
         ModuleManager moduleManager = new ModuleManager(appPkg);

@@ -81,6 +81,7 @@ public class PackageManager {
         Dependency[] dependencies = parseDependencies(deps);
         String dependenciesHash = SnUtils.calculateHash(Arrays.toString(dependencies));
 
-        return new SnPackage(artifactId, groupId, version, dependencies, dependenciesHash);
+        String name = groupId.concat(":").concat(artifactId);
+        return new SnPackage(name, version, dependencies, dependenciesHash);
     }
 }

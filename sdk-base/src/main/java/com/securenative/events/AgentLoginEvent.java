@@ -32,7 +32,7 @@ public class AgentLoginEvent implements Event {
         this.appName = appName;
         this.framework = new Framework(framework, frameworkVersion);
 
-        this.snPackage = new SnPackage(appPkg.getArtifactId(), appPkg.getGroupId(), appPkg.getVersion(), appPkg.getDependencies(), appPkg.getDependenciesHash());
+        this.snPackage = new SnPackage(appPkg.getName(), appPkg.getVersion(), appPkg.getDependencies(), appPkg.getDependenciesHash());
 
         this.eventType = EventTypes.AGENT_LOG_IN.getType();
 
