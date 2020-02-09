@@ -244,6 +244,12 @@
             <artifactId>aws-java-sdk-waf</artifactId>
             <version>1.11.714</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <properties>
