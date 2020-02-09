@@ -36,7 +36,7 @@ public class ActionSet {
             }
         } else if (type.equals(SetType.USER.name())) {
             this.user.add(new ActionItem(item, timeout));
-        } else {
+        } else if (type.equals(SetType.COUNTRY.name())) {
             this.country.add(new ActionItem(item, timeout));
         }
     }
@@ -49,9 +49,10 @@ public class ActionSet {
             return this.ip.contains(new ActionItem(item, timeout));
         } else if (type.equals(SetType.USER.name())) {
             return this.user.contains(new ActionItem(item, timeout));
-        } else {
+        } else if (type.equals(SetType.COUNTRY.name())) {
             return this.country.contains(new ActionItem(item, timeout));
         }
+        return false;
     }
 
     public void delete(String type, String item, @Nullable Long timeout) {
@@ -59,7 +60,7 @@ public class ActionSet {
             this.ip.remove(new ActionItem(item, timeout));
         } else if (type.equals(SetType.USER.name())) {
             this.user.remove(new ActionItem(item, timeout));
-        } else {
+        } else if (type.equals(SetType.COUNTRY.name())) {
             this.country.remove(new ActionItem(item, timeout));
         }
     }
@@ -84,4 +85,3 @@ public class ActionSet {
         return country;
     }
 }
-
