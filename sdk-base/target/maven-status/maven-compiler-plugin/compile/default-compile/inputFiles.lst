@@ -1,5 +1,6 @@
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/utils/SnUtils.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/models/SecureNativeOptions.java
+/Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/snlogic/ActionSet.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/models/ActionType.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/events/AgentLogoutEvent.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/snlogic/Agent.java
@@ -8,6 +9,7 @@
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/snlogic/Utils.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/models/ClientFingerPrint.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/models/Device.java
+/Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/models/SetType.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/models/Message.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/models/SnEvent.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/models/EventTypes.java
@@ -15,6 +17,7 @@
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/snlogic/SnPackage.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/events/AgentLoginEvent.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/snlogic/PackageManager.java
+/Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/models/ActionItem.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/events/Event.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/middleware/SpringVerifyWebhookMiddleware.java
 /Users/inbaltako/code/securenative-java/sdk-base/src/main/java/com/securenative/interceptors/AgentHeaderInterceptor.java

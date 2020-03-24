@@ -106,9 +106,10 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    <failOnError>false</failOnError>
                     <additionalOptions>
-                        <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-                        <failOnError>false</failOnError>
+                        <additionalparam>-Xdoclint:none</additionalparam>
                     </additionalOptions>
                 </configuration>
             </plugin>

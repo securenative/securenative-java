@@ -103,6 +103,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
+                    <additionalOptions>
+                        <additionalparam>Xdoclint:none</additionalparam>
+                    </additionalOptions>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                     <failOnError>false</failOnError>
                 </configuration>
