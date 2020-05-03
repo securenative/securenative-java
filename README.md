@@ -1,61 +1,58 @@
-
 # Java SDK for SecureNative
 
+[SecureNative](https://www.securenative.com/) performs user monitoring by analyzing user interactions with your application and various factors such as network, devices, locations and access patterns to stop and prevent account takeover attacks.
 
-**[SecureNative](https://www.securenative.com/) is rethinking-security-as-a-service, disrupting the cyber security space and the way enterprises consume and implement security solutions.**
-
-
-#SDK
-
-This Java sdk is very light, comes with only two dependencies (httpAsyncClient and Jackson).
-In addition, you can find two modules that can help you:
-
-[Spring](https://github.com/securenative/securenative-java/tree/master/spring) or any web application that uses javax.servlet
-
-[akka-http](https://github.com/securenative/securenative-java/tree/master/akka-http)
-
-# Quickstart
+## Install the SDK
 
 When using Maven, add the following dependency to your `pom.xml` file:
 ```xml
-      <dependency>
-        <groupId>com.securenative.java</groupId>
-        <artifactId>sdk-base</artifactId>
-        <version>0.2.4</version>
-      </dependency>
+<dependency>
+    <groupId>com.securenative.java</groupId>
+    <artifactId>sdk-base</artifactId>
+    <version>LATEST</version>
+</dependency>
 ```
 
-Gradle:
+When using Gradle, add the following dependency to your `build.gradle` file:
+```gradle
+compile group: 'com.securenative.java', name: 'sdk-parent', version: '0.3.1', ext: 'pom'
+```
 
-compile group: 'com.securenative.java', name: 'sdk-base', version: 'LATEST'
-
-
+When using SBT, add the following dependency to your `build.sbt` file:
+```sbt
+libraryDependencies += "com.securenative.java" % "sdk-parent" % "0.3.1" pomOnly()
+```
 
 ## Initialize the SDK
 
-Go to the settings page of your SecureNative account and find your **API KEY**
+To get your *API KEY*, login to your SecureNative account and go to project settings page:
 
-**Initialize using API KEY**
+### Option 1: Initialize via Config file
+SecureNative can automatically load your config from *securenative.properties* file or from the file that is specified in your *SECURENATIVE_CONFIG_FILE* env variable:
 
 ```java
- secureNative = new SecureNative(API_KEY,new SecureNativeOptions());
+SecureNative secureNative =  SecureNative.init();
+```
+### Option 2: Initialize via API Key
+
+```java
+SecureNative secureNative =  SecureNative.init("YOUR_API_KEY");
 ```
 
-You can pass empty SecureNativeOptions object or you can set the following:
+### Option 3: Initialize via ConfigurationBuilder
+```java
+SecureNative secureNative = SecureNative.init(SecureNative.configBuilder()
+                                        .withApiKey("API_KEY")
+                                        .withMaxEvents(10)
+                                        .withLogLevel("error")
+                                        .build()); 
+```
 
-   api url - target url the events will be sent (https://api.securenative.com/collector/api/v1).
-   interval - minimum interval between sending events (1000ms).
-   max events - maximum events that will be sent (1000).
-   timeout - (1500 ms).
-
-    ```java
-     secureNative = new SecureNative(API_KEY,new SecureNativeOptions(
-            "https://other.domain.com/collector/api/v1",
-            1200,
-            5000,
-            2000     
-      ));
-    ```
+## Getting SecureNative instance
+Once initialized, sdk will create a singleton instance which you can get: 
+```java
+SecureNative secureNative = SecureNative.getInstance();
+```
 
 ## Tracking events
 
@@ -177,3 +174,7 @@ Apply our filter to verify the request is from us, example in spring:
         return registrationBean;
     }
  ```
+
+[Spring](https://github.com/securenative/securenative-java/tree/master/spring) or any web application that uses javax.servlet
+
+[akka-http](https://github.com/securenative/securenative-java/tree/master/akka-http)
