@@ -89,7 +89,7 @@ You can also create request context from HttpServletRequest:
 
 ```java
 @RequestMapping("/track")
-public String track(HttpServletRequest request, HttpServletResponse response) {
+public void track(HttpServletRequest request, HttpServletResponse response) {
     SecureNativeContext context = SecureNative.contextBuilder()
                                               .fromHttpServletRequest(request);
 
@@ -115,7 +115,7 @@ public String track(HttpServletRequest request, HttpServletResponse response) {
 
 ```java
 @RequestMapping("/track")
-public String track(HttpServletRequest request, HttpServletResponse response) {
+public void track(HttpServletRequest request, HttpServletResponse response) {
     SecureNativeContext context = SecureNative.contextBuilder()
                                               .fromHttpServletRequest(request);
 
@@ -144,7 +144,7 @@ Apply our filter to verify the request is from us, example in spring:
 
 ```java
 @RequestMapping("/webhook")
-public String webhookEndpoint(HttpServletRequest request, HttpServletResponse response) {
+public void webhookEndpoint(HttpServletRequest request, HttpServletResponse response) {
     SecureNative secureNative = SecureNative.getInstance();
     
     // Checks if request if verified
