@@ -56,125 +56,98 @@ SecureNative secureNative = SecureNative.getInstance();
 
 ## Tracking events
 
-Once the SDK has been initialized, tracking requests are sent through the SDK
+Once the SDK has been initialized, tracking requests sent through the SDK
 instance. Make sure you build event with the EventBuilder:
 
  ```java
-Event event = new SnEvent.EventBuilder(EventTypes.LOG_IN.getType()).
-                            withUser(new User("","","apple@sucks.com")).
-                            withIp("35.199.23.1").
-                            withCookieValue("eyJjaWQiOiJkYzgyYjdhZS00ODFkLTQyODItYTMyZC0xZTU1Njk2ZjNmZTQiLCJmcCI6Ijk5NGYzZjVjZTRiYWUwODQzMTRhOTFkNzgyN2I1MWYuMjQ3MDBmOWYxOTg2ODAwYWI0ZmNjODgwNTMwZGQwZWQifQ").
-                            withRemoteIP("35.199.23.1").
-                            withUserAgent("Mozilla/5.0 (Linux; U; Android 4.4.2; zh-cn; GT-I9500 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko)Version/4.0 MQQBrowser/5.0 QQ-URL-Manager Mobile Safari/537.36").
-                            build();
+SecureNative secureNative = SecureNative.getInstance();
+
+SecureNativeContext context = SecureNative.contextBuilder()
+        .withIp("127.0.0.1")
+        .withClientToken("SECURED_CLIENT_TOKEN")
+        .withHeaders(Maps.defaultBuilder()
+                    .put("user-agent", "Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405")
+                    .build())
+        .build();
+
+EventOptions eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
+        .userId("USER_ID")
+        .userTraits(new UserTraits("'USER_NAME'", "'USER_EMAIL'"))
+        .context(context)
+        .properties(Maps.builder()
+                .put("prop1", "CUSTOM_PARAM_VALUE")
+                .put("prop2", true)
+                .put("prop3", 3)
+                .build())
+        .timestamp(new Date())
+        .build();
+
+secureNative.track(eventOptions);
  ```
 
-**Example**
+You can also create request context from HttpServletRequest:
 
 ```java
-   @RequestMapping("/track")
-    public String track( HttpServletRequest request, HttpServletResponse response) {
-        try {
-            secureNative = new SecureNative(API_KEY,new SecureNativeOptions());
-            Event event = new SnEvent.EventBuilder(EventTypes.LOG_IN.getType()).
-                                        withUser(new User("","","chuck@norris.com")).
-                                        withIp("35.199.23.1").
-                                        withCookieValue("eyJjaWQiOiJkYzgyYjdhZS00ODFkLTQyODItYTMyZC0xZTU1Njk2ZjNmZTQiLCJmcCI6Ijk5NGYzZjVjZTRiYWUwODQzMTRhOTFkNzgyN2I1MWYuMjQ3MDBmOWYxOTg2ODAwYWI0ZmNjODgwNTMwZGQwZWQifQ").
-                                        withRemoteIP("35.199.23.1").
-                                        withUserAgent("Mozilla/5.0 (Linux; U; Android 4.4.2; zh-cn; GT-I9500 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko)Version/4.0 MQQBrowser/5.0 QQ-URL-Manager Mobile Safari/537.36").
-                                        build();
-            secureNative.track(event);
-            
-            
-        } catch (SecureNativeSDKException e) {
-            e.printStackTrace();
-            return "Api key is not valid";
-        }
-        return "tracked";
-    }
+@RequestMapping("/track")
+public String track(HttpServletRequest request, HttpServletResponse response) {
+    SecureNativeContext context = SecureNative.contextBuilder()
+                                              .fromHttpServletRequest(request);
 
+    EventOptions eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
+            .userId("USER_ID")
+            .userTraits(new UserTraits("'USER_NAME'", "'USER_EMAIL'"))
+            .context(context)
+            .properties(Maps.builder()
+                    .put("prop1", "CUSTOM_PARAM_VALUE")
+                    .put("prop2", true)
+                    .put("prop3", 3)
+                    .build())
+            .timestamp(new Date())
+            .build();
+    
+    secureNative.track(eventOptions);
+}
 ```
 
-You can build an event from HttpServletRequest or from combination between event and HttpServletRequest:
-
-
-```java
-   @RequestMapping("/track")
-    public String track( HttpServletRequest request, HttpServletResponse response) {
-        try {
-            secureNative = new SecureNative(API_KEY,new SecureNativeOptions());
-            Event e = new SnEvent.EventBuilder(EventTypes.LOG_IN.getType()).
-                                                    withUser(new User("","","chuck@norris.com")).
-                                                    build();
-            Event event = secureNative.buildEventFromHttpServletRequest(request, e);
-            secureNative.track(event);
-            
-            
-        } catch (SecureNativeSDKException e) {
-            e.printStackTrace();
-            return "Api key is not valid";
-        }
-        return "tracked";
-    }
-
-```
-
-
-
-
-
-## Verification events
+## Verify events
 
 **Example**
 
 ```java
-     @RequestMapping("/verify")
-        public String verify(HttpServletRequest request, HttpServletResponse response) {
-            try {
-                secureNative = new SecureNative(API_KEY,new SecureNativeOptions());
-            } catch (SecureNativeSDKException e) {
-                e.printStackTrace();
-                return "Api key is not valid";
-            }
-            secureNative.verify(new SnEvent.EventBuilder(EventTypes.LOG_IN.getType()).withUser(new User("1","Dan","Dan@Dan.dan")).withIp(ip).withRemoteIP(remoteIP).withUserAgent(userAgent).build());
-);
-            return "verify";
-        }
+@RequestMapping("/track")
+public String track(HttpServletRequest request, HttpServletResponse response) {
+    SecureNativeContext context = SecureNative.contextBuilder()
+                                              .fromHttpServletRequest(request);
 
-```
-## Flow events
-
-**Example**
-
-```java
-       @RequestMapping("/flow")
-          public String flow( HttpServletRequest request, HttpServletResponse response) {
-              try {
-                  secureNative = new SecureNative(API_KEY,new SecureNativeOptions());
-              } catch (SecureNativeSDKException e) {
-                  e.printStackTrace();
-                  return "Api key is not valid";
-              }
-              secureNative.flow(1,new SnEvent.EventBuilder(EventTypes.LOG_IN.getType()).withUser(new User("1","Dan","Dan@Dan.dan")).withIp(ip).withRemoteIP(remoteIP).withUserAgent(userAgent).build());
-              return "flow";
-          }
+    EventOptions eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
+            .userId("USER_ID")
+            .userTraits(new UserTraits("'USER_NAME'", "'USER_EMAIL'"))
+            .context(context)
+            .properties(Maps.builder()
+                    .put("prop1", "CUSTOM_PARAM_VALUE")
+                    .put("prop2", true)
+                    .put("prop3", 3)
+                    .build())
+            .timestamp(new Date())
+            .build();
+    
+    VerifyResult verifyResult = secureNative.verify(eventOptions);
+    verifyResult.getRiskLevel() // Low, Medium, High
+    verifyResult.score() // Risk score: 0 -1 (0 - Very Low, 1 - Very High)
+    verifyResult.getTriggers() // ["TOR", "New IP", "New City"]
+}
 ```
 
-## Webhook entry filter
+## Webhook signature verification
 
 Apply our filter to verify the request is from us, example in spring:
 
 ```java
-
- @Bean
-    public FilterRegistrationBean<VerifyWebHookMiddleware> filterWebhook() throws SecureNativeSDKException {
-        FilterRegistrationBean <VerifyWebHookMiddleware> registrationBean = new FilterRegistrationBean();
-        VerifyWebHookMiddleware customURLFilter = new VerifyWebHookMiddleware("API KEY");
-        registrationBean.setFilter(customURLFilter);
-        return registrationBean;
-    }
+@RequestMapping("/webhook")
+public String webhookEndpoint(HttpServletRequest request, HttpServletResponse response) {
+    SecureNative secureNative = SecureNative.getInstance();
+    
+    // Checks if request if verified
+    Boolean isVerified = secureNative.verifyRequestPayload(request);
+}
  ```
-
-[Spring](https://github.com/securenative/securenative-java/tree/master/spring) or any web application that uses javax.servlet
-
-[akka-http](https://github.com/securenative/securenative-java/tree/master/akka-http)
