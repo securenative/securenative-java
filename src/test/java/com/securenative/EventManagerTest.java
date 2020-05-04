@@ -115,7 +115,7 @@ public class EventManagerTest extends HTTPServerMock {
     }
 
     @Test
-    @Timeout(value = 3000, unit = TimeUnit.MILLISECONDS)
+    @Timeout(value = 4000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should not retry sending async event when status code 401")
     public void ShouldNotRetrySendingAsyncEventWhenStatusCode401Test() throws SecureNativeSDKException, InterruptedException {
         configBuilder = ConfigurationManager.configBuilder()

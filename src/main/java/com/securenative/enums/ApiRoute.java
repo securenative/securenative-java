@@ -4,13 +4,13 @@ public enum ApiRoute {
         TRACK("track"),
         VERIFY("verify");
 
-        private String route;
+        private String apiRoute;
 
-        public String getRoute() {
-            return route;
+        public String getApiRoute() {
+            return apiRoute;
         }
 
-        ApiRoute(String route) {
-            this.route = route;
+        ApiRoute(String apiRoute) {
+            this.apiRoute = apiRoute;
         }
 }

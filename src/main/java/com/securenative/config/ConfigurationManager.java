@@ -1,7 +1,10 @@
 package com.securenative.config;
 
+import com.securenative.ResourceStreamImpl;
+import com.securenative.enums.FailoverStrategy;
 import com.securenative.exceptions.SecureNativeConfigException;
 import com.securenative.SecureNative;
+import com.securenative.ResourceStream;
 import com.securenative.utils.Utils;
 
 import java.io.IOException;
@@ -12,7 +15,7 @@ import java.util.Properties;
 public class ConfigurationManager {
     private static final String DEFAULT_CONFIG_FILE = "securenative.properties";
     private static final String CUSTOM_CONFIG_FILE_ENV_NAME = "SECURENATIVE_CONFIG_FILE";
-
+    private static ResourceStream resourceStream = new ResourceStreamImpl();
     private static String getEnvOrDefault(String envName, String defaultValue) {
         String envValue = System.getenv(envName);
         if (envValue != null) {
@@ -26,10 +29,14 @@ public class ConfigurationManager {
         return defaultValue;
     }
 
+    public static void setResourceStream(ResourceStream resourceStream) {
+        ConfigurationManager.resourceStream = resourceStream;
+    }
+
     private static Properties loadProperties(Properties properties, InputStream inputStream) {
         try (final InputStream stream = inputStream) {
             properties.load(stream);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return new Properties();
         }
         return properties;
@@ -39,7 +46,7 @@ public class ConfigurationManager {
         Properties properties = new Properties();
         URL resourceUrl = SecureNative.class.getClassLoader().getResource(resourcePath);
         if (resourceUrl != null) {
-            InputStream resourceStream = SecureNative.class.getClassLoader().getResourceAsStream(resourcePath);
+            InputStream resourceStream = ConfigurationManager.resourceStream.getInputStream(resourcePath);
             properties = loadProperties(properties, resourceStream);
         }
         return properties;
@@ -69,7 +76,8 @@ public class ConfigurationManager {
                 .withTimeout(Utils.parseIntegerOrDefault(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_TIMEOUT", defaultOptions.getTimeout()), defaultOptions.getTimeout()))
                 .withAutoSend(Utils.parseBooleanOrDefault(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_AUTO_SEND", defaultOptions.getAutoSend()), defaultOptions.getAutoSend()))
                 .withDisable(Utils.parseBooleanOrDefault(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_DISABLE", defaultOptions.getDisabled()), defaultOptions.getDisabled()))
-                .withLogLevel(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_LOG_LEVEL", defaultOptions.getLogLevel()));
+                .withLogLevel(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_LOG_LEVEL", defaultOptions.getLogLevel()))
+                .withFailoverStrategy(FailoverStrategy.fromString(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_FAILOVER_STRATEGY", defaultOptions.getFailoverStrategy()),defaultOptions.getFailoverStrategy()));
 
         return builder.build();
     }

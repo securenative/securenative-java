@@ -1,6 +1,5 @@
 package com.securenative.config;
 
-import com.securenative.exceptions.SecureNativeConfigException;
 import com.securenative.enums.FailoverStrategy;
 
 public class SecureNativeConfigurationBuilder {
@@ -61,7 +60,7 @@ public class SecureNativeConfigurationBuilder {
                 .withAutoSend(true)
                 .withDisable(false)
                 .withLogLevel("fatal")
-                .withFailoverStrategy(FailoverStrategy.FailOpen);
+                .withFailoverStrategy(FailoverStrategy.FAIL_OPEN);
     }
 
     public SecureNativeConfigurationBuilder withApiKey(String apiKey) {
@@ -112,6 +111,5 @@ public class SecureNativeConfigurationBuilder {
 
     public SecureNativeOptions build() {
         return new SecureNativeOptions(apiKey, apiUrl, interval, maxEvents, timeout, autoSend, disable, logLevel, failoverStrategy);
-
     }
 }

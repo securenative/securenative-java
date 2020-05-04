@@ -13,37 +13,37 @@ public class SecureNativeContextBuilder {
         this.context = new SecureNativeContext();
     }
 
-    public SecureNativeContextBuilder withClientToken(String clientToken) {
+    public SecureNativeContextBuilder clientToken(String clientToken) {
         this.context.setClientToken(clientToken);
         return this;
     }
 
-    public SecureNativeContextBuilder withIp(String ip) {
+    public SecureNativeContextBuilder ip(String ip) {
         this.context.setIp(ip);
         return this;
     }
 
-    public SecureNativeContextBuilder withRemoteIp(String remoteIp) {
+    public SecureNativeContextBuilder remoteIp(String remoteIp) {
         this.context.setRemoteIp(remoteIp);
         return this;
     }
 
-    public SecureNativeContextBuilder withHeaders(Map<String, String> headers) {
+    public SecureNativeContextBuilder headers(Map<String, String> headers) {
         this.context.setHeaders(headers);
         return this;
     }
 
-    public SecureNativeContextBuilder withUrl(String url) {
+    public SecureNativeContextBuilder url(String url) {
         this.context.setUrl(url);
         return this;
     }
 
-    public SecureNativeContextBuilder withMethod(String method) {
+    public SecureNativeContextBuilder method(String method) {
         this.context.setMethod(method);
         return this;
     }
 
-    public SecureNativeContextBuilder withBody(String body) {
+    public SecureNativeContextBuilder body(String body) {
         this.context.setBody(body);
         return this;
     }
@@ -61,13 +61,13 @@ public class SecureNativeContextBuilder {
         }
 
         return new SecureNativeContextBuilder()
-                .withUrl(request.getRequestURI())
-                .withMethod(request.getMethod())
-                .withHeaders(headers)
-                .withClientToken(clientToken)
-                .withIp(RequestUtils.getClientIpFromRequest(request, headers))
-                .withRemoteIp(RequestUtils.getRemoteIpFromRequest(request))
-                .withBody(null);
+                .url(request.getRequestURI())
+                .method(request.getMethod())
+                .headers(headers)
+                .clientToken(clientToken)
+                .ip(RequestUtils.getClientIpFromRequest(request, headers))
+                .remoteIp(RequestUtils.getRemoteIpFromRequest(request))
+                .body(null);
     }
 
     public SecureNativeContext build(){

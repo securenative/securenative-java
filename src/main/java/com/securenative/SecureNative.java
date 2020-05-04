@@ -6,6 +6,7 @@ import com.securenative.config.SecureNativeOptions;
 import com.securenative.context.SecureNativeContextBuilder;
 import com.securenative.exceptions.SecureNativeConfigException;
 import com.securenative.exceptions.SecureNativeSDKException;
+import com.securenative.exceptions.SecureNativeSDKIllegalStateException;
 import com.securenative.http.SecureNativeHTTPClient;
 import com.securenative.models.EventOptions;
 import com.securenative.models.VerifyResult;
@@ -55,9 +56,9 @@ public class SecureNative implements ApiManager {
         return init(secureNativeOptions);
     }
 
-    public static SecureNative getInstance() throws SecureNativeSDKException {
+    public static SecureNative getInstance() throws SecureNativeSDKIllegalStateException {
         if (secureNative == null) {
-            throw new SecureNativeSDKException("Secure Native SDK wasn't initialized yet, please call init first");
+            throw new SecureNativeSDKIllegalStateException();
         }
         return secureNative;
     }

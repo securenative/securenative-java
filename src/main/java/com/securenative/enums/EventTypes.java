@@ -1,5 +1,7 @@
 package com.securenative.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum EventTypes {
     LOG_IN("sn.user.login"),
     LOG_IN_CHALLENGE("sn.user.login.challenge"),
@@ -21,6 +23,7 @@ public enum EventTypes {
     PAGE_VIEW("sn.user.page.view"),
     VERIFY("sn.verify");
 
+    @JsonValue
     public String getType() {
         return type;
     }

@@ -10,8 +10,6 @@ import com.securenative.models.EventOptions;
 import com.securenative.models.VerifyResult;
 import com.securenative.models.SDKEvent;
 
-import java.io.IOException;
-
 public class ApiManagerImpl implements ApiManager {
     private final EventManager eventManager;
     private final SecureNativeOptions options;
@@ -25,7 +23,7 @@ public class ApiManagerImpl implements ApiManager {
     @Override
     public void track(EventOptions eventOptions) {
         logger.info("Track event call");
-        String requestUrl = String.format("%s/%s", this.options.getApiUrl(), ApiRoute.TRACK.getRoute());
+        String requestUrl = String.format("%s/%s", this.options.getApiUrl(), ApiRoute.TRACK.getApiRoute());
         Event event = new SDKEvent(eventOptions, this.options);
         this.eventManager.sendAsync(event,requestUrl, true);
     }
@@ -33,13 +31,13 @@ public class ApiManagerImpl implements ApiManager {
     @Override
     public VerifyResult verify(EventOptions eventOptions) {
         logger.info("Verify event call");
-        String requestUrl = String.format("%s/%s", this.options.getApiUrl(), ApiRoute.VERIFY.getRoute());
+        String requestUrl = String.format("%s/%s", this.options.getApiUrl(), ApiRoute.VERIFY.getApiRoute());
         Event event = new SDKEvent(eventOptions, this.options);
         try {
             return this.eventManager.sendSync(VerifyResult.class , event, requestUrl);
         } catch (Exception ex) {
             logger.error("Failed to call verify", ex);
-            return this.options.getFailoverStrategy() == FailoverStrategy.FailOpen ?
+            return this.options.getFailoverStrategy() == FailoverStrategy.FAIL_OPEN ?
                     new VerifyResult(RiskLevel.LOW, 0, new String[0])
                     : new VerifyResult(RiskLevel.HIGH, 1, new String[0]);
         }

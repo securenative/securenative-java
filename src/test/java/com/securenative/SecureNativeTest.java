@@ -4,6 +4,7 @@ import com.securenative.config.SecureNativeOptions;
 import com.securenative.enums.FailoverStrategy;
 import com.securenative.exceptions.SecureNativeConfigException;
 import com.securenative.exceptions.SecureNativeSDKException;
+import com.securenative.exceptions.SecureNativeSDKIllegalStateException;
 import org.junit.jupiter.api.*;
 import org.junitpioneer.jupiter.SetSystemProperty;
 
@@ -35,7 +36,7 @@ public class SecureNativeTest{
     @Order(2)
     @DisplayName("Should throw when getting SDK instance without init")
     public void getSDKInstanceWithoutInitThrowsTest() {
-        assertThrows(SecureNativeSDKException.class, SecureNative::getInstance);
+        assertThrows(SecureNativeSDKIllegalStateException.class, SecureNative::getInstance);
     }
 
     @Test
@@ -78,7 +79,7 @@ public class SecureNativeTest{
         assertThat(options.getAutoSend()).isEqualTo(true);
         assertThat(options.getDisabled()).isEqualTo(false);
         assertThat(options.getLogLevel()).isEqualTo("fatal");
-        assertThat(options.getFailoverStrategy()).isEqualTo(FailoverStrategy.FailOpen);
+        assertThat(options.getFailoverStrategy()).isEqualTo(FailoverStrategy.FAIL_OPEN);
     }
 
     @Test
