@@ -38,8 +38,8 @@ public class SecureNativeContextBuilderTest {
 
     @Test
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
-    @DisplayName("Create empty context")
-    public void createEmptyContextTest() {
+    @DisplayName("Create default context builder")
+    public void createDefaultContextBuilderTest() {
         SecureNativeContext context =  SecureNativeContextBuilder.defaultContextBuilder()
                                                                  .build();
 
@@ -50,6 +50,33 @@ public class SecureNativeContextBuilderTest {
         assertThat(context.getRemoteIp()).isNull();
         assertThat(context.getHeaders()).isNull();
         assertThat(context.getBody()).isNull();
+    }
+
+    @Test
+    @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
+    @DisplayName("Create custom context with ContextBuilder test")
+    public void createCustomContextWithContextBuilderTest() {
+        SecureNativeContext context =  SecureNativeContextBuilder
+                .defaultContextBuilder()
+                .withUrl("/some-url")
+                .withClientToken("SECRET_TOKEN")
+                .withIp("10.0.0.0")
+                .withBody("{ \"name\": \"YOUR_NAME\" }")
+                .withMethod("Get")
+                .withRemoteIp("10.0.0.1")
+                .withHeaders(Maps.defaultBuilder()
+                                 .put("header1", "value1")
+                                 .build())
+                .build();
+        assertThat(context.getUrl()).isEqualTo("/some-url");
+        assertThat(context.getClientToken()).isEqualTo("SECRET_TOKEN");
+        assertThat(context.getIp()).isEqualTo("10.0.0.0");
+        assertThat(context.getBody()).isEqualTo("{ \"name\": \"YOUR_NAME\" }");
+        assertThat(context.getMethod()).isEqualTo("Get");
+        assertThat(context.getRemoteIp()).isEqualTo("10.0.0.1");
+        assertThat(context.getHeaders()).isEqualTo(Maps.defaultBuilder()
+                                                       .put("header1", "value1")
+                                                       .build());
     }
 }
 
