@@ -72,7 +72,7 @@ SecureNativeContext context = SecureNative.contextBuilder()
 
 EventOptions eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
         .userId("USER_ID")
-        .userTraits(new UserTraits("'USER_NAME'", "'USER_EMAIL'"))
+        .userTraits("USER_NAME", "USER_EMAIL")
         .context(context)
         .properties(Maps.builder()
                 .put("prop1", "CUSTOM_PARAM_VALUE")
@@ -95,7 +95,7 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
 
     EventOptions eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
             .userId("USER_ID")
-            .userTraits(new UserTraits("'USER_NAME'", "'USER_EMAIL'"))
+            .userTraits("USER_NAME", "USER_EMAIL")
             .context(context)
             .properties(Maps.builder()
                     .put("prop1", "CUSTOM_PARAM_VALUE")
@@ -121,7 +121,7 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
 
     EventOptions eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
             .userId("USER_ID")
-            .userTraits(new UserTraits("'USER_NAME'", "'USER_EMAIL'"))
+            .userTraits("USER_NAME", "USER_EMAIL")
             .context(context)
             .properties(Maps.builder()
                     .put("prop1", "CUSTOM_PARAM_VALUE")

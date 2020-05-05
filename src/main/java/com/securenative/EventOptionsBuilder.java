@@ -32,8 +32,18 @@ public class EventOptionsBuilder {
         return this;
     }
 
-    public EventOptionsBuilder userTraits(UserTraits userTraits) {
-        this.eventOptions.setUserTraits(userTraits);
+    public EventOptionsBuilder userTraits(String name) {
+        this.eventOptions.setUserTraits(new UserTraits(name));
+        return this;
+    }
+
+    public EventOptionsBuilder userTraits(String name, String email) {
+        this.eventOptions.setUserTraits(new UserTraits(name, email));
+        return this;
+    }
+
+    public EventOptionsBuilder userTraits(String name, String email, Date createdAt) {
+        this.eventOptions.setUserTraits(new UserTraits(name, email, createdAt));
         return this;
     }
 
