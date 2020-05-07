@@ -1,13 +1,12 @@
 package com.securenative.config;
 
+import com.securenative.ResourceStream;
 import com.securenative.ResourceStreamImpl;
+import com.securenative.SecureNative;
 import com.securenative.enums.FailoverStrategy;
 import com.securenative.exceptions.SecureNativeConfigException;
-import com.securenative.SecureNative;
-import com.securenative.ResourceStream;
 import com.securenative.utils.Utils;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
@@ -67,7 +66,6 @@ public class ConfigurationManager {
         SecureNativeOptions defaultOptions = builder.build();
         String resourceFilePath = getEnvOrDefault(CUSTOM_CONFIG_FILE_ENV_NAME, DEFAULT_CONFIG_FILE);
         Properties properties = readResourceFile(resourceFilePath);
-
 
         builder.withApiKey(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_API_KEY",  defaultOptions.getApiKey()))
                 .withApiUrl(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_API_URL", defaultOptions.getApiUrl()))

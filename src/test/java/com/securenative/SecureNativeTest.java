@@ -1,5 +1,6 @@
 package com.securenative;
 
+import com.securenative.config.ConfigurationManager;
 import com.securenative.config.SecureNativeOptions;
 import com.securenative.enums.FailoverStrategy;
 import com.securenative.exceptions.SecureNativeConfigException;
@@ -129,7 +130,6 @@ public class SecureNativeTest{
     public void initSDKAndLoadFromPropertiesFileTest() throws SecureNativeConfigException, SecureNativeSDKException {
         SecureNative secureNative = SecureNative.init();
         SecureNativeOptions options =  secureNative.getOptions();
-
         assertThat(options).extracting("apiKey", "timeout")
                 .containsExactly("SOME_API_KEY", 2000);
     }

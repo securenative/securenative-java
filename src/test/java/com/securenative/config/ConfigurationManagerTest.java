@@ -60,6 +60,9 @@ public class ConfigurationManagerTest {
         assertThat(options.getLogLevel()).isEqualTo("fatal");
         assertThat(options.getMaxEvents()).isEqualTo(100);
         assertThat(options.getTimeout()).isEqualTo(1500);
+
+        // restore resource stream
+        ConfigurationManager.setResourceStream(new ResourceStreamImpl());
     }
 
     @Test
@@ -81,6 +84,8 @@ public class ConfigurationManagerTest {
 
         assertThat(options).isNotNull();
         assertThat(options.getTimeout()).isEqualTo(7500);
+        // restore resource stream
+        ConfigurationManager.setResourceStream(new ResourceStreamImpl());
     }
 
 
@@ -100,6 +105,9 @@ public class ConfigurationManagerTest {
         SecureNativeOptions options = ConfigurationManager.loadConfig();
 
         assertThat(options).isNotNull();
+
+        // restore resource stream
+        ConfigurationManager.setResourceStream(new ResourceStreamImpl());
     }
 
     @Test
@@ -123,6 +131,8 @@ public class ConfigurationManagerTest {
 
         assertThat(options).isNotNull();
         assertThat(options.getFailoverStrategy()).isEqualTo(FailoverStrategy.FAIL_OPEN);
+        // restore resource stream
+        ConfigurationManager.setResourceStream(new ResourceStreamImpl());
     }
 
     @Test
@@ -132,6 +142,9 @@ public class ConfigurationManagerTest {
     public void loadDefaultConfigTest() throws SecureNativeConfigException {
         ResourceStreamImpl resourceStream = Mockito.spy(new ResourceStreamImpl());
         Mockito.when(resourceStream.getInputStream("securenative.properties")).thenReturn(null);
+
+        //set resource stream
+        ConfigurationManager.setResourceStream(resourceStream);
 
         SecureNativeOptions options = ConfigurationManager.loadConfig();
 
@@ -146,6 +159,8 @@ public class ConfigurationManagerTest {
         assertThat(options.getDisabled()).isEqualTo(false);
         assertThat(options.getLogLevel()).isEqualTo("fatal");
         assertThat(options.getFailoverStrategy()).isEqualTo(FailoverStrategy.FAIL_OPEN);
+
+        ConfigurationManager.setResourceStream(new ResourceStreamImpl());
     }
 
     @Test
@@ -153,7 +168,7 @@ public class ConfigurationManagerTest {
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should get config via env variables")
     public void getConfigFromEnvVariablesTest() throws SecureNativeConfigException, ReflectiveOperationException {
-        setEnv("SECURENATIVE_API_KEY", "SOME_API_KEY");
+        setEnv("SECURENATIVE_API_KEY", "SOME_ENV_API_KEY");
         setEnv("SECURENATIVE_API_URL", "SOME_API_URL");
         setEnv("SECURENATIVE_INTERVAL", "6000");
         setEnv("SECURENATIVE_MAX_EVENTS", "700");
@@ -168,7 +183,7 @@ public class ConfigurationManagerTest {
         assertThat(options.getApiKey()).isEqualTo("SOME_API_KEY");
         assertThat(options.getApiUrl()).isEqualTo("SOME_API_URL");
         assertThat(options.getInterval()).isEqualTo(6000);
-        assertThat(options.getTimeout()).isEqualTo(1700);
+        assertThat(options.getTimeout()).isEqualTo(2000);
         assertThat(options.getMaxEvents()).isEqualTo(700);
         assertThat(options.getAutoSend()).isEqualTo(false);
         assertThat(options.getDisabled()).isEqualTo(true);
@@ -240,6 +255,9 @@ public class ConfigurationManagerTest {
         setEnv("SECURENATIVE_DISABLE", "");
         setEnv("SECURENATIVE_LOG_LEVEL", "");
         setEnv("SECURENATIVE_FAILOVER_STRATEGY", "");
+
+        // restore resource stream
+        ConfigurationManager.setResourceStream(new ResourceStreamImpl());
     }
 
     @Test
@@ -260,5 +278,8 @@ public class ConfigurationManagerTest {
 
         assertThat(options).isNotNull();
         assertThat(options.getFailoverStrategy()).isEqualTo(FailoverStrategy.FAIL_OPEN);
+
+        // restore resource stream
+        ConfigurationManager.setResourceStream(new ResourceStreamImpl());
     }
 }
