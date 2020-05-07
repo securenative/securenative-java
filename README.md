@@ -1,4 +1,29 @@
-# Java SDK for SecureNative
+<p align="center">
+  <a href="https://www.securenative.com"><img src="https://user-images.githubusercontent.com/45174009/77826512-f023ed80-7120-11ea-80e0-58aacde0a84e.png" alt="SecureNative Logo"/></a>
+</p>
+
+<p align="center">
+  <b>A Cloud-Native Security Monitoring and Protection for Modern Applications</b>
+</p>
+<p align="center">
+  <a href="https://github.com/securenative/securenative-node">
+    <img alt="Github Actions" src="https://github.com/securenative/securenative-java/workflows/CI/badge.svg">
+  </a>
+  <a href="https://codecov.io/gh/securenative/securenative-java">
+    <img src="https://codecov.io/gh/securenative/securenative-java/branch/master/graph/badge.svg" />
+  </a>
+  <a href="https://search.maven.org/artifact/com.securenative.java/securenative-java">
+    <img src="https://img.shields.io/maven-central/v/com.securenative.java/securenative-java.svg" alt="npm version" height="20">
+  </a>
+</p>
+<p align="center">
+  <a href="https://docs.securenative.com">Documentation</a> |
+  <a href="https://docs.securenative.com/quick-start">Quick Start</a> |
+  <a href="https://blog.securenative.com">Blog</a> |
+  <a href="">Chat with us on Slack!</a>
+</p>
+<hr/>
+
 
 [SecureNative](https://www.securenative.com/) performs user monitoring by analyzing user interactions with your application and various factors such as network, devices, locations and access patterns to stop and prevent account takeover attacks.
 
