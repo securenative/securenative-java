@@ -118,7 +118,8 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
 @RequestMapping("/track")
 public void track(HttpServletRequest request, HttpServletResponse response) {
     SecureNativeContext context = SecureNative.contextBuilder()
-                                              .fromHttpServletRequest(request);
+                                              .fromHttpServletRequest(request)
+                                              .build();
 
     EventOptions eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
             .userId("USER_ID")
