@@ -149,7 +149,7 @@ Apply our filter to verify the request is from us, example in spring:
 public void webhookEndpoint(HttpServletRequest request, HttpServletResponse response) {
     SecureNative secureNative = SecureNative.getInstance();
     
-    // Checks if request if verified
+    // Checks if request is verified
     Boolean isVerified = secureNative.verifyRequestPayload(request);
 }
  ```
