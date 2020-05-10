@@ -4,6 +4,7 @@ import com.securenative.config.SecureNativeOptions;
 import com.securenative.exceptions.SecureNativeInvalidUriException;
 import com.securenative.http.HttpClient;
 import com.securenative.http.HttpResponse;
+import com.securenative.utils.VersionUtils;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -11,8 +12,10 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class SecureNativeHTTPClient implements HttpClient {
-    private final String USER_AGENT_VALUE = "SecureNative-java";
-    private final String SN_VERSION = "SN-Version";
+    private final String AUTHORIZATION_HEADER = "Authorization";
+    private final String VERSION_HEADER = "SN-Version";
+    private final String USER_AGENT_HEADER = "User-Agent";
+    private final String USER_AGENT_HEADER_VALUE = "SecureNative-java";
     private final OkHttpClient client;
     private final SecureNativeOptions options;
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
@@ -26,7 +29,9 @@ public class SecureNativeHTTPClient implements HttpClient {
                 .addInterceptor((chain) ->{
                         Request request = chain.request();
                         Request authenticatedRequest = request.newBuilder()
-                                .header("Authorization", options.getApiKey()).build();
+                                .header(USER_AGENT_HEADER, USER_AGENT_HEADER_VALUE)
+                                .header(VERSION_HEADER, VersionUtils.getVersion())
+                                .header(AUTHORIZATION_HEADER, options.getApiKey()).build();
                         return chain.proceed(authenticatedRequest);
                 }).build();
     }
