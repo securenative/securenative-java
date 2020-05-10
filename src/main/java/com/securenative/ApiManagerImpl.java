@@ -23,18 +23,16 @@ public class ApiManagerImpl implements ApiManager {
     @Override
     public void track(EventOptions eventOptions) {
         logger.info("Track event call");
-        String requestUrl = String.format("%s/%s", this.options.getApiUrl(), ApiRoute.TRACK.getApiRoute());
         Event event = new SDKEvent(eventOptions, this.options);
-        this.eventManager.sendAsync(event,requestUrl, true);
+        this.eventManager.sendAsync(event, ApiRoute.TRACK.getApiRoute(), true);
     }
 
     @Override
     public VerifyResult verify(EventOptions eventOptions) {
         logger.info("Verify event call");
-        String requestUrl = String.format("%s/%s", this.options.getApiUrl(), ApiRoute.VERIFY.getApiRoute());
         Event event = new SDKEvent(eventOptions, this.options);
         try {
-            return this.eventManager.sendSync(VerifyResult.class , event, requestUrl);
+            return this.eventManager.sendSync(VerifyResult.class , event, ApiRoute.VERIFY.getApiRoute());
         } catch (Exception ex) {
             logger.error("Failed to call verify", ex);
             return this.options.getFailoverStrategy() == FailoverStrategy.FAIL_OPEN ?
