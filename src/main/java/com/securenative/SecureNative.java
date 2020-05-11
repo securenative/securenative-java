@@ -30,7 +30,12 @@ public class SecureNative implements ApiManager {
             throw new SecureNativeSDKException("You must pass your SecureNative api key");
         }
         this.options = options;
-        this.apiManager = new ApiManagerImpl(new SecureNativeEventManager(new SecureNativeHTTPClient(options), options), options);
+
+        EventManager eventManager = new SecureNativeEventManager(new SecureNativeHTTPClient(options), options);
+        if(options.getAutoSend()){
+            eventManager.startEventsPersist();
+        }
+        this.apiManager = new ApiManagerImpl(eventManager, options);
         Logger.initLogger(options.getLogLevel());
     }
 
