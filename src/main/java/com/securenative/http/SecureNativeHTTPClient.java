@@ -39,7 +39,7 @@ public class SecureNativeHTTPClient implements HttpClient {
 
     @Override
     public HttpResponse post(String path, String json) throws IOException {
-        RequestBody body = RequestBody.create(json, JSON);
+        RequestBody body = RequestBody.create(JSON, json);
 
         String url = String.format("%s/%s", this.options.getApiUrl(), path);
 
