@@ -26,7 +26,7 @@ public class ConfigurationManagerTest {
 
     @Test
     @Order(1)
-    @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
+    @Timeout(value = 3000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should parse config file correctly")
     public void ParseConfigFileCorrectlyTest() throws SecureNativeConfigException {
         String config = String.join(System.getProperty("line.separator"),
