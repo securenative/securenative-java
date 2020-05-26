@@ -1,9 +1,6 @@
 package com.securenative.http;
 
 import com.securenative.config.SecureNativeOptions;
-import com.securenative.exceptions.SecureNativeInvalidUriException;
-import com.securenative.http.HttpClient;
-import com.securenative.http.HttpResponse;
 import com.securenative.utils.VersionUtils;
 import okhttp3.*;
 
@@ -18,7 +15,7 @@ public class SecureNativeHTTPClient implements HttpClient {
     private final String USER_AGENT_HEADER_VALUE = "SecureNative-java";
     private final OkHttpClient client;
     private final SecureNativeOptions options;
-    public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    public static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json; charset=utf-8");
 
     public SecureNativeHTTPClient(SecureNativeOptions options) {
         this.options = options;
@@ -38,9 +35,9 @@ public class SecureNativeHTTPClient implements HttpClient {
 
 
     @Override
-    public HttpResponse post(String path, String json) throws IOException {
-        RequestBody body = RequestBody.create(JSON, json);
-
+    public HttpResponse post(String path, String payload) throws IOException {
+        RequestBody body = RequestBody.create(payload, JSON_MEDIA_TYPE);
+        
         String url = String.format("%s/%s", this.options.getApiUrl(), path);
 
         Request request = new Request.Builder()
