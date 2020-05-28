@@ -6,7 +6,7 @@
     <groupId>com.securenative.java</groupId>
     <artifactId>securenative-java</artifactId>
     <packaging>jar</packaging>
-    <version>0.4.3</version>
+    <version>0.4.4</version>
     <url>https://github.com/securenative/securenative-java</url>
 
     <name>${project.groupId}:${project.artifactId}:${project.version}</name>
@@ -133,7 +133,7 @@
        <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.1.0</version>
+            <version>3.14.8</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -156,7 +156,7 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>mockwebserver</artifactId>
-            <version>4.0.0</version>
+            <version>3.14.8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -200,6 +200,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>

@@ -36,7 +36,7 @@ public class SecureNativeHTTPClient implements HttpClient {
 
     @Override
     public HttpResponse post(String path, String payload) throws IOException {
-        RequestBody body = RequestBody.create(payload, JSON_MEDIA_TYPE);
+        RequestBody body = RequestBody.create(JSON_MEDIA_TYPE, payload);
         
         String url = String.format("%s/%s", this.options.getApiUrl(), path);
 

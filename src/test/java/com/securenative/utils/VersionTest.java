@@ -1,25 +1,35 @@
 package com.securenative.utils;
 
+import com.securenative.ResourceStreamImpl;
+import com.securenative.config.ConfigurationManager;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.io.InputStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class VersionTest {
 
     @Test
-    public void testManifest() throws IOException {
-        URL res = org.junit.Assert.class.getResource(org.junit.Assert.class.getSimpleName() + ".class");
-        JarURLConnection conn = (JarURLConnection) res.openConnection();
-        Manifest mf = conn.getManifest();
+    public void testVersionExtraction() throws IOException {
 
-        Attributes atts = mf.getMainAttributes();
-        for (Object v : atts.values()) {
-            System.out.println(v);
-        }
+        String props = String.join(System.getProperty("line.separator"),
+                "version=1.0.0",
+                        "groupId=com.securenative.java",
+                        "artifactId=securenative-java");
+
+        InputStream inputStream = new ByteArrayInputStream(props.getBytes());
+        ResourceStreamImpl resourceStream = Mockito.spy(new ResourceStreamImpl());
+        Mockito.when(resourceStream.getInputStream("/META-INF/maven/com.securenative.java/securenative-java/pom.properties")).thenReturn(inputStream);
+
+        VersionUtils.setResourceStream(resourceStream);
+
+        assertThat(VersionUtils.getVersion()).isEqualTo("1.0.0");
+
+        // restore resource stream
+        VersionUtils.setResourceStream(new ResourceStreamImpl());
     }
 }
