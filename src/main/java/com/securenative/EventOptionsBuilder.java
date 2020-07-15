@@ -47,6 +47,11 @@ public class EventOptionsBuilder {
         return this;
     }
 
+    public EventOptionsBuilder userTraits(String name, String email, String phone) {
+        this.eventOptions.setUserTraits(new UserTraits(name, email, phone));
+        return this;
+    }
+
     public EventOptionsBuilder context(SecureNativeContext context) {
         this.eventOptions.setContext(context);
         return this;
