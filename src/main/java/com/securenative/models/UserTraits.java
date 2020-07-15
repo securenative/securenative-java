@@ -25,6 +25,12 @@ public class UserTraits {
         this.phone = phone;
     }
 
+    public UserTraits(String name, String email, Date createdAt) {
+        this.name = name;
+        this.email = email;
+        this.createdAt = createdAt;
+    }
+
     public UserTraits(String name, String email, String phone, Date createdAt) {
         this.name = name;
         this.email = email;
