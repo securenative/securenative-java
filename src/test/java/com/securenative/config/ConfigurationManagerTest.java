@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class NotRunningOnWindows implements IgnoreCondition {
+class NotRunningOnWindows implements IgnoreCondition {
     public boolean isSatisfied() {
         return !System.getProperty("os.name").startsWith("Windows");
     }
