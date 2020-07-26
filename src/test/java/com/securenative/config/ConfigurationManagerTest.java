@@ -14,6 +14,12 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+public class NotRunningOnWindows implements IgnoreCondition {
+    public boolean isSatisfied() {
+        return !System.getProperty("os.name").startsWith("Windows");
+    }
+}
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ConfigurationManagerTest {
     @SuppressWarnings({ "unchecked" })
@@ -167,7 +173,7 @@ public class ConfigurationManagerTest {
     @Order(6)
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should get config via env variables")
-    @DisabledOnOs({OS.WINDOWS})
+    @ConditionalIgnore(condition = NotRunningOnWindows.class)
     public void getConfigFromEnvVariablesTest() throws SecureNativeConfigException, ReflectiveOperationException {
         setEnv("SECURENATIVE_API_KEY", "SOME_ENV_API_KEY");
         setEnv("SECURENATIVE_API_URL", "SOME_API_URL");
@@ -206,7 +212,7 @@ public class ConfigurationManagerTest {
     @Order(7)
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should overwrite env variables with vales from config file")
-    @DisabledOnOs({OS.WINDOWS})
+    @ConditionalIgnore(condition = NotRunningOnWindows.class)
     public void overwriteEnvVariablesWithConfigFileTest() throws SecureNativeConfigException, ReflectiveOperationException {
         String config = String.join(System.getProperty("line.separator"),
                 "SECURENATIVE_API_KEY=API_KEY_FROM_FILE",
