@@ -4,6 +4,7 @@ import com.securenative.ResourceStreamImpl;
 import com.securenative.enums.FailoverStrategy;
 import com.securenative.exceptions.SecureNativeConfigException;
 import org.junit.jupiter.api.*;
+import org.junit.Ignore;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
