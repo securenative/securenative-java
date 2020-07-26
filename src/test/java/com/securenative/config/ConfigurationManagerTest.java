@@ -167,6 +167,7 @@ public class ConfigurationManagerTest {
     @Order(6)
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should get config via env variables")
+    @DisabledOnOs(WINDOWS)
     public void getConfigFromEnvVariablesTest() throws SecureNativeConfigException, ReflectiveOperationException {
         setEnv("SECURENATIVE_API_KEY", "SOME_ENV_API_KEY");
         setEnv("SECURENATIVE_API_URL", "SOME_API_URL");
@@ -205,6 +206,7 @@ public class ConfigurationManagerTest {
     @Order(7)
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should overwrite env variables with vales from config file")
+    @DisabledOnOs(WINDOWS)
     public void overwriteEnvVariablesWithConfigFileTest() throws SecureNativeConfigException, ReflectiveOperationException {
         String config = String.join(System.getProperty("line.separator"),
                 "SECURENATIVE_API_KEY=API_KEY_FROM_FILE",
