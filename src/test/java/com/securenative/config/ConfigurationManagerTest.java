@@ -4,7 +4,7 @@ import com.securenative.ResourceStreamImpl;
 import com.securenative.enums.FailoverStrategy;
 import com.securenative.exceptions.SecureNativeConfigException;
 import org.junit.jupiter.api.*;
-import org.junit.Ignore;
+import org.junit.*;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
@@ -14,12 +14,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-class NotRunningOnWindows implements IgnoreCondition {
-    public boolean isSatisfied() {
-        return !System.getProperty("os.name").startsWith("Windows");
-    }
-}
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ConfigurationManagerTest {
@@ -174,7 +168,7 @@ public class ConfigurationManagerTest {
     @Order(6)
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should get config via env variables")
-    @ConditionalIgnore(condition = NotRunningOnWindows.class)
+    @DisabledOnOs(OS.WINDOWS)
     public void getConfigFromEnvVariablesTest() throws SecureNativeConfigException, ReflectiveOperationException {
         setEnv("SECURENATIVE_API_KEY", "SOME_ENV_API_KEY");
         setEnv("SECURENATIVE_API_URL", "SOME_API_URL");
@@ -213,7 +207,7 @@ public class ConfigurationManagerTest {
     @Order(7)
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should overwrite env variables with vales from config file")
-    @ConditionalIgnore(condition = NotRunningOnWindows.class)
+    @DisabledOnOs(OS.WINDOWS)
     public void overwriteEnvVariablesWithConfigFileTest() throws SecureNativeConfigException, ReflectiveOperationException {
         String config = String.join(System.getProperty("line.separator"),
                 "SECURENATIVE_API_KEY=API_KEY_FROM_FILE",
