@@ -35,9 +35,9 @@ public class ApiManagerImplTest extends HTTPServerMock {
     public ApiManagerImplTest() throws SecureNativeInvalidOptionsException {
         // init default event for tests
         SecureNativeContext context = SecureNative.contextBuilder()
-                .ip("127.0.0.1")
-                .clientToken("SECURED_CLIENT_TOKEN")
-                .headers(Maps.defaultBuilder()
+                .withIp("127.0.0.1")
+                .withClientToken("SECURED_CLIENT_TOKEN")
+                .withHeaders(Maps.defaultBuilder()
                             .put("user-agent", "Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405")
                             .build())
                 .build();
