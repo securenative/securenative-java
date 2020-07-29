@@ -83,13 +83,13 @@ public class SecureNativeContextBuilderTest {
     public void createCustomContextWithContextBuilderTest() {
         SecureNativeContext context =  SecureNativeContextBuilder
                 .defaultContextBuilder()
-                .url("/some-url")
-                .clientToken("SECRET_TOKEN")
-                .ip("10.0.0.0")
-                .body("{ \"name\": \"YOUR_NAME\" }")
-                .method("Get")
-                .remoteIp("10.0.0.1")
-                .headers(Maps.defaultBuilder()
+                .withUrl("/some-url")
+                .withClientToken("SECRET_TOKEN")
+                .withIp("10.0.0.0")
+                .withBody("{ \"name\": \"YOUR_NAME\" }")
+                .withMethod("Get")
+                .withRemoteIp("10.0.0.1")
+                .withHeaders(Maps.defaultBuilder()
                                  .put("header1", "value1")
                                  .build())
                 .build();
