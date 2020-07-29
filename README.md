@@ -33,7 +33,7 @@ When using Maven, add the following dependency to your `pom.xml` file:
 ```xml
 <dependency>
     <groupId>com.securenative.java</groupId>
-    <artifactId>sdk-base</artifactId>
+    <artifactId>securenative-java</artifactId>
     <version>LATEST</version>
 </dependency>
 ```
