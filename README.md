@@ -56,7 +56,12 @@ To get your *API KEY*, login to your SecureNative account and go to project sett
 SecureNative can automatically load your config from *securenative.properties* file or from the file that is specified in your *SECURENATIVE_CONFIG_FILE* env variable:
 
 ```java
+// Options 1: Use default config file path
 SecureNative secureNative =  SecureNative.init();
+
+// Options 2: Use specific config file path
+Path path = Paths.get("/path/to/securenative.properties");
+SecureNative secureNative =  SecureNative.init(path);
 ```
 ### Option 2: Initialize via API Key
 
