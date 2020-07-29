@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ConfigurationManagerTest {
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private static void setEnv(String name, String val) throws ReflectiveOperationException {
         Map<String, String> env = System.getenv();
         Field field = env.getClass().getDeclaredField("m");
@@ -30,17 +30,17 @@ public class ConfigurationManagerTest {
     @DisplayName("Should parse config file correctly")
     public void ParseConfigFileCorrectlyTest() throws SecureNativeConfigException {
         String config = String.join(System.getProperty("line.separator"),
-        "SECURENATIVE_API_KEY=SOME_API_KEY",
-        "SECURENATIVE_APP_NAME=SOME_APP_NAME",
-        "SECURENATIVE_API_URL=SOME_API_URL",
-        "SECURENATIVE_INTERVAL=1000",
-        "SECURENATIVE_HEARTBEAT_INTERVAL=5000",
-        "SECURENATIVE_MAX_EVENTS=100",
-        "SECURENATIVE_TIMEOUT=1500",
-        "SECURENATIVE_AUTO_SEND=true",
-        "SECURENATIVE_DISABLE=false",
-        "SECURENATIVE_LOG_LEVEL=fatal",
-        "SECURENATIVE_FAILOVER_STRATEGY=fail-closed");
+                "SECURENATIVE_API_KEY=SOME_API_KEY",
+                "SECURENATIVE_APP_NAME=SOME_APP_NAME",
+                "SECURENATIVE_API_URL=SOME_API_URL",
+                "SECURENATIVE_INTERVAL=1000",
+                "SECURENATIVE_HEARTBEAT_INTERVAL=5000",
+                "SECURENATIVE_MAX_EVENTS=100",
+                "SECURENATIVE_TIMEOUT=1500",
+                "SECURENATIVE_AUTO_SEND=true",
+                "SECURENATIVE_DISABLE=false",
+                "SECURENATIVE_LOG_LEVEL=fatal",
+                "SECURENATIVE_FAILOVER_STRATEGY=fail-closed");
 
         InputStream inputStream = new ByteArrayInputStream(config.getBytes());
 
@@ -54,7 +54,7 @@ public class ConfigurationManagerTest {
         assertThat(options.getApiKey()).isEqualTo("SOME_API_KEY");
         assertThat(options.getApiUrl()).isEqualTo("SOME_API_URL");
         assertThat(options.getAutoSend()).isEqualTo(true);
-        assertThat(options.getDisabled()).isEqualTo( false);
+        assertThat(options.getDisabled()).isEqualTo(false);
         assertThat(options.getFailoverStrategy()).isEqualTo(FailoverStrategy.FAIL_CLOSED);
         assertThat(options.getInterval()).isEqualTo(1000);
         assertThat(options.getLogLevel()).isEqualTo("fatal");
@@ -72,7 +72,7 @@ public class ConfigurationManagerTest {
     public void IgnoreUnknownConfigInPropertiesFileTest() throws SecureNativeConfigException {
         String config = String.join(System.getProperty("line.separator"),
                 "SECURENATIVE_UNKNOWN_KEY=SOME_UNKNOWN_KEY",
-                            "SECURENATIVE_TIMEOUT=7500");
+                "SECURENATIVE_TIMEOUT=7500");
 
         InputStream inputStream = new ByteArrayInputStream(config.getBytes());
 

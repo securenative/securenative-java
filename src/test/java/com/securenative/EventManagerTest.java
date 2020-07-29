@@ -27,25 +27,25 @@ public class EventManagerTest extends HTTPServerMock {
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should successfully send async event with status code 200")
     public void SendAsyncEventWithStatusCode200Test() throws SecureNativeSDKException, InterruptedException, JSONException {
-        configBuilder =  ConfigurationManager.configBuilder()
-                                             .withApiKey("YOUR_API_KEY")
-                                             .withAutoSend(true)
-                                             .withInterval(10);
+        configBuilder = ConfigurationManager.configBuilder()
+                .withApiKey("YOUR_API_KEY")
+                .withAutoSend(true)
+                .withInterval(10);
 
         client = sandbox().mock(200);
         eventManager = new SecureNativeEventManager(client, options);
         eventManager.startEventsPersist();
 
-        eventManager.sendAsync( event, "some-path/to-api",true);
+        eventManager.sendAsync(event, "some-path/to-api", true);
 
-        try{
-            RecordedRequest lastRequest =  server.takeRequest(10 * options.getInterval(), TimeUnit.MILLISECONDS);
+        try {
+            RecordedRequest lastRequest = server.takeRequest(10 * options.getInterval(), TimeUnit.MILLISECONDS);
             String body = lastRequest != null ? lastRequest.getBody().readUtf8() : null;
             String expected = "{\"eventType\":\"custom-event\"}";
 
             JSONAssert.assertEquals(expected, body, false);
             assertThat(new JSONObject(body).has("timestamp")).isTrue();
-        }finally {
+        } finally {
             eventManager.stopEventsPersist();
         }
     }
@@ -144,7 +144,7 @@ public class EventManagerTest extends HTTPServerMock {
             // should be called only once
             assertThat(server.getRequestCount()).isEqualTo(1);
         } finally {
-             eventManager.stopEventsPersist();
+            eventManager.stopEventsPersist();
         }
     }
 
@@ -195,7 +195,8 @@ public class EventManagerTest extends HTTPServerMock {
         JsonNode data = null;
         try {
             data = eventManager.sendSync(JsonNode.class, event, "some-path/to-api");
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {
+        }
 
         JSONAssert.assertEquals(resBody, data.toString(), false);
 
@@ -222,7 +223,8 @@ public class EventManagerTest extends HTTPServerMock {
         String resp = null;
         try {
             resp = eventManager.sendSync(String.class, event, "some-path/to-api");
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {
+        }
 
         RecordedRequest lastRequest = server.takeRequest(10 * options.getInterval(), TimeUnit.MILLISECONDS);
         //invalid json response will turn into null
@@ -241,7 +243,7 @@ public class EventManagerTest extends HTTPServerMock {
         eventManager = new SecureNativeEventManager(client, options);
 
         try {
-            Object obj  = eventManager.sendSync(Object.class, event, "path what");
+            Object obj = eventManager.sendSync(Object.class, event, "path what");
             assertThat(obj).isNull();
         } catch (Exception ignored) {
 
@@ -261,9 +263,9 @@ public class EventManagerTest extends HTTPServerMock {
 
         try {
             // track async event
-             eventManager.sendSync(Object.class, event, "some-path/to-api");
+            eventManager.sendSync(Object.class, event, "some-path/to-api");
         } catch (SecureNativeParseException | IOException ex) {
-            RecordedRequest lastRequest =  server.takeRequest(10 * options.getInterval(), TimeUnit.MILLISECONDS);
+            RecordedRequest lastRequest = server.takeRequest(10 * options.getInterval(), TimeUnit.MILLISECONDS);
             assertThat(lastRequest).isNotNull();
             assertThat(ex.getMessage()).contains("401");
         }
@@ -281,9 +283,9 @@ public class EventManagerTest extends HTTPServerMock {
 
         try {
             // track async event
-             eventManager.sendSync(Object.class, event, "some-path/to-api");
+            eventManager.sendSync(Object.class, event, "some-path/to-api");
         } catch (Exception ex) {
-            RecordedRequest lastRequest =  server.takeRequest(10 * options.getInterval(), TimeUnit.MILLISECONDS);
+            RecordedRequest lastRequest = server.takeRequest(10 * options.getInterval(), TimeUnit.MILLISECONDS);
             assertThat(lastRequest).isNotNull();
             assertThat(ex.getMessage()).contains("500");
         }

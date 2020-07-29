@@ -3,7 +3,6 @@ package com.securenative.utils;
 import com.securenative.Logger;
 
 
-
 public class Utils {
     private static final Logger logger = Logger.getLogger(Utils.class);
 
@@ -19,14 +18,14 @@ public class Utils {
         return result == 0;
     }
 
-    public static Boolean isNullOrEmpty(String str){
+    public static Boolean isNullOrEmpty(String str) {
         return str == null || str.length() == 0;
     }
 
     public static Integer parseIntegerOrDefault(String str, Integer defaultValue) {
         try {
             return Integer.valueOf(str);
-        }catch (NumberFormatException ex){
+        } catch (NumberFormatException ex) {
             return defaultValue;
         }
     }
@@ -34,7 +33,7 @@ public class Utils {
     public static Boolean parseBooleanOrDefault(String str, Boolean defaultValue) {
         try {
             return Boolean.valueOf(str);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             return defaultValue;
         }
     }

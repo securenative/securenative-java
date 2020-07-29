@@ -10,7 +10,6 @@ import com.securenative.exceptions.SecureNativeInvalidOptionsException;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.http.HTTPServerMock;
 import com.securenative.models.EventOptions;
-import com.securenative.models.UserTraits;
 import com.securenative.models.VerifyResult;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.json.JSONException;
@@ -38,11 +37,11 @@ public class ApiManagerImplTest extends HTTPServerMock {
                 .withIp("127.0.0.1")
                 .withClientToken("SECURED_CLIENT_TOKEN")
                 .withHeaders(Maps.defaultBuilder()
-                            .put("user-agent", "Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405")
-                            .build())
+                        .put("user-agent", "Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405")
+                        .build())
                 .build();
 
-         eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
+        eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
                 .userId("USER_ID")
                 .userTraits("USER_NAME", "USER_EMAIL")
                 .context(context)
@@ -101,19 +100,21 @@ public class ApiManagerImplTest extends HTTPServerMock {
         eventManager.startEventsPersist();
         ApiManager apiManager = new ApiManagerImpl(eventManager, options);
 
-        Map<Object,Object> props = IntStream.range(0,11).boxed().collect(Collectors.toMap(i-> String.format("prop%d",i) , i-> String.format("val%d",i)));
+        Map<Object, Object> props = IntStream.range(0, 11).boxed().collect(Collectors.toMap(i -> String.format("prop%d", i), i -> String.format("val%d", i)));
 
         try {
-            assertThrows(SecureNativeInvalidOptionsException.class, ()->{
+            assertThrows(SecureNativeInvalidOptionsException.class, () -> {
                 // track async event
                 apiManager.track(EventOptionsBuilder.builder(EventTypes.LOG_IN)
                         .properties(props)
                         .build());
             });
-        }finally {
-             eventManager.stopEventsPersist();
+        } finally {
+            eventManager.stopEventsPersist();
         }
-    };
+    }
+
+    ;
 
 
     @Test
@@ -168,7 +169,7 @@ public class ApiManagerImplTest extends HTTPServerMock {
 
             assertThat(server.getRequestCount()).isEqualTo(1);
         } finally {
-             eventManager.stopEventsPersist();
+            eventManager.stopEventsPersist();
         }
     }
 
@@ -190,7 +191,7 @@ public class ApiManagerImplTest extends HTTPServerMock {
 
 
         // call verify event
-        VerifyResult result =  apiManager.verify(eventOptions);
+        VerifyResult result = apiManager.verify(eventOptions);
 
         assertThat(result.getRiskLevel()).isEqualTo(verifyResult.getRiskLevel());
         assertThat(result.getScore()).isEqualTo(verifyResult.getScore());
@@ -219,7 +220,7 @@ public class ApiManagerImplTest extends HTTPServerMock {
         ApiManager apiManager = new ApiManagerImpl(eventManager, options);
 
         // call verify event
-        VerifyResult verifyResult =  apiManager.verify(eventOptions);
+        VerifyResult verifyResult = apiManager.verify(eventOptions);
         assertThat(verifyResult.getRiskLevel()).isEqualTo(RiskLevel.LOW);
         assertThat(verifyResult.getScore()).isEqualTo(0);
         assertThat(verifyResult.getTriggers().length).isEqualTo(0);

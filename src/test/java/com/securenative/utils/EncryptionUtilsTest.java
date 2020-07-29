@@ -23,8 +23,8 @@ public class EncryptionUtilsTest {
     @Test
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should decrypt message correctly")
-    public void decryptTest(){
-        String encryptedPayload  = "5208ae703cc2fa0851347f55d3b76d3fd6035ee081d71a401e8bc92ebdc25d42440f62310bda60628537744ac03f200d78da9e61f1019ce02087b7ce6c976e7b2d8ad6aa978c532cea8f3e744cc6a5cafedc4ae6cd1b08a4ef75d6e37aa3c0c76954d16d57750be2980c2c91ac7ef0bbd0722abd59bf6be22493ea9b9759c3ff4d17f17ab670b0b6fc320e6de982313f1c4e74c0897f9f5a32d58e3e53050ae8fdbebba9009d0d1250fe34dcde1ebb42acbc22834a02f53889076140f0eb8db1";
+    public void decryptTest() {
+        String encryptedPayload = "5208ae703cc2fa0851347f55d3b76d3fd6035ee081d71a401e8bc92ebdc25d42440f62310bda60628537744ac03f200d78da9e61f1019ce02087b7ce6c976e7b2d8ad6aa978c532cea8f3e744cc6a5cafedc4ae6cd1b08a4ef75d6e37aa3c0c76954d16d57750be2980c2c91ac7ef0bbd0722abd59bf6be22493ea9b9759c3ff4d17f17ab670b0b6fc320e6de982313f1c4e74c0897f9f5a32d58e3e53050ae8fdbebba9009d0d1250fe34dcde1ebb42acbc22834a02f53889076140f0eb8db1";
         String result = EncryptionUtils.decrypt(encryptedPayload, SECRET_KEY);
         Assertions.assertThat(result).isEqualTo(PAYLOAD);
     }
@@ -32,7 +32,7 @@ public class EncryptionUtilsTest {
     @Test
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should encrypt and decrypt message correctly")
-    public void encryptDecryptTest(){
+    public void encryptDecryptTest() {
         String encRes = EncryptionUtils.encrypt(PAYLOAD, SECRET_KEY);
         String decRes = EncryptionUtils.decrypt(encRes, SECRET_KEY);
         Assertions.assertThat(decRes).isEqualTo(PAYLOAD);
@@ -41,7 +41,7 @@ public class EncryptionUtilsTest {
     @Test
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should handle encryption with short key")
-    public void encryptWithInvalidKeyLenTest(){
+    public void encryptWithInvalidKeyLenTest() {
         String secretKey = "BAD_KEY";
         String result = EncryptionUtils.encrypt(PAYLOAD, secretKey);
         Assertions.assertThat(result).hasSize(0);
@@ -50,9 +50,9 @@ public class EncryptionUtilsTest {
     @Test
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should handle decryption with short key")
-    public void decryptWithInvalidKeyLenTest(){
+    public void decryptWithInvalidKeyLenTest() {
         String secretKey = "BAD_KEY";
-        String encryptedPayload  = "5208ae703cc2fa0851347f55d3b76d3fd6035ee081d71a401e8bc92ebdc25d42440f62310bda60628537744ac03f200d78da9e61f1019ce02087b7ce6c976e7b2d8ad6aa978c532cea8f3e744cc6a5cafedc4ae6cd1b08a4ef75d6e37aa3c0c76954d16d57750be2980c2c91ac7ef0bbd0722abd59bf6be22493ea9b9759c3ff4d17f17ab670b0b6fc320e6de982313f1c4e74c0897f9f5a32d58e3e53050ae8fdbebba9009d0d1250fe34dcde1ebb42acbc22834a02f53889076140f0eb8db1";
+        String encryptedPayload = "5208ae703cc2fa0851347f55d3b76d3fd6035ee081d71a401e8bc92ebdc25d42440f62310bda60628537744ac03f200d78da9e61f1019ce02087b7ce6c976e7b2d8ad6aa978c532cea8f3e744cc6a5cafedc4ae6cd1b08a4ef75d6e37aa3c0c76954d16d57750be2980c2c91ac7ef0bbd0722abd59bf6be22493ea9b9759c3ff4d17f17ab670b0b6fc320e6de982313f1c4e74c0897f9f5a32d58e3e53050ae8fdbebba9009d0d1250fe34dcde1ebb42acbc22834a02f53889076140f0eb8db1";
 
         String result = EncryptionUtils.decrypt(encryptedPayload, secretKey);
 
@@ -62,7 +62,7 @@ public class EncryptionUtilsTest {
     @Test
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should decrypt with key which is too long")
-    public void encryptDecryptWithKeyWhichTooLongTest(){
+    public void encryptDecryptWithKeyWhichTooLongTest() {
         String secretKey = "B00C42DAD33EAC6F6572DA756EA4915349C0A4F6B00C42DAD33EAC6F6572DA756EA4915349C0A4F6";
 
         String encRes = EncryptionUtils.encrypt(PAYLOAD, secretKey);

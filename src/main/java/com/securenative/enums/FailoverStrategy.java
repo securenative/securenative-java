@@ -1,13 +1,12 @@
 package com.securenative.enums;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum FailoverStrategy {
     FAIL_OPEN("fail-open"),
     FAIL_CLOSED("fail-closed");
 
-    private String failoverStrategy;
+    private final String failoverStrategy;
 
     @JsonValue
     public String getFailoverStrategy() {
@@ -17,7 +16,7 @@ public enum FailoverStrategy {
     public static FailoverStrategy fromString(String key, FailoverStrategy failoverStrategy) {
         try {
             return FailoverStrategy.valueOf(key.replace("-", "_").toUpperCase());
-        }catch (IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             return failoverStrategy;
         }
     }

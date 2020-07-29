@@ -48,15 +48,15 @@ public class SecureNativeContextBuilder {
         return this;
     }
 
-    public static SecureNativeContextBuilder defaultContextBuilder(){
+    public static SecureNativeContextBuilder defaultContextBuilder() {
         return new SecureNativeContextBuilder();
     }
 
     public static SecureNativeContextBuilder fromHttpServletRequest(HttpServletRequest request) {
-        Map<String,String> headers  = RequestUtils.getHeadersFromRequest(request);
+        Map<String, String> headers = RequestUtils.getHeadersFromRequest(request);
 
         String clientToken = RequestUtils.getCookieValueFromRequest(request, RequestUtils.SECURENATIVE_COOKIE);
-        if(Utils.isNullOrEmpty(clientToken)){
+        if (Utils.isNullOrEmpty(clientToken)) {
             clientToken = RequestUtils.getSecureHeaderFromRequest(headers);
         }
 
@@ -70,7 +70,7 @@ public class SecureNativeContextBuilder {
                 .withBody(null);
     }
 
-    public SecureNativeContext build(){
+    public SecureNativeContext build() {
         return this.context;
     }
 }

@@ -7,7 +7,7 @@ import java.util.*;
 public class RequestUtils {
     public final static String SECURENATIVE_COOKIE = "_sn";
     public final static String SECURENATIVE_HEADER = "x-securenative";
-    private final static List<String> ipHeaders =  Arrays.asList("x-forwarded-for", "x-client-ip", "x-real-ip", "x-forwarded", "x-cluster-client-ip", "forwarded-for", "forwarded", "via");
+    private final static List<String> ipHeaders = Arrays.asList("x-forwarded-for", "x-client-ip", "x-real-ip", "x-forwarded", "x-cluster-client-ip", "forwarded-for", "forwarded", "via");
 
     public static Map<String, String> getHeadersFromRequest(HttpServletRequest request) {
         Map<String, String> headersMap = new HashMap<>();
@@ -37,31 +37,31 @@ public class RequestUtils {
 
     public static String getClientIpFromRequest(HttpServletRequest request, Map<String, String> headers) {
         Optional<String> bestCandidate = Optional.empty();
-        for (String ipHeader: ipHeaders) {
-            if(!headers.containsKey(ipHeader)){
+        for (String ipHeader : ipHeaders) {
+            if (!headers.containsKey(ipHeader)) {
                 continue;
             }
             String headerValue = headers.get(ipHeader);
 
             Optional<String> candidateIp = Arrays.stream(headerValue.split(","))
-                                                    .map(String::trim)
-                                                    .filter(IPUtils::isIpAddress)
-                                                    .filter(IPUtils::isValidPublicIp)
-                                                    .findFirst();
+                    .map(String::trim)
+                    .filter(IPUtils::isIpAddress)
+                    .filter(IPUtils::isValidPublicIp)
+                    .findFirst();
 
-            if(candidateIp.isPresent()){
-                return  candidateIp.get();
-            }else if(!bestCandidate.isPresent()) {
+            if (candidateIp.isPresent()) {
+                return candidateIp.get();
+            } else if (!bestCandidate.isPresent()) {
                 bestCandidate = Arrays.stream(headerValue.split(","))
-                                       .map(String::trim)
-                                       .filter(IPUtils::isLoopBack)
-                                       .findFirst();
+                        .map(String::trim)
+                        .filter(IPUtils::isLoopBack)
+                        .findFirst();
             }
         }
         return bestCandidate.orElseGet(request::getRemoteAddr);
     }
 
-    public static String getRemoteIpFromRequest(HttpServletRequest request){
+    public static String getRemoteIpFromRequest(HttpServletRequest request) {
         return request.getRemoteAddr();
     }
 }

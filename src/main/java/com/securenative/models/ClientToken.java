@@ -1,6 +1,5 @@
 package com.securenative.models;
 
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,7 +8,8 @@ public class ClientToken {
     private String vid;
     private String fp;
 
-    public ClientToken() { }
+    public ClientToken() {
+    }
 
     @JsonCreator
     public ClientToken(@JsonProperty("cid") String cid, @JsonProperty("vid") String vid, @JsonProperty("fp") String fp) {

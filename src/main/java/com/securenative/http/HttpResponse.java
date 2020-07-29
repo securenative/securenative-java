@@ -5,13 +5,15 @@ public class HttpResponse {
     private final int statusCode;
     private final String body;
 
-    public HttpResponse(Boolean ok, int statusCode, String body){
+    public HttpResponse(Boolean ok, int statusCode, String body) {
         this.ok = ok;
         this.statusCode = statusCode;
         this.body = body;
     }
 
-    public Boolean isOk() { return ok; }
+    public Boolean isOk() {
+        return ok;
+    }
 
     public int getStatusCode() {
         return statusCode;

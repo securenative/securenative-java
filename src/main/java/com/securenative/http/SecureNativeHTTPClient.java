@@ -23,13 +23,13 @@ public class SecureNativeHTTPClient implements HttpClient {
                 .Builder()
                 .readTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
                 .connectionSpecs(Arrays.asList(ConnectionSpec.MODERN_TLS, ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.CLEARTEXT))
-                .addInterceptor((chain) ->{
-                        Request request = chain.request();
-                        Request authenticatedRequest = request.newBuilder()
-                                .header(USER_AGENT_HEADER, USER_AGENT_HEADER_VALUE)
-                                .header(VERSION_HEADER, VersionUtils.getVersion())
-                                .header(AUTHORIZATION_HEADER, options.getApiKey()).build();
-                        return chain.proceed(authenticatedRequest);
+                .addInterceptor((chain) -> {
+                    Request request = chain.request();
+                    Request authenticatedRequest = request.newBuilder()
+                            .header(USER_AGENT_HEADER, USER_AGENT_HEADER_VALUE)
+                            .header(VERSION_HEADER, VersionUtils.getVersion())
+                            .header(AUTHORIZATION_HEADER, options.getApiKey()).build();
+                    return chain.proceed(authenticatedRequest);
                 }).build();
     }
 
@@ -37,7 +37,7 @@ public class SecureNativeHTTPClient implements HttpClient {
     @Override
     public HttpResponse post(String path, String payload) throws IOException {
         RequestBody body = RequestBody.create(JSON_MEDIA_TYPE, payload);
-        
+
         String url = String.format("%s/%s", this.options.getApiUrl(), path);
 
         Request request = new Request.Builder()
@@ -45,9 +45,9 @@ public class SecureNativeHTTPClient implements HttpClient {
                 .post(body)
                 .build();
         try (Response response = this.client.newCall(request).execute()) {
-           int statusCode = response.code();
-           String responseBody = response.body().string();
-           return new HttpResponse(response.isSuccessful(), statusCode, responseBody);
+            int statusCode = response.code();
+            String responseBody = response.body().string();
+            return new HttpResponse(response.isSuccessful(), statusCode, responseBody);
         }
     }
 }

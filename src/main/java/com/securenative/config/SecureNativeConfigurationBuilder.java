@@ -48,7 +48,8 @@ public class SecureNativeConfigurationBuilder {
      */
     private FailoverStrategy failoverStrategy;
 
-    private SecureNativeConfigurationBuilder(){ }
+    private SecureNativeConfigurationBuilder() {
+    }
 
     public static SecureNativeConfigurationBuilder defaultConfigBuilder() {
         return new SecureNativeConfigurationBuilder()

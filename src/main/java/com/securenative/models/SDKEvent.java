@@ -8,6 +8,7 @@ import com.securenative.context.SecureNativeContext;
 import com.securenative.context.SecureNativeContextBuilder;
 import com.securenative.utils.DateUtils;
 import com.securenative.utils.EncryptionUtils;
+
 import java.util.*;
 
 public class SDKEvent implements Event {
@@ -21,7 +22,7 @@ public class SDKEvent implements Event {
     public static final Logger logger = Logger.getLogger(SecureNative.class);
 
     public SDKEvent(EventOptions event, SecureNativeOptions options) {
-        SecureNativeContext context = event.getContext() != null?  event.getContext() : SecureNativeContextBuilder.defaultContextBuilder().build();
+        SecureNativeContext context = event.getContext() != null ? event.getContext() : SecureNativeContextBuilder.defaultContextBuilder().build();
 
         ClientToken clientToken = decryptToken(context.getClientToken(), options.getApiKey());
 
@@ -29,16 +30,16 @@ public class SDKEvent implements Event {
         this.eventType = event.getEvent();
         this.userId = event.getUserId();
         this.userTraits = event.getUserTraits();
-        this.request =  new RequestContext.RequestContextBuilder()
-                                        .withCid(clientToken.getCid())
-                                        .withVid(clientToken.getVid())
-                                        .withFp(clientToken.getFp())
-                                        .withIp(context.getIp())
-                                        .withRemoteIp(context.getRemoteIp())
-                                        .withMethod(context.getMethod())
-                                        .withUrl(context.getUrl())
-                                        .witHeaders(context.getHeaders())
-                                        .build();
+        this.request = new RequestContext.RequestContextBuilder()
+                .withCid(clientToken.getCid())
+                .withVid(clientToken.getVid())
+                .withFp(clientToken.getFp())
+                .withIp(context.getIp())
+                .withRemoteIp(context.getRemoteIp())
+                .withMethod(context.getMethod())
+                .withUrl(context.getUrl())
+                .witHeaders(context.getHeaders())
+                .build();
         this.timestamp = DateUtils.toTimestamp(event.getTimestamp());
         this.properties = event.getProperties();
     }
@@ -46,8 +47,8 @@ public class SDKEvent implements Event {
     private ClientToken decryptToken(String token, String key) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-          String decryptedClientToken = EncryptionUtils.decrypt(token, key);
-          return mapper.readValue(decryptedClientToken, ClientToken.class);
+            String decryptedClientToken = EncryptionUtils.decrypt(token, key);
+            return mapper.readValue(decryptedClientToken, ClientToken.class);
         } catch (Exception ex) {
             logger.error("Failed to decrypt token");
         }

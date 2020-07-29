@@ -57,7 +57,11 @@ public class EventOptions {
         this.properties = properties;
     }
 
-    public Date getTimestamp() { return timestamp; }
+    public Date getTimestamp() {
+        return timestamp;
+    }
 
-    public void setTimestamp(Date timestamp) { this.timestamp = timestamp; }
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 }

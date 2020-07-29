@@ -56,7 +56,12 @@ To get your *API KEY*, login to your SecureNative account and go to project sett
 SecureNative can automatically load your config from *securenative.properties* file or from the file that is specified in your *SECURENATIVE_CONFIG_FILE* env variable:
 
 ```java
+// Options 1: Use default config file path
 SecureNative secureNative =  SecureNative.init();
+
+// Options 2: Use specific config file path
+Path path = Paths.get("/path/to/securenative.properties");
+SecureNative secureNative =  SecureNative.init(path);
 ```
 ### Option 2: Initialize via API Key
 
@@ -140,8 +145,8 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
 **Example**
 
 ```java
-@RequestMapping("/track")
-public void track(HttpServletRequest request, HttpServletResponse response) {
+@RequestMapping("/verify")
+public void verify(HttpServletRequest request, HttpServletResponse response) {
     SecureNativeContext context = SecureNative.contextBuilder()
                                               .fromHttpServletRequest(request)
                                               .build();
@@ -159,9 +164,9 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
             .build();
     
     VerifyResult verifyResult = secureNative.verify(eventOptions);
-    verifyResult.getRiskLevel() // Low, Medium, High
-    verifyResult.score() // Risk score: 0 -1 (0 - Very Low, 1 - Very High)
-    verifyResult.getTriggers() // ["TOR", "New IP", "New City"]
+    verifyResult.getRiskLevel(); // Low, Medium, High
+    verifyResult.score(); // Risk score: 0 -1 (0 - Very Low, 1 - Very High)
+    verifyResult.getTriggers(); // ["TOR", "New IP", "New City"]
 }
 ```
 

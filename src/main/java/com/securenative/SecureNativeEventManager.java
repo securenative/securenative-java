@@ -3,23 +3,25 @@ package com.securenative;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.securenative.config.SecureNativeOptions;
 import com.securenative.exceptions.SecureNativeHttpException;
-import com.securenative.exceptions.SecureNativeInvalidUriException;
 import com.securenative.exceptions.SecureNativeParseException;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.http.HttpClient;
 import com.securenative.http.HttpResponse;
 import com.securenative.models.Event;
 import com.securenative.models.RequestOptions;
-import com.securenative.config.SecureNativeOptions;
 
 import java.io.IOException;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class SecureNativeEventManager implements EventManager {
     private static final Logger logger = Logger.getLogger(SecureNativeEventManager.class);
-    private final int[] coefficients = new int[] { 1, 1, 2, 3, 5, 8, 13 };
+    private final int[] coefficients = new int[]{1, 1, 2, 3, 5, 8, 13};
     private int attempt = 0;
     private Boolean sendEnabled = false;
     private ScheduledExecutorService scheduler;
@@ -54,7 +56,7 @@ public class SecureNativeEventManager implements EventManager {
         String responseBody = response.getBody();
         try {
             return mapper.readValue(responseBody, clazz);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("Failed to parse response body", ex.getMessage());
             throw new SecureNativeParseException(ex.getMessage());
         }
@@ -77,10 +79,10 @@ public class SecureNativeEventManager implements EventManager {
 
     private void sendEvents() throws InterruptedException {
         if (!this.events.isEmpty() && this.sendEnabled) {
-            RequestOptions requestOptions =  events.peek();
+            RequestOptions requestOptions = events.peek();
             try {
                 String body = requestOptions.getBody();
-                HttpResponse resp =  this.httpClient.post(requestOptions.getUrl(), body);
+                HttpResponse resp = this.httpClient.post(requestOptions.getUrl(), body);
                 if (resp.getStatusCode() == 401) {
                     requestOptions.setRetry(false);
                 }
@@ -93,7 +95,7 @@ public class SecureNativeEventManager implements EventManager {
             } catch (Exception ex) {
                 logger.error("Failed to send event", ex.getMessage());
                 if (requestOptions.getRetry()) {
-                    if(attempt++ == coefficients.length){
+                    if (attempt++ == coefficients.length) {
                         attempt = 0;
                     }
                     int backoff = coefficients[attempt] * this.options.getInterval();
@@ -101,7 +103,7 @@ public class SecureNativeEventManager implements EventManager {
                     this.sendEnabled = false;
                     Thread.sleep(backoff);
                     this.sendEnabled = true;
-                }else{
+                } else {
                     // remove the event from queue, retry: false
                     events.remove(requestOptions);
                 }
@@ -119,7 +121,10 @@ public class SecureNativeEventManager implements EventManager {
         this.sendEnabled = true;
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
         this.scheduler.scheduleWithFixedDelay(() -> {
-            try { sendEvents(); } catch (InterruptedException ignored) { }
+            try {
+                sendEvents();
+            } catch (InterruptedException ignored) {
+            }
         }, 0, this.options.getInterval(), TimeUnit.MILLISECONDS);
     }
 
@@ -131,7 +136,8 @@ public class SecureNativeEventManager implements EventManager {
                 this.scheduler.shutdown();
                 // drain event queue
                 this.scheduler.awaitTermination(this.options.getTimeout(), TimeUnit.MILLISECONDS);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
 
             logger.debug("Stopped event persistence");
         }

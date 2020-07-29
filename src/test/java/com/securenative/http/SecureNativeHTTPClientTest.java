@@ -1,4 +1,5 @@
 package com.securenative.http;
+
 import com.securenative.config.ConfigurationManager;
 import com.securenative.exceptions.SecureNativeInvalidUriException;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +16,8 @@ public class SecureNativeHTTPClientTest extends HTTPServerMock {
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
     @DisplayName("Should make simple http post call")
     public void shouldMakeSimplePostCallTest() throws IOException, SecureNativeInvalidUriException {
-        configBuilder =  ConfigurationManager.configBuilder()
-                                             .withApiKey("YOUR_API_KEY");
+        configBuilder = ConfigurationManager.configBuilder()
+                .withApiKey("YOUR_API_KEY");
 
         client = sandbox().mock(200, "SOME_BODY");
 

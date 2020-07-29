@@ -1,9 +1,7 @@
 package com.securenative.utils;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +27,7 @@ public class IPUtils {
         }
 
         return !(address.isSiteLocalAddress() ||
-                address.isAnyLocalAddress()  ||
+                address.isAnyLocalAddress() ||
                 address.isLinkLocalAddress() ||
                 address.isLoopbackAddress() ||
                 address.isMulticastAddress());
