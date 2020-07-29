@@ -28,3 +28,5 @@ hs_err_pid*
 /.project
 *.iml
 .idea
+.vscode
+.DS_Store
