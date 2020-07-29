@@ -1,7 +1,6 @@
 package com.securenative.utils;
 
 import com.securenative.ResourceStreamImpl;
-import com.securenative.config.ConfigurationManager;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -18,8 +17,8 @@ public class VersionTest {
 
         String props = String.join(System.getProperty("line.separator"),
                 "version=1.0.0",
-                        "groupId=com.securenative.java",
-                        "artifactId=securenative-java");
+                "groupId=com.securenative.java",
+                "artifactId=securenative-java");
 
         InputStream inputStream = new ByteArrayInputStream(props.getBytes());
         ResourceStreamImpl resourceStream = Mockito.spy(new ResourceStreamImpl());

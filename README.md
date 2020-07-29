@@ -140,8 +140,8 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
 **Example**
 
 ```java
-@RequestMapping("/track")
-public void track(HttpServletRequest request, HttpServletResponse response) {
+@RequestMapping("/verify")
+public void verify(HttpServletRequest request, HttpServletResponse response) {
     SecureNativeContext context = SecureNative.contextBuilder()
                                               .fromHttpServletRequest(request)
                                               .build();
@@ -159,9 +159,9 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
             .build();
     
     VerifyResult verifyResult = secureNative.verify(eventOptions);
-    verifyResult.getRiskLevel() // Low, Medium, High
-    verifyResult.score() // Risk score: 0 -1 (0 - Very Low, 1 - Very High)
-    verifyResult.getTriggers() // ["TOR", "New IP", "New City"]
+    verifyResult.getRiskLevel(); // Low, Medium, High
+    verifyResult.score(); // Risk score: 0 -1 (0 - Very Low, 1 - Very High)
+    verifyResult.getTriggers(); // ["TOR", "New IP", "New City"]
 }
 ```
 

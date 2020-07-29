@@ -7,11 +7,12 @@ public class SecureNativeContext {
     private String ip;
     private String remoteIp;
     private Map<String, String> headers;
-    private  String url;
+    private String url;
     private String method;
     private String body;
 
-    public SecureNativeContext() { }
+    public SecureNativeContext() {
+    }
 
     public SecureNativeContext(String clientToken, String ip, String remoteIp, Map<String, String> headers, String url, String method, String body) {
         this.clientToken = clientToken;

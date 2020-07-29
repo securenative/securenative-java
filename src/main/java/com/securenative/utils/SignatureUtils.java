@@ -2,10 +2,7 @@ package com.securenative.utils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.Formatter;
-import java.util.stream.Collectors;
 
 import static com.securenative.utils.Utils.timingSafeEqual;
 
@@ -28,7 +25,8 @@ public class SignatureUtils {
             hasher.init(new SecretKeySpec(key.getBytes(), HMAC_SHA512));
             byte[] hash = hasher.doFinal(message.getBytes());
             return toHexString(hash);
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {
+        }
 
         return "";
     }

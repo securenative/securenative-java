@@ -2,9 +2,9 @@ package com.securenative;
 
 
 import com.securenative.context.SecureNativeContext;
+import com.securenative.enums.EventTypes;
 import com.securenative.exceptions.SecureNativeInvalidOptionsException;
 import com.securenative.models.EventOptions;
-import com.securenative.enums.EventTypes;
 import com.securenative.models.UserTraits;
 
 import java.util.Date;
@@ -15,11 +15,11 @@ public class EventOptionsBuilder {
     private static final Logger logger = Logger.getLogger(EventOptionsBuilder.class);
     private final EventOptions eventOptions;
 
-    public static EventOptionsBuilder builder(String eventType){
+    public static EventOptionsBuilder builder(String eventType) {
         return new EventOptionsBuilder(eventType);
     }
 
-    public static EventOptionsBuilder builder(EventTypes eventType){
+    public static EventOptionsBuilder builder(EventTypes eventType) {
         return new EventOptionsBuilder(eventType.getType());
     }
 
@@ -68,7 +68,7 @@ public class EventOptionsBuilder {
     }
 
     public EventOptions build() throws SecureNativeInvalidOptionsException {
-        if(this.eventOptions.getProperties().size() > MAX_PROPERTIES_SIZE){
+        if (this.eventOptions.getProperties().size() > MAX_PROPERTIES_SIZE) {
             throw new SecureNativeInvalidOptionsException(String.format("You can have only up to %d custom properties", MAX_PROPERTIES_SIZE));
         }
         return this.eventOptions;

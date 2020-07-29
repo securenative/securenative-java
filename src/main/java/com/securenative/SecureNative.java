@@ -15,6 +15,7 @@ import com.securenative.utils.Utils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 import static com.securenative.utils.SignatureUtils.SIGNATURE_HEADER;
@@ -32,7 +33,7 @@ public class SecureNative implements ApiManager {
         this.options = options;
 
         EventManager eventManager = new SecureNativeEventManager(new SecureNativeHTTPClient(options), options);
-        if(options.getAutoSend()){
+        if (options.getAutoSend()) {
             eventManager.startEventsPersist();
         }
         this.apiManager = new ApiManagerImpl(eventManager, options);
@@ -51,13 +52,19 @@ public class SecureNative implements ApiManager {
         if (Utils.isNullOrEmpty(apiKey)) {
             throw new SecureNativeConfigException("You must pass your SecureNative api key");
         }
-        SecureNativeConfigurationBuilder builder =  SecureNativeConfigurationBuilder.defaultConfigBuilder();
+        SecureNativeConfigurationBuilder builder = SecureNativeConfigurationBuilder.defaultConfigBuilder();
         SecureNativeOptions secureNativeOptions = builder.withApiKey(apiKey).build();
         return init(secureNativeOptions);
     }
 
+
     public static SecureNative init() throws SecureNativeSDKException, SecureNativeConfigException {
         SecureNativeOptions secureNativeOptions = ConfigurationManager.loadConfig();
+        return init(secureNativeOptions);
+    }
+
+    public static SecureNative init(Path path) throws SecureNativeSDKException, SecureNativeConfigException {
+        SecureNativeOptions secureNativeOptions = ConfigurationManager.loadConfig(path);
         return init(secureNativeOptions);
     }
 
@@ -72,24 +79,24 @@ public class SecureNative implements ApiManager {
         return options;
     }
 
-    public static SecureNativeConfigurationBuilder configBuilder(){
+    public static SecureNativeConfigurationBuilder configBuilder() {
         return SecureNativeConfigurationBuilder.defaultConfigBuilder();
     }
 
-    public static SecureNativeContextBuilder contextBuilder(){
+    public static SecureNativeContextBuilder contextBuilder() {
         return SecureNativeContextBuilder.defaultContextBuilder();
     }
 
     public boolean verifyRequestPayload(HttpServletRequest request) throws IOException {
         String requestSignature = request.getHeader(SIGNATURE_HEADER);
-        String body =  request.getReader().lines().collect(Collectors.joining());
+        String body = request.getReader().lines().collect(Collectors.joining());
 
         return SignatureUtils.isValidSignature(requestSignature, body, this.options.getApiKey());
     }
 
     @Override
     public void track(EventOptions eventOptions) {
-         this.apiManager.track(eventOptions);
+        this.apiManager.track(eventOptions);
     }
 
     @Override

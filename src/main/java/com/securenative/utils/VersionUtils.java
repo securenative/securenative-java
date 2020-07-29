@@ -2,10 +2,6 @@ package com.securenative.utils;
 
 import com.securenative.ResourceStream;
 import com.securenative.ResourceStreamImpl;
-import com.securenative.SecureNative;
-import com.securenative.config.ConfigurationManager;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 import java.io.InputStream;
 import java.util.Properties;

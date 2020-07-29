@@ -12,7 +12,8 @@ public class RequestContext {
     private String url;
     private String method;
 
-    public RequestContext() { }
+    public RequestContext() {
+    }
 
     public RequestContext(String cid, String vid, String fp, String ip, String remoteIp, Map<String, String> headers, String url, String method) {
         this.cid = cid;
@@ -107,7 +108,7 @@ public class RequestContext {
             return this;
         }
 
-        public RequestContext build(){
+        public RequestContext build() {
             return new RequestContext(cid, vid, fp, ip, remoteIp, headers, url, method);
         }
     }

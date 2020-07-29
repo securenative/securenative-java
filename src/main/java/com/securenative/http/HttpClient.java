@@ -1,6 +1,5 @@
 package com.securenative.http;
 
-
 import java.io.IOException;
 
 public interface HttpClient {

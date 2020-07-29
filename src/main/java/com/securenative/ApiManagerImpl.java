@@ -7,8 +7,8 @@ import com.securenative.enums.RiskLevel;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.models.Event;
 import com.securenative.models.EventOptions;
-import com.securenative.models.VerifyResult;
 import com.securenative.models.SDKEvent;
+import com.securenative.models.VerifyResult;
 
 public class ApiManagerImpl implements ApiManager {
     private final EventManager eventManager;
@@ -32,7 +32,7 @@ public class ApiManagerImpl implements ApiManager {
         logger.info("Verify event call");
         Event event = new SDKEvent(eventOptions, this.options);
         try {
-            return this.eventManager.sendSync(VerifyResult.class , event, ApiRoute.VERIFY.getApiRoute());
+            return this.eventManager.sendSync(VerifyResult.class, event, ApiRoute.VERIFY.getApiRoute());
         } catch (Exception ex) {
             logger.error("Failed to call verify", ex);
             return this.options.getFailoverStrategy() == FailoverStrategy.FAIL_OPEN ?

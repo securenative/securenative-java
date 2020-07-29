@@ -8,7 +8,7 @@ public enum RiskLevel {
     MEDIUM("medium"),
     HIGH("high");
 
-    private String riskLevel;
+    private final String riskLevel;
 
     @JsonValue
     public String getRiskLevel() {

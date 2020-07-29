@@ -1,7 +1,8 @@
 package com.securenative.utils;
 
 import com.securenative.Logger;
-import javax.crypto.*;
+
+import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +15,7 @@ public class EncryptionUtils {
     private static final String EMPTY_STRING = "";
     private static final Logger logger = Logger.getLogger(EncryptionUtils.class);
     private static final int AES_KEY_SIZE = 32;
-    private final static char[] HEX = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+    private final static char[] HEX = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     private static byte[] hexToByteArray(String s) {
         byte[] retValue = null;
@@ -35,13 +36,13 @@ public class EncryptionUtils {
         return hexBuffer.toString();
     }
 
-    private byte[] pad (byte[] buf, int size){
+    private byte[] pad(byte[] buf, int size) {
         int bufLen = buf.length;
-        int padLen = size - bufLen%size;
-        byte[] padded = new byte[bufLen+padLen];
-        padded = Arrays.copyOf(buf,bufLen+padLen);
+        int padLen = size - bufLen % size;
+        byte[] padded = new byte[bufLen + padLen];
+        padded = Arrays.copyOf(buf, bufLen + padLen);
         for (int i = 0; i < padLen; i++) {
-            padded[bufLen+i] = (byte)padLen;
+            padded[bufLen + i] = (byte) padLen;
         }
         return padded;
     }
@@ -66,7 +67,7 @@ public class EncryptionUtils {
             if (mod != 0) {
                 text = String.format(text + "%" + (16 - mod) + "s", " ");
             }
-            return byteArrayToHex(cipher.doFinal(addAll(ivBytes,text.getBytes(StandardCharsets.UTF_8)))).trim();
+            return byteArrayToHex(cipher.doFinal(addAll(ivBytes, text.getBytes(StandardCharsets.UTF_8)))).trim();
         } catch (Exception ex) {
             logger.error("Unable to encrypt, err:", ex.getMessage());
         }
