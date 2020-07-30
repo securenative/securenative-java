@@ -6,6 +6,9 @@ import com.securenative.SecureNative;
 import com.securenative.enums.FailoverStrategy;
 import com.securenative.utils.Utils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
@@ -69,7 +72,15 @@ public class ConfigurationManager {
     }
 
     public static SecureNativeOptions loadConfig(Path path) {
-        Properties properties = readResourceFile(path.toString());
+        Properties properties = new Properties();
+        InputStream input;
+        try {
+            input = new FileInputStream(path.toString());
+            properties.load(input);
+        } catch (IOException ignore) {
+
+        }
+
         return getOptions(properties);
     }
 
