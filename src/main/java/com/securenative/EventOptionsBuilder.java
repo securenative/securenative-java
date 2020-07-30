@@ -68,7 +68,7 @@ public class EventOptionsBuilder {
     }
 
     public EventOptions build() throws SecureNativeInvalidOptionsException {
-        if (this.eventOptions.getProperties().size() > MAX_PROPERTIES_SIZE) {
+        if (this.eventOptions.getProperties() != null && this.eventOptions.getProperties().size() > MAX_PROPERTIES_SIZE) {
             throw new SecureNativeInvalidOptionsException(String.format("You can have only up to %d custom properties", MAX_PROPERTIES_SIZE));
         }
         return this.eventOptions;
