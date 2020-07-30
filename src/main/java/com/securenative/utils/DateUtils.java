@@ -13,6 +13,9 @@ public class DateUtils {
     }
 
     public static String toTimestamp(Date date) {
+        if (date == null) {
+            date = new Date();
+        }
         return ZonedDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC).format(ISO_8601_PATTERN);
     }
 }
