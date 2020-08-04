@@ -45,6 +45,9 @@ public class SDKEvent implements Event {
     }
 
     private ClientToken decryptToken(String token, String key) {
+        if (token == null || token.length() == 0) {
+             return new ClientToken();
+        }
         ObjectMapper mapper = new ObjectMapper();
         try {
             String decryptedClientToken = EncryptionUtils.decrypt(token, key);
@@ -52,7 +55,6 @@ public class SDKEvent implements Event {
         } catch (Exception ex) {
             logger.error("Failed to decrypt token");
         }
-
         return new ClientToken();
     }
 
