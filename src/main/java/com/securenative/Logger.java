@@ -44,7 +44,7 @@ public class Logger implements ILogger {
 
     static void initLogger(String logLevel) {
         try {
-            _logLevel = LogLevel.valueOf(logLevel);
+            _logLevel = LogLevel.valueOf(logLevel.toLowerCase());
         } catch (IllegalArgumentException ignored) {}
     }
 
