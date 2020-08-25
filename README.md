@@ -57,21 +57,21 @@ SecureNative can automatically load your config from *securenative.properties* f
 
 ```java
 // Options 1: Use default config file path
-SecureNative secureNative =  SecureNative.init();
+SecureNative securenative =  SecureNative.init();
 
 // Options 2: Use specific config file path
 Path path = Paths.get("/path/to/securenative.properties");
-SecureNative secureNative =  SecureNative.init(path);
+SecureNative securenative =  SecureNative.init(path);
 ```
 ### Option 2: Initialize via API Key
 
 ```java
-SecureNative secureNative =  SecureNative.init("YOUR_API_KEY");
+SecureNative securenative =  SecureNative.init("YOUR_API_KEY");
 ```
 
 ### Option 3: Initialize via ConfigurationBuilder
 ```java
-SecureNative secureNative = SecureNative.init(SecureNative.configBuilder()
+SecureNative securenative = SecureNative.init(SecureNative.configBuilder()
                                         .withApiKey("API_KEY")
                                         .withMaxEvents(10)
                                         .withLogLevel("error")
@@ -81,7 +81,7 @@ SecureNative secureNative = SecureNative.init(SecureNative.configBuilder()
 ## Getting SecureNative instance
 Once initialized, sdk will create a singleton instance which you can get: 
 ```java
-SecureNative secureNative = SecureNative.getInstance();
+SecureNative securenative = SecureNative.getInstance();
 ```
 
 ## Tracking events
@@ -90,7 +90,7 @@ Once the SDK has been initialized, tracking requests sent through the SDK
 instance. Make sure you build event with the EventBuilder:
 
  ```java
-SecureNative secureNative = SecureNative.getInstance();
+SecureNative securenative = SecureNative.getInstance();
 
 SecureNativeContext context = SecureNative.contextBuilder()
         .withIp("127.0.0.1")
@@ -136,7 +136,7 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
             .timestamp(new Date())
             .build();
     
-    secureNative.track(eventOptions);
+    securenative.track(eventOptions);
 }
 ```
 
@@ -163,7 +163,7 @@ public void verify(HttpServletRequest request, HttpServletResponse response) {
             .timestamp(new Date())
             .build();
     
-    VerifyResult verifyResult = secureNative.verify(eventOptions);
+    VerifyResult verifyResult = securenative.verify(eventOptions);
     verifyResult.getRiskLevel(); // Low, Medium, High
     verifyResult.score(); // Risk score: 0 -1 (0 - Very Low, 1 - Very High)
     verifyResult.getTriggers(); // ["TOR", "New IP", "New City"]
@@ -177,9 +177,9 @@ Apply our filter to verify the request is from us, example in spring:
 ```java
 @RequestMapping("/webhook")
 public void webhookEndpoint(HttpServletRequest request, HttpServletResponse response) {
-    SecureNative secureNative = SecureNative.getInstance();
+    SecureNative securenative = SecureNative.getInstance();
     
     // Checks if request is verified
-    Boolean isVerified = secureNative.verifyRequestPayload(request);
+    Boolean isVerified = securenative.verifyRequestPayload(request);
 }
  ```
