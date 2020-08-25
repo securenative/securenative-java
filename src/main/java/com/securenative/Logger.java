@@ -87,5 +87,3 @@ public class Logger implements ILogger {
         }
     }
 }
-
-
