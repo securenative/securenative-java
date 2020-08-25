@@ -112,7 +112,7 @@ EventOptions eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
         .timestamp(new Date())
         .build();
 
-secureNative.track(eventOptions);
+securenative.track(eventOptions);
  ```
 
 You can also create request context from HttpServletRequest:
