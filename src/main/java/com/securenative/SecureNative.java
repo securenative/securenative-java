@@ -5,6 +5,7 @@ import com.securenative.config.SecureNativeConfigurationBuilder;
 import com.securenative.config.SecureNativeOptions;
 import com.securenative.context.SecureNativeContextBuilder;
 import com.securenative.exceptions.SecureNativeConfigException;
+import com.securenative.exceptions.SecureNativeInvalidOptionsException;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.exceptions.SecureNativeSDKIllegalStateException;
 import com.securenative.http.SecureNativeHTTPClient;
@@ -95,12 +96,12 @@ public class SecureNative implements ApiManager {
     }
 
     @Override
-    public void track(EventOptions eventOptions) {
+    public void track(EventOptions eventOptions) throws SecureNativeInvalidOptionsException {
         this.apiManager.track(eventOptions);
     }
 
     @Override
-    public VerifyResult verify(EventOptions eventOptions) {
+    public VerifyResult verify(EventOptions eventOptions) throws SecureNativeInvalidOptionsException {
         return this.apiManager.verify(eventOptions);
     }
 }

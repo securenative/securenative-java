@@ -80,6 +80,7 @@ public class ApiManagerImplTest extends HTTPServerMock {
             JSONAssert.assertEquals(expected, body, false);
             assertThat(new JSONObject(body).has("rid")).isTrue();
             assertThat(new JSONObject(body).has("timestamp")).isTrue();
+        } catch (SecureNativeInvalidOptionsException ignored) {
         } finally {
             eventManager.stopEventsPersist();
         }
@@ -114,8 +115,6 @@ public class ApiManagerImplTest extends HTTPServerMock {
         }
     }
 
-    ;
-
 
     @Test
     @Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
@@ -131,7 +130,10 @@ public class ApiManagerImplTest extends HTTPServerMock {
         ApiManager apiManager = new ApiManagerImpl(eventManager, options);
 
         // track async event
-        apiManager.track(eventOptions);
+        try {
+            apiManager.track(eventOptions);
+        } catch (SecureNativeInvalidOptionsException ignored) {
+        }
 
         // ensure event to be sent
         RecordedRequest lastRequest = server.takeRequest(10 * options.getInterval(), TimeUnit.MILLISECONDS);
@@ -156,7 +158,10 @@ public class ApiManagerImplTest extends HTTPServerMock {
         ApiManager apiManager = new ApiManagerImpl(eventManager, options);
 
         // track async event
-        apiManager.track(eventOptions);
+        try {
+            apiManager.track(eventOptions);
+        } catch (SecureNativeInvalidOptionsException ignored) {
+        }
 
         try {
             // ensure event to be sent
@@ -191,8 +196,13 @@ public class ApiManagerImplTest extends HTTPServerMock {
 
 
         // call verify event
-        VerifyResult result = apiManager.verify(eventOptions);
+        VerifyResult result = null;
+        try {
+            result = apiManager.verify(eventOptions);
+        } catch (SecureNativeInvalidOptionsException ignored) {
+        }
 
+        assert result != null;
         assertThat(result.getRiskLevel()).isEqualTo(verifyResult.getRiskLevel());
         assertThat(result.getScore()).isEqualTo(verifyResult.getScore());
         assertThat(result.getTriggers().length).isEqualTo(verifyResult.getTriggers().length);
@@ -220,7 +230,13 @@ public class ApiManagerImplTest extends HTTPServerMock {
         ApiManager apiManager = new ApiManagerImpl(eventManager, options);
 
         // call verify event
-        VerifyResult verifyResult = apiManager.verify(eventOptions);
+        VerifyResult verifyResult = null;
+        try {
+            verifyResult = apiManager.verify(eventOptions);
+        } catch (SecureNativeInvalidOptionsException ignored) {
+        }
+
+        assert verifyResult != null;
         assertThat(verifyResult.getRiskLevel()).isEqualTo(RiskLevel.LOW);
         assertThat(verifyResult.getScore()).isEqualTo(0);
         assertThat(verifyResult.getTriggers().length).isEqualTo(0);
@@ -230,8 +246,6 @@ public class ApiManagerImplTest extends HTTPServerMock {
         RecordedRequest lastRequest = server.takeRequest(10 * options.getInterval(), TimeUnit.MILLISECONDS);
         String lastRequestBody = lastRequest != null ? lastRequest.getBody().readUtf8() : null;
 
-        String expected = "{\"eventType\":\"sn.user.login\",\"userId\":\"USER_ID\",\"userTraits\":{\"name\":\"USER_NAME'\",\"email\":\"USER_EMAIL'\",\"createdAt\":null},\"request\":{\"cid\":null,\"vid\":null,\"fp\":null,\"ip\":\"127.0.0.1\",\"remoteIp\":null,\"headers\":{\"user-agent\":\"Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405\"},\"url\":null,\"method\":null},\"properties\":{\"prop2\":true,\"prop1\":\"CUSTOM_PARAM_VALUE\",\"prop3\":3}}";
         assertThat(lastRequestBody).isNotNull();
-
     }
 }
