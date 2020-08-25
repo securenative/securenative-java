@@ -6,6 +6,7 @@ import com.securenative.SecureNative;
 import com.securenative.config.SecureNativeOptions;
 import com.securenative.context.SecureNativeContext;
 import com.securenative.context.SecureNativeContextBuilder;
+import com.securenative.exceptions.SecureNativeInvalidOptionsException;
 import com.securenative.utils.DateUtils;
 import com.securenative.utils.EncryptionUtils;
 
@@ -21,7 +22,15 @@ public class SDKEvent implements Event {
     public Map<Object, Object> properties;
     public static final Logger logger = Logger.getLogger(SecureNative.class);
 
-    public SDKEvent(EventOptions event, SecureNativeOptions options) {
+    public SDKEvent(EventOptions event, SecureNativeOptions options) throws SecureNativeInvalidOptionsException {
+        if (event.getUserId() == null || event.getUserId().length() <= 0 || event.getUserId().equals("")) {
+            throw new SecureNativeInvalidOptionsException("Invalid event structure; User Id is missing");
+        }
+
+        if (event.getEvent() == null || event.getEvent().length() <= 0 || event.getEvent().equals("")) {
+            throw new SecureNativeInvalidOptionsException("Invalid event structure; Event Type is missing");
+        }
+
         SecureNativeContext context = event.getContext() != null ? event.getContext() : SecureNativeContextBuilder.defaultContextBuilder().build();
 
         ClientToken clientToken = decryptToken(context.getClientToken(), options.getApiKey());

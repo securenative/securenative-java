@@ -4,6 +4,7 @@ import com.securenative.config.SecureNativeOptions;
 import com.securenative.enums.ApiRoute;
 import com.securenative.enums.FailoverStrategy;
 import com.securenative.enums.RiskLevel;
+import com.securenative.exceptions.SecureNativeInvalidOptionsException;
 import com.securenative.exceptions.SecureNativeSDKException;
 import com.securenative.models.Event;
 import com.securenative.models.EventOptions;
@@ -21,14 +22,14 @@ public class ApiManagerImpl implements ApiManager {
     }
 
     @Override
-    public void track(EventOptions eventOptions) {
+    public void track(EventOptions eventOptions) throws SecureNativeInvalidOptionsException {
         logger.info("Track event call");
         Event event = new SDKEvent(eventOptions, this.options);
         this.eventManager.sendAsync(event, ApiRoute.TRACK.getApiRoute(), true);
     }
 
     @Override
-    public VerifyResult verify(EventOptions eventOptions) {
+    public VerifyResult verify(EventOptions eventOptions) throws SecureNativeInvalidOptionsException {
         logger.info("Verify event call");
         Event event = new SDKEvent(eventOptions, this.options);
         try {
