@@ -131,8 +131,8 @@ public void track() {
     EventOptions eventOptions = null;
     try {
         eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
-                .userId("11")
-                .userTraits("track02", "t@somemail.com", "+01234566789")
+                .userId("1234")
+                .userTraits("Your Name", "name@gmail.com", "+1234567890")
                 .context(context)
                 .properties(Maps.builder()
                         .put("prop1", "CUSTOM_PARAM_VALUE")
