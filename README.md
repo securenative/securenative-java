@@ -170,8 +170,8 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
     EventOptions eventOptions = null;
     try {
         eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
-                .userId("USER_ID")
-                .userTraits("USER_NAME", "USER_EMAIL", "+01234566789")
+                .userId("1234")
+                .userTraits("Your Name", "name@gmail.com", "+1234567890")
                 .context(context)
                 .properties(Maps.builder()
                         .put("prop1", "CUSTOM_PARAM_VALUE")
@@ -204,8 +204,8 @@ public void verify(HttpServletRequest request, HttpServletResponse response) {
     EventOptions eventOptions = null;
     try {
         eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
-                .userId("USER_ID")
-                .userTraits("USER_NAME", "USER_EMAIL", "+01234566789")
+                .userId("1234")
+                .userTraits("Your Name", "name@gmail.com", "+1234567890")
                 .context(context)
                 .properties(Maps.builder()
                         .put("prop1", "CUSTOM_PARAM_VALUE")
