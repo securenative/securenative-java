@@ -111,6 +111,7 @@ Once the SDK has been initialized, tracking requests sent through the SDK
 instance. Make sure you build event with the EventBuilder:
 
  ```java
+@RequestMapping("/track")
 public void track() {
     SecureNative securenative = null;
     try {
