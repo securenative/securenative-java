@@ -57,31 +57,52 @@ SecureNative can automatically load your config from *securenative.properties* f
 
 ```java
 // Options 1: Use default config file path
-SecureNative securenative =  SecureNative.init();
+try {
+    SecureNative securenative =  SecureNative.init();
+} catch (SecureNativeSDKException | SecureNativeConfigException e) {
+    e.printStackTrace();
+}
 
 // Options 2: Use specific config file path
 Path path = Paths.get("/path/to/securenative.properties");
-SecureNative securenative =  SecureNative.init(path);
+try {
+    SecureNative.init(path);
+} catch (SecureNativeSDKException | SecureNativeConfigException e) {
+    System.err.printf("Could not initialize SecureNative sdk; %s%n", e);
+}
 ```
 ### Option 2: Initialize via API Key
 
 ```java
-SecureNative securenative =  SecureNative.init("YOUR_API_KEY");
+try {
+   SecureNative securenative =  SecureNative.init("YOUR_API_KEY");
+} catch (SecureNativeSDKException | SecureNativeConfigException e) {
+   e.printStackTrace();
+}
 ```
 
 ### Option 3: Initialize via ConfigurationBuilder
 ```java
-SecureNative securenative = SecureNative.init(SecureNative.configBuilder()
-                                        .withApiKey("API_KEY")
-                                        .withMaxEvents(10)
-                                        .withLogLevel("error")
-                                        .build()); 
+try {
+    securenative = SecureNative.init(SecureNative.configBuilder()
+        .withApiKey("API_KEY")
+        .withMaxEvents(10)
+        .withLogLevel("error")
+        .build());
+} catch (SecureNativeSDKException e) {
+    e.printStackTrace();
+}
 ```
 
 ## Getting SecureNative instance
 Once initialized, sdk will create a singleton instance which you can get: 
 ```java
-SecureNative securenative = SecureNative.getInstance();
+SecureNative securenative = null;
+try {
+    securenative = SecureNative.getInstance();
+} catch (SecureNativeSDKIllegalStateException e) {
+    System.err.printf("Could not get SecureNative instance; %s%n", e);
+}
 ```
 
 ## Tracking events
@@ -90,29 +111,45 @@ Once the SDK has been initialized, tracking requests sent through the SDK
 instance. Make sure you build event with the EventBuilder:
 
  ```java
-SecureNative securenative = SecureNative.getInstance();
-
-SecureNativeContext context = SecureNative.contextBuilder()
-        .withIp("127.0.0.1")
-        .withClientToken("SECURED_CLIENT_TOKEN")
-        .withHeaders(Maps.defaultBuilder()
-                    .put("user-agent", "Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405")
+public void track() {
+    SecureNative securenative = null;
+    try {
+        securenative = SecureNative.getInstance();
+    } catch (SecureNativeSDKIllegalStateException e) {
+        System.err.printf("Could not get SecureNative instance; %s%n", e);
+    }
+    
+    SecureNativeContext context = SecureNative.contextBuilder()
+            .withIp("37.86.255.94")
+            .withClientToken("SECURENATIVE_CLIENT_TOKEN")
+            .withHeaders(Maps.defaultBuilder()
+                    .put("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36")
                     .build())
-        .build();
-
-EventOptions eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
-        .userId("USER_ID")
-        .userTraits("USER_NAME", "USER_EMAIL", "+01234566789")
-        .context(context)
-        .properties(Maps.builder()
-                .put("prop1", "CUSTOM_PARAM_VALUE")
-                .put("prop2", true)
-                .put("prop3", 3)
-                .build())
-        .timestamp(new Date())
-        .build();
-
-securenative.track(eventOptions);
+            .build();
+    
+    EventOptions eventOptions = null;
+    try {
+        eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
+                .userId("11")
+                .userTraits("track02", "t@somemail.com", "+01234566789")
+                .context(context)
+                .properties(Maps.builder()
+                        .put("prop1", "CUSTOM_PARAM_VALUE")
+                        .put("prop2", true)
+                        .put("prop3", 3)
+                        .build())
+                .timestamp(new Date())
+                .build();
+    } catch (SecureNativeInvalidOptionsException e) {
+        e.printStackTrace();
+    }
+    
+    try {
+        securenative.track(eventOptions);
+    } catch (SecureNativeInvalidOptionsException e) {
+        e.printStackTrace();
+    }
+}
  ```
 
 You can also create request context from HttpServletRequest:
@@ -120,23 +157,37 @@ You can also create request context from HttpServletRequest:
 ```java
 @RequestMapping("/track")
 public void track(HttpServletRequest request, HttpServletResponse response) {
-    SecureNativeContext context = SecureNative.contextBuilder()
-                                              .fromHttpServletRequest(request)
-                                              .build();
+    SecureNative securenative = null;
+    try {
+        securenative = SecureNative.getInstance();
+    } catch (SecureNativeSDKIllegalStateException e) {
+        System.err.printf("Could not get SecureNative instance; %s%n", e);
+    }
 
-    EventOptions eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
-            .userId("USER_ID")
-            .userTraits("USER_NAME", "USER_EMAIL", "+01234566789")
-            .context(context)
-            .properties(Maps.builder()
-                    .put("prop1", "CUSTOM_PARAM_VALUE")
-                    .put("prop2", true)
-                    .put("prop3", 3)
-                    .build())
-            .timestamp(new Date())
-            .build();
-    
-    securenative.track(eventOptions);
+    SecureNativeContext context = SecureNativeContextBuilder.fromHttpServletRequest(request).build();
+
+    EventOptions eventOptions = null;
+    try {
+        eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
+                .userId("USER_ID")
+                .userTraits("USER_NAME", "USER_EMAIL", "+01234566789")
+                .context(context)
+                .properties(Maps.builder()
+                        .put("prop1", "CUSTOM_PARAM_VALUE")
+                        .put("prop2", true)
+                        .put("prop3", 3)
+                        .build())
+                .timestamp(new Date())
+                .build();
+    } catch (SecureNativeInvalidOptionsException e) {
+        e.printStackTrace();
+    }
+
+    try {
+        securenative.track(eventOptions);
+    } catch (SecureNativeInvalidOptionsException e) {
+        e.printStackTrace();
+    }
 }
 ```
 
@@ -147,25 +198,34 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
 ```java
 @RequestMapping("/verify")
 public void verify(HttpServletRequest request, HttpServletResponse response) {
-    SecureNativeContext context = SecureNative.contextBuilder()
-                                              .fromHttpServletRequest(request)
-                                              .build();
-
-    EventOptions eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
-            .userId("USER_ID")
-            .userTraits("USER_NAME", "USER_EMAIL", "+01234566789")
-            .context(context)
-            .properties(Maps.builder()
-                    .put("prop1", "CUSTOM_PARAM_VALUE")
-                    .put("prop2", true)
-                    .put("prop3", 3)
-                    .build())
-            .timestamp(new Date())
-            .build();
+    SecureNativeContext context = SecureNativeContextBuilder.fromHttpServletRequest(request).build();
     
-    VerifyResult verifyResult = securenative.verify(eventOptions);
+    EventOptions eventOptions = null;
+    try {
+        eventOptions = EventOptionsBuilder.builder(EventTypes.LOG_IN)
+                .userId("USER_ID")
+                .userTraits("USER_NAME", "USER_EMAIL", "+01234566789")
+                .context(context)
+                .properties(Maps.builder()
+                        .put("prop1", "CUSTOM_PARAM_VALUE")
+                        .put("prop2", true)
+                        .put("prop3", 3)
+                        .build())
+                .timestamp(new Date())
+                .build();
+    } catch (SecureNativeInvalidOptionsException e) {
+        e.printStackTrace();
+    }
+
+    VerifyResult verifyResult = null;
+    try {
+        verifyResult = securenative.verify(eventOptions);
+    } catch (SecureNativeInvalidOptionsException e) {
+        e.printStackTrace();
+    }    
+
     verifyResult.getRiskLevel(); // Low, Medium, High
-    verifyResult.score(); // Risk score: 0 -1 (0 - Very Low, 1 - Very High)
+    verifyResult.getScore(); // Risk score: 0 -1 (0 - Very Low, 1 - Very High)
     verifyResult.getTriggers(); // ["TOR", "New IP", "New City"]
 }
 ```
@@ -177,7 +237,12 @@ Apply our filter to verify the request is from us, example in spring:
 ```java
 @RequestMapping("/webhook")
 public void webhookEndpoint(HttpServletRequest request, HttpServletResponse response) {
-    SecureNative securenative = SecureNative.getInstance();
+    SecureNative securenative = null;
+    try {
+        securenative = SecureNative.getInstance();
+    } catch (SecureNativeSDKIllegalStateException e) {
+        System.err.printf("Could not get SecureNative instance; %s%n", e);
+    }
     
     // Checks if request is verified
     Boolean isVerified = securenative.verifyRequestPayload(request);
