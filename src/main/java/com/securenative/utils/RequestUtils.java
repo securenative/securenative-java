@@ -1,5 +1,7 @@
 package com.securenative.utils;
 
+import com.securenative.config.SecureNativeOptions;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -35,7 +37,25 @@ public class RequestUtils {
         return null;
     }
 
-    public static String getClientIpFromRequest(HttpServletRequest request, Map<String, String> headers) {
+    public static String getClientIpFromRequest(HttpServletRequest request, Map<String, String> headers, SecureNativeOptions options) {
+        if (options.getProxyHeaders().size() > 0) {
+            for (String header : options.getProxyHeaders()) {
+                if (headers.containsKey(header)) {
+                    String headerValue = headers.get(header);
+
+                    Optional<String> ip = Arrays.stream(headerValue.split(","))
+                            .map(String::trim)
+                            .filter(IPUtils::isIpAddress)
+                            .filter(IPUtils::isValidPublicIp)
+                            .findFirst();
+
+                    if (ip.isPresent()) {
+                        return ip.get();
+                    }
+                }
+            }
+        }
+
         Optional<String> bestCandidate = Optional.empty();
         for (String ipHeader : ipHeaders) {
             if (!headers.containsKey(ipHeader)) {

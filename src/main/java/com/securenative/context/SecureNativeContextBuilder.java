@@ -1,5 +1,6 @@
 package com.securenative.context;
 
+import com.securenative.config.SecureNativeOptions;
 import com.securenative.utils.RequestUtils;
 import com.securenative.utils.Utils;
 
@@ -52,7 +53,7 @@ public class SecureNativeContextBuilder {
         return new SecureNativeContextBuilder();
     }
 
-    public static SecureNativeContextBuilder fromHttpServletRequest(HttpServletRequest request) {
+    public static SecureNativeContextBuilder fromHttpServletRequest(HttpServletRequest request, SecureNativeOptions options) {
         Map<String, String> headers = RequestUtils.getHeadersFromRequest(request);
 
         String clientToken = RequestUtils.getCookieValueFromRequest(request, RequestUtils.SECURENATIVE_COOKIE);
@@ -65,7 +66,7 @@ public class SecureNativeContextBuilder {
                 .withMethod(request.getMethod())
                 .withHeaders(headers)
                 .withClientToken(clientToken)
-                .withIp(RequestUtils.getClientIpFromRequest(request, headers))
+                .withIp(RequestUtils.getClientIpFromRequest(request, headers, options))
                 .withRemoteIp(RequestUtils.getRemoteIpFromRequest(request))
                 .withBody(null);
     }
