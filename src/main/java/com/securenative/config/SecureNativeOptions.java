@@ -2,6 +2,8 @@ package com.securenative.config;
 
 import com.securenative.enums.FailoverStrategy;
 
+import java.util.ArrayList;
+
 public class SecureNativeOptions {
     /**
      * Api Secret associated with SecureNative account
@@ -48,7 +50,12 @@ public class SecureNativeOptions {
      */
     private final FailoverStrategy failoverStrategy;
 
-    public SecureNativeOptions(String apiKey, String apiUrl, int interval, int maxEvents, int timeout, boolean autoSend, boolean disable, String logLevel, FailoverStrategy failoverStrategy) {
+    /**
+     * Proxy Headers
+     */
+    private final ArrayList<String> proxyHeaders;
+
+    public SecureNativeOptions(String apiKey, String apiUrl, int interval, int maxEvents, int timeout, boolean autoSend, boolean disable, String logLevel, FailoverStrategy failoverStrategy, ArrayList<String> proxyHeaders) {
         this.apiKey = apiKey;
         this.apiUrl = apiUrl;
         this.interval = interval;
@@ -58,6 +65,7 @@ public class SecureNativeOptions {
         this.disable = disable;
         this.logLevel = logLevel;
         this.failoverStrategy = failoverStrategy;
+        this.proxyHeaders = proxyHeaders;
     }
 
     public String getApiKey() {
@@ -94,5 +102,9 @@ public class SecureNativeOptions {
 
     public FailoverStrategy getFailoverStrategy() {
         return failoverStrategy;
+    }
+
+    public ArrayList<String> getProxyHeaders() {
+        return proxyHeaders;
     }
 }

@@ -6,7 +6,7 @@
     <groupId>com.securenative.java</groupId>
     <artifactId>securenative-java</artifactId>
     <packaging>jar</packaging>
-    <version>0.5.5</version>
+    <version>0.5.6</version>
     <url>https://github.com/securenative/securenative-java</url>
 
     <name>${project.groupId}:${project.artifactId}:${project.version}</name>

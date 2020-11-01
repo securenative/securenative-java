@@ -7,11 +7,13 @@ import com.securenative.enums.FailoverStrategy;
 import com.securenative.utils.Utils;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Properties;
 
 public class ConfigurationManager {
@@ -61,6 +63,12 @@ public class ConfigurationManager {
         return res == null ? null : res.toString();
     }
 
+    private static ArrayList<String> getPropertyListOrEnvOrDefault(Properties properties, String key, Object defaultValue) {
+        String defaultStrValue = defaultValue == null ? null : defaultValue.toString();
+        Object res = properties.getOrDefault(key, getEnvOrDefault(key, defaultStrValue));
+        return res == null ? null : new ArrayList<>(Arrays.asList(res.toString().split(",")));
+    }
+
     public static SecureNativeConfigurationBuilder configBuilder() {
         return SecureNativeConfigurationBuilder.defaultConfigBuilder();
     }
@@ -96,8 +104,8 @@ public class ConfigurationManager {
                 .withAutoSend(Utils.parseBooleanOrDefault(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_AUTO_SEND", defaultOptions.getAutoSend()), defaultOptions.getAutoSend()))
                 .withDisable(Utils.parseBooleanOrDefault(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_DISABLE", defaultOptions.getDisabled()), defaultOptions.getDisabled()))
                 .withLogLevel(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_LOG_LEVEL", defaultOptions.getLogLevel()))
-                .withFailoverStrategy(FailoverStrategy.fromString(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_FAILOVER_STRATEGY", defaultOptions.getFailoverStrategy()), defaultOptions.getFailoverStrategy()));
-
+                .withFailoverStrategy(FailoverStrategy.fromString(Objects.requireNonNull(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_FAILOVER_STRATEGY", defaultOptions.getFailoverStrategy())), defaultOptions.getFailoverStrategy()))
+                .withProxyHeaders(getPropertyListOrEnvOrDefault(properties, "SECURENATIVE_PROXY_HEADERS", defaultOptions.getProxyHeaders()));
         return builder.build();
     }
 }

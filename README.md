@@ -165,7 +165,7 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
         System.err.printf("Could not get SecureNative instance; %s%n", e);
     }
 
-    SecureNativeContext context = SecureNativeContextBuilder.fromHttpServletRequest(request).build();
+    SecureNativeContext context = securenative.fromHttpServletRequest(request).build();
 
     EventOptions eventOptions = null;
     try {
@@ -199,7 +199,14 @@ public void track(HttpServletRequest request, HttpServletResponse response) {
 ```java
 @RequestMapping("/verify")
 public void verify(HttpServletRequest request, HttpServletResponse response) {
-    SecureNativeContext context = SecureNativeContextBuilder.fromHttpServletRequest(request).build();
+SecureNative securenative = null;
+    try {
+        securenative = SecureNative.getInstance();
+    } catch (SecureNativeSDKIllegalStateException e) {
+        System.err.printf("Could not get SecureNative instance; %s%n", e);
+    }
+
+    SecureNativeContext context = securenative.fromHttpServletRequest(request).build();
     
     EventOptions eventOptions = null;
     try {

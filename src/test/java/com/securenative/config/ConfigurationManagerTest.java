@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +41,8 @@ public class ConfigurationManagerTest {
                 "SECURENATIVE_AUTO_SEND=true",
                 "SECURENATIVE_DISABLE=false",
                 "SECURENATIVE_LOG_LEVEL=fatal",
-                "SECURENATIVE_FAILOVER_STRATEGY=fail-closed");
+                "SECURENATIVE_FAILOVER_STRATEGY=fail-closed",
+                "SECURENATIVE_PROXY_HEADERS=CF-Connecting-IP,Some-Random-Ip");
 
         InputStream inputStream = new ByteArrayInputStream(config.getBytes());
 
@@ -60,6 +62,7 @@ public class ConfigurationManagerTest {
         assertThat(options.getLogLevel()).isEqualTo("fatal");
         assertThat(options.getMaxEvents()).isEqualTo(100);
         assertThat(options.getTimeout()).isEqualTo(1500);
+        assertThat(options.getProxyHeaders().size() == 0);
 
         // restore resource stream
         ConfigurationManager.setResourceStream(new ResourceStreamImpl());
@@ -159,6 +162,7 @@ public class ConfigurationManagerTest {
         assertThat(options.getDisabled()).isEqualTo(false);
         assertThat(options.getLogLevel()).isEqualTo("fatal");
         assertThat(options.getFailoverStrategy()).isEqualTo(FailoverStrategy.FAIL_OPEN);
+        assertThat(options.getProxyHeaders().size() == 0);
 
         ConfigurationManager.setResourceStream(new ResourceStreamImpl());
     }
@@ -177,6 +181,7 @@ public class ConfigurationManagerTest {
         setEnv("SECURENATIVE_DISABLE", "true");
         setEnv("SECURENATIVE_LOG_LEVEL", "fatal");
         setEnv("SECURENATIVE_FAILOVER_STRATEGY", "fail-closed");
+        setEnv("SECURENATIVE_PROXY_HEADERS", "CF-Connecting-IP,Some-Random-Ip");
 
         SecureNativeOptions options = ConfigurationManager.loadConfig();
 
@@ -189,6 +194,7 @@ public class ConfigurationManagerTest {
         assertThat(options.getDisabled()).isEqualTo(true);
         assertThat(options.getLogLevel()).isEqualTo("fatal");
         assertThat(options.getFailoverStrategy()).isEqualTo(FailoverStrategy.FAIL_CLOSED);
+        assertThat(options.getProxyHeaders().size() == 2);
 
         setEnv("SECURENATIVE_API_KEY", "");
         setEnv("SECURENATIVE_API_URL", "");
@@ -199,6 +205,7 @@ public class ConfigurationManagerTest {
         setEnv("SECURENATIVE_DISABLE", "");
         setEnv("SECURENATIVE_LOG_LEVEL", "");
         setEnv("SECURENATIVE_FAILOVER_STRATEGY", "");
+        setEnv("SECURENATIVE_PROXY_HEADERS", "");
     }
 
     @Test
@@ -215,7 +222,8 @@ public class ConfigurationManagerTest {
                 "SECURENATIVE_AUTO_SEND=false",
                 "SECURENATIVE_DISABLE=false",
                 "SECURENATIVE_LOG_LEVEL=fatal",
-                "SECURENATIVE_FAILOVER_STRATEGY=fail-closed");
+                "SECURENATIVE_FAILOVER_STRATEGY=fail-closed",
+                "SECURENATIVE_PROXY_HEADERS=CF-Connecting-IP,Some-Random-Ip");
 
         setEnv("SECURENATIVE_API_KEY", "API_KEY_FROM_ENV");
         setEnv("SECURENATIVE_API_URL", "API_URL_ENV");
@@ -226,6 +234,7 @@ public class ConfigurationManagerTest {
         setEnv("SECURENATIVE_DISABLE", "true");
         setEnv("SECURENATIVE_LOG_LEVEL", "error");
         setEnv("SECURENATIVE_FAILOVER_STRATEGY", "fail-open");
+        setEnv("SECURENATIVE_PROXY_HEADERS", "CF-Connecting-IP,Some-Random-Ip");
 
         InputStream inputStream = new ByteArrayInputStream(config.getBytes());
 
@@ -234,6 +243,9 @@ public class ConfigurationManagerTest {
 
         ConfigurationManager.setResourceStream(resourceStream);
         SecureNativeOptions options = ConfigurationManager.loadConfig();
+        ArrayList<String> proxyHeaders = new ArrayList<>();
+        proxyHeaders.add("CF-Connecting-IP");
+        proxyHeaders.add("Some-Random-Ip");
 
         assertThat(options).isNotNull();
         assertThat(options.getApiKey()).isEqualTo("API_KEY_FROM_FILE");
@@ -245,6 +257,7 @@ public class ConfigurationManagerTest {
         assertThat(options.getDisabled()).isEqualTo(false);
         assertThat(options.getLogLevel()).isEqualTo("fatal");
         assertThat(options.getFailoverStrategy()).isEqualTo(FailoverStrategy.FAIL_CLOSED);
+        assertThat(options.getProxyHeaders()).isEqualTo(proxyHeaders);
 
         setEnv("SECURENATIVE_API_KEY", "");
         setEnv("SECURENATIVE_API_URL", "");
@@ -255,6 +268,7 @@ public class ConfigurationManagerTest {
         setEnv("SECURENATIVE_DISABLE", "");
         setEnv("SECURENATIVE_LOG_LEVEL", "");
         setEnv("SECURENATIVE_FAILOVER_STRATEGY", "");
+        setEnv("SECURENATIVE_PROXY_HEADERS", "");
 
         // restore resource stream
         ConfigurationManager.setResourceStream(new ResourceStreamImpl());

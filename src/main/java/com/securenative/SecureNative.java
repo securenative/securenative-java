@@ -88,6 +88,10 @@ public class SecureNative implements ApiManager {
         return SecureNativeContextBuilder.defaultContextBuilder();
     }
 
+    public SecureNativeContextBuilder fromHttpServletRequest(HttpServletRequest request) {
+        return SecureNativeContextBuilder.fromHttpServletRequest(request, this.options);
+    }
+
     public boolean verifyRequestPayload(HttpServletRequest request) throws IOException {
         String requestSignature = request.getHeader(SIGNATURE_HEADER);
         String body = request.getReader().lines().collect(Collectors.joining());
