@@ -302,7 +302,7 @@ Initialize sdk as shown above.
 try {
     securenative = SecureNative.init(SecureNative.configBuilder()
         .withApiKey("API_KEY")
-        .WithPiiRegexPattern(@"((?i)(http_auth_)(\w+)?)")
+        .WithPiiRegexPattern("((?i)(http_auth_)(\\w+)?)")
         .build());
 } catch (SecureNativeSDKException e) {
     e.printStackTrace();
