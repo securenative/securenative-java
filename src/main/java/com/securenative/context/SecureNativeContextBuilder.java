@@ -54,7 +54,7 @@ public class SecureNativeContextBuilder {
     }
 
     public static SecureNativeContextBuilder fromHttpServletRequest(HttpServletRequest request, SecureNativeOptions options) {
-        Map<String, String> headers = RequestUtils.getHeadersFromRequest(request);
+        Map<String, String> headers = RequestUtils.getHeadersFromRequest(request, options);
 
         String clientToken = RequestUtils.getCookieValueFromRequest(request, RequestUtils.SECURENATIVE_COOKIE);
         if (Utils.isNullOrEmpty(clientToken)) {

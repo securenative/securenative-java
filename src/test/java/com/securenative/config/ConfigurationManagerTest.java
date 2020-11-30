@@ -42,7 +42,9 @@ public class ConfigurationManagerTest {
                 "SECURENATIVE_DISABLE=false",
                 "SECURENATIVE_LOG_LEVEL=fatal",
                 "SECURENATIVE_FAILOVER_STRATEGY=fail-closed",
-                "SECURENATIVE_PROXY_HEADERS=CF-Connecting-IP,Some-Random-Ip");
+                "SECURENATIVE_PROXY_HEADERS=CF-Connecting-IP,Some-Random-Ip",
+                "SECURENATIVE_PII_HEADERS=authentication,apiKey",
+                "SECURENATIVE_PII_REGEX_PATTERN=/http_auth_/i");
 
         InputStream inputStream = new ByteArrayInputStream(config.getBytes());
 
@@ -63,6 +65,8 @@ public class ConfigurationManagerTest {
         assertThat(options.getMaxEvents()).isEqualTo(100);
         assertThat(options.getTimeout()).isEqualTo(1500);
         assertThat(options.getProxyHeaders().size() == 0);
+        assertThat(options.getPiiHeaders().size() == 0);
+        assertThat(options.getPiiRegexPattern()).isEqualTo("/http_auth_/i");
 
         // restore resource stream
         ConfigurationManager.setResourceStream(new ResourceStreamImpl());
@@ -163,6 +167,8 @@ public class ConfigurationManagerTest {
         assertThat(options.getLogLevel()).isEqualTo("fatal");
         assertThat(options.getFailoverStrategy()).isEqualTo(FailoverStrategy.FAIL_OPEN);
         assertThat(options.getProxyHeaders().size() == 0);
+        assertThat(options.getPiiHeaders().size() == 0);
+        assertThat(options.getPiiRegexPattern()).isEqualTo(null);
 
         ConfigurationManager.setResourceStream(new ResourceStreamImpl());
     }
