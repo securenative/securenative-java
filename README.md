@@ -256,3 +256,55 @@ public void webhookEndpoint(HttpServletRequest request, HttpServletResponse resp
     Boolean isVerified = securenative.verifyRequestPayload(request);
 }
  ```
+
+## Extract proxy headers from cloud providers
+
+You can specify custom header keys to allow extraction of client ip from different providers.
+This example demonstrates the usage of proxy headers for ip extraction from Cloudflare.
+
+### Option 1: Using config file
+```properties
+SECURENATIVE_API_KEY="YOUR_API_KEY"
+SECURENATIVE_PROXY_HEADERS=["CF-Connecting-IP"]
+```
+
+Initialize sdk as shown above.
+
+### Options 2: Using ConfigurationBuilder
+
+```java
+try {
+    securenative = SecureNative.init(SecureNative.configBuilder()
+        .withApiKey("API_KEY")
+        .WithProxyHeaders(new ["CF-Connecting-IP"])
+        .build());
+} catch (SecureNativeSDKException e) {
+    e.printStackTrace();
+}
+```
+
+## Remove PII Data From Headers
+
+By default, SecureNative SDK remove any known pii headers from the received request.
+We also support using custom pii headers and regex matching via configuration, for example:
+
+### Option 1: Using config file
+```properties
+SECURENATIVE_API_KEY="YOUR_API_KEY"
+SECURENATIVE_PII_HEADERS=["apiKey"]
+```
+
+Initialize sdk as shown above.
+
+### Options 2: Using ConfigurationBuilder
+
+```java
+try {
+    securenative = SecureNative.init(SecureNative.configBuilder()
+        .withApiKey("API_KEY")
+        .WithPiiRegexPattern("((?i)(http_auth_)(\\w+)?)")
+        .build());
+} catch (SecureNativeSDKException e) {
+    e.printStackTrace();
+}
+```
