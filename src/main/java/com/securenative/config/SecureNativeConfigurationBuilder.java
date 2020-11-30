@@ -55,6 +55,16 @@ public class SecureNativeConfigurationBuilder {
      */
     private ArrayList<String> proxyHeaders;
 
+    /**
+     * Pii Headers
+     */
+    private ArrayList<String> piiHeaders;
+
+    /**
+     * Pii Regex Pattern
+     */
+    private String piiRegexPattern;
+
     private SecureNativeConfigurationBuilder() {
     }
 
@@ -69,7 +79,9 @@ public class SecureNativeConfigurationBuilder {
                 .withDisable(false)
                 .withLogLevel("fatal")
                 .withFailoverStrategy(FailoverStrategy.FAIL_OPEN)
-                .withProxyHeaders(new ArrayList<>());
+                .withProxyHeaders(new ArrayList<>())
+                .withPiiHeaders(new ArrayList<>())
+                .withPiiRegexPattern(null);
     }
 
     public SecureNativeConfigurationBuilder withApiKey(String apiKey) {
@@ -122,7 +134,17 @@ public class SecureNativeConfigurationBuilder {
         return this;
     }
 
+    public SecureNativeConfigurationBuilder withPiiHeaders(ArrayList<String> piiHeaders) {
+        this.piiHeaders = piiHeaders;
+        return this;
+    }
+
+    public SecureNativeConfigurationBuilder withPiiRegexPattern(String piiRegexPattern) {
+        this.piiRegexPattern = piiRegexPattern;
+        return this;
+    }
+
     public SecureNativeOptions build() {
-        return new SecureNativeOptions(apiKey, apiUrl, interval, maxEvents, timeout, autoSend, disable, logLevel, failoverStrategy, proxyHeaders);
+        return new SecureNativeOptions(apiKey, apiUrl, interval, maxEvents, timeout, autoSend, disable, logLevel, failoverStrategy, proxyHeaders, piiHeaders, piiRegexPattern);
     }
 }

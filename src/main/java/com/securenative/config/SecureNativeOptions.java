@@ -55,7 +55,17 @@ public class SecureNativeOptions {
      */
     private final ArrayList<String> proxyHeaders;
 
-    public SecureNativeOptions(String apiKey, String apiUrl, int interval, int maxEvents, int timeout, boolean autoSend, boolean disable, String logLevel, FailoverStrategy failoverStrategy, ArrayList<String> proxyHeaders) {
+    /**
+     * Pii Headers
+     */
+    private final ArrayList<String> piiHeaders;
+
+    /**
+     * Pii Regex Pattern
+     */
+    private final String piiRegexPattern;
+
+    public SecureNativeOptions(String apiKey, String apiUrl, int interval, int maxEvents, int timeout, boolean autoSend, boolean disable, String logLevel, FailoverStrategy failoverStrategy, ArrayList<String> proxyHeaders, ArrayList<String> piiHeaders, String piiRegexPattern) {
         this.apiKey = apiKey;
         this.apiUrl = apiUrl;
         this.interval = interval;
@@ -66,6 +76,8 @@ public class SecureNativeOptions {
         this.logLevel = logLevel;
         this.failoverStrategy = failoverStrategy;
         this.proxyHeaders = proxyHeaders;
+        this.piiHeaders = piiHeaders;
+        this.piiRegexPattern = piiRegexPattern;
     }
 
     public String getApiKey() {
@@ -106,5 +118,13 @@ public class SecureNativeOptions {
 
     public ArrayList<String> getProxyHeaders() {
         return proxyHeaders;
+    }
+
+    public ArrayList<String> getPiiHeaders() {
+        return piiHeaders;
+    }
+
+    public String getPiiRegexPattern() {
+        return piiRegexPattern;
     }
 }

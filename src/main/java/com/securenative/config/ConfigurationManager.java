@@ -105,7 +105,9 @@ public class ConfigurationManager {
                 .withDisable(Utils.parseBooleanOrDefault(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_DISABLE", defaultOptions.getDisabled()), defaultOptions.getDisabled()))
                 .withLogLevel(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_LOG_LEVEL", defaultOptions.getLogLevel()))
                 .withFailoverStrategy(FailoverStrategy.fromString(Objects.requireNonNull(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_FAILOVER_STRATEGY", defaultOptions.getFailoverStrategy())), defaultOptions.getFailoverStrategy()))
-                .withProxyHeaders(getPropertyListOrEnvOrDefault(properties, "SECURENATIVE_PROXY_HEADERS", defaultOptions.getProxyHeaders()));
+                .withProxyHeaders(getPropertyListOrEnvOrDefault(properties, "SECURENATIVE_PROXY_HEADERS", defaultOptions.getProxyHeaders()))
+                .withPiiHeaders(getPropertyListOrEnvOrDefault(properties, "SECURENATIVE_PII_HEADERS", defaultOptions.getPiiHeaders()))
+                .withPiiRegexPattern(getPropertyOrEnvOrDefault(properties, "SECURENATIVE_PII_REGEX_PATTERN", defaultOptions.getPiiRegexPattern()));
         return builder.build();
     }
 }
